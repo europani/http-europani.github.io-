@@ -90,8 +90,6 @@ yat:
 #     img: https://www.countryflags.io/ru/flat/64.png
 #     text: Russia
 
-theme: jekyll-theme-yat
-
 # You can choose a theme color
 # Default theme colors as below:
 # coolblack: #090a0b
