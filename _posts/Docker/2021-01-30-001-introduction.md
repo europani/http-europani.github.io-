@@ -5,11 +5,13 @@ categories: Docker
 tags: [Docker]
 ---
 
-Docker File : 
+Docker File : 도커 이미지를 만들기 위한 파일로써 CMD를 사용하여 파일과 설정값을 셋팅함
 
-Docker Image : 
+Docker Image : 컨테이너 실행에 필요한 파일과 설정값이 포함되어 있는 파일, Immutable
 
-Docker hub : 
+Docker Container : 파일이 실행되는 독립적인 환경, Mutable
+
+Docker hub : 도커 이미지파일을 저장할 수 있는 remote repository
 
  
 
