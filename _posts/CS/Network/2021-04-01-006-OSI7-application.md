@@ -4,6 +4,9 @@ title: 응용 계층
 categories: Network
 tags: [Network, CS]
 ---
+#### HTTP [TCP : 80]
+- 웹에서 HTML 등을 주고 받기 위한 프로토콜
+
 
 ### 주소 변환 및 설정 프로토콜
 #### DNS [TCP&UDP : 53]
