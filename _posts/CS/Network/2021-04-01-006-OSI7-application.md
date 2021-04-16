@@ -5,7 +5,9 @@ categories: Network
 tags: [Network, CS]
 ---
 #### HTTP [TCP : 80]
-- 웹에서 HTML 등을 주고 받기 위한 프로토콜
+- 웹에서 HTML 등을 주고 받기 위한 프로토콜 
+- [(링크)](https://europani.github.io//web/2021/04/16/002-HTTP.html)
+
 
 
 ### 주소 변환 및 설정 프로토콜
