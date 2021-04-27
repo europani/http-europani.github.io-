@@ -84,14 +84,25 @@ $ pip install -r requirements.txt
 
 4\. Pycharm run configuration 설정
 
- 우측상단 Add Configuration -> + 버튼 -> Python
+(1) python 사용시 (community version)  
+- 우측상단 Add Configuration -> + 버튼 -> Python
 
 ![](https://blog.kakaocdn.net/dn/VUwb6/btqWsJbADMW/Q0OffKb5AKKxRE5fs7fIH1/img.png)
 
-→ name : 마음대로 설정
+→ name : 마음대로 설정  
+→ Script path : 프로젝트의 manage.py  
+→ Parameters : runserver  
+→ Python interpreter : 해당 프로젝트 venv 파이썬 interpreter (Project Default)  
 
-→ Script path : 프로젝트의 manage.py
 
-→ Parameters : runserver
+(2) django server 사용시 (professional version)
+- 우측상단 Add Configuration -> + 버튼 -> Django Server
 
-→ Python interpreter : 해당 프로젝트 venv 파이썬 interpreter (Project Default)
+![](https://user-images.githubusercontent.com/48157259/116200182-fc8ad780-a772-11eb-9dee-a05df0e0ad7a.png)
+
+→ 환경변수에 settings 파일 명시 
+
+
+![](https://user-images.githubusercontent.com/48157259/116200311-23490e00-a773-11eb-9969-2a1b1061fb75.png)
+
+→ 장고 프레임워크 사용 설정 (root, settings, manage.py)
