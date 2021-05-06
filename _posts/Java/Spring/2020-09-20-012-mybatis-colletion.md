@@ -1,6 +1,6 @@
 ---
 layout: post
-title: (Mybatis) resultMap, association, collection
+title: '[Mybatis] resultMap, association, collection'
 categories: Spring
 tags: [Spring, Mybatis]
 ---

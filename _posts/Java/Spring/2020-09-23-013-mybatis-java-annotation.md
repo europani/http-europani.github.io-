@@ -1,6 +1,6 @@
 ---
 layout: post
-title: (Mybatis) 자바 Annotation
+title: '[Mybatis] 자바 Annotation'
 categories: Spring
 tags: [Spring, Mybatis]
 ---
