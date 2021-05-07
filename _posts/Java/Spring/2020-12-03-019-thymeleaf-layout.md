@@ -11,17 +11,13 @@ tags: [Spring, Thymeleaf]
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 ```
 
-fragment -> layout -> content 페이지 순으로 단계적으로 적용한다고 생각
-
 #### header.html (fragment)
-
- - <th:fragment="이름"> : fragment 선언
+- `<layout:fragment="이름">` : fragment 선언
 
 ```html
 <html xmlns:th="http://www.thymeleaf.org">
        
-    <!--headerFragment 선언-->
-    <div th:fragment="headerFragment">
+    <div layout:fragment="headerFragment">
         <h1>HEADER</h1>
     </div>
     
@@ -33,19 +29,16 @@ fragment -> layout -> content 페이지 순으로 단계적으로 적용한다�
 ```html
 <html xmlns:th="http://www.thymeleaf.org">
       
-    <!--footerFragment 선언-->
-    <div th:fragment="footerFragment">
+    <div layout:fragment="footerFragment">
         <h1>FOOTER</h1>
     </div>
     
 </html>
 ```
 
-#### layout.html (layout) : fragment 적용 (th:replace 사용)
-
-\- \<th:replace = "fragment경로 :: fragment이름"> : fragment 사용
-
-\- \<layout:fragment="이름"> : content에서 구현된 fragment 사용 -> 레이아웃에 자리를 잡아놓는다고 생각
+#### ★ layout.html
+- `<th:include = "fragment경로 :: fragment이름">` : fragment 사용  
+- `<layout:fragment="이름">` : content에서 구현된 fragment 사용
 
 ```html
 <html lagn="ko" 
@@ -53,21 +46,19 @@ fragment -> layout -> content 페이지 순으로 단계적으로 적용한다�
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
-    <th:block th:replace="fragment/header :: headerFragment"></th:block>
+    <th:block th:include="fragment/header :: headerFragment"></th:block>
 </head>
 <body>
-    <th:block layout:fragment="abc"></th:block>		<!-- content에서 구현된 abc 사용 -->
+    <th:block layout:fragment="abc"></th:block>
     
-    <th:block th:replace="fragment/footer :: footerFragment"></th:block>
+    <th:block th:include="fragment/footer :: footerFragment"></th:block>
 </body>
 </html>
 ```
 
-#### content.html (본문) : layout 적용 (layout:decorator 사용)
-
- - \<layout:decorator = "layout경로&이름">
-
- \- \<th:block layout:fragment="이름"> ........ </th:block> : 구현할 내용을 태그 안쪽에 적어서 fragment 구현
+#### content.html
+- `<layout:decorator = "layout경로&이름">` : fragment를 적용시킬 레이아웃  
+- `<th:block layout:fragment="이름">~~~</th:block>`
 
 ```html
 <html xmlns="http://www.w3.org/1999/xhtml"
@@ -75,7 +66,7 @@ fragment -> layout -> content 페이지 순으로 단계적으로 적용한다�
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layout">		<!-- layout.html -->
       
-      <th:block layout:fragment="abc">		<!-- abc 구현 -->
+      <th:block layout:fragment="abc">
           <h1>content</h1>
       </th:block>
 </html>
