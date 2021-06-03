@@ -106,3 +106,17 @@ $ pip install -r requirements.txt
 ![](https://user-images.githubusercontent.com/48157259/116200311-23490e00-a773-11eb-9969-2a1b1061fb75.png)
 
 → 장고 프레임워크 사용 설정 (root, settings, manage.py)
+
+
+#### MacOS mysqlclient 패키지 설치 오류시
+  - OpenSSL을 통해 설치해야 함
+
+```bash
+$ brew install mysql@5.7      # MySQL 먼저 설치
+[...MySQL 셋팅...]
+$ brew install openssl
+
+$ source ./venv/bin/activ     # 가상환경진입
+# 가상환경에서 openSSL을 사용하여 mysqlclient 설치
+(venv)$ LDFLAGS=-L/usr/local/opt/openssl/lib pip install mysqlclient==1.4.4
+```
