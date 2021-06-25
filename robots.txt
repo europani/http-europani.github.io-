@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: http://europani.github.io/sitemap.xml
+Sitemap: https://europani.github.io/sitemap.xml
