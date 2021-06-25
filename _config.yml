@@ -27,7 +27,7 @@
 title: For My Developer
 email: europani1212@google.com
 github: https://github.com/europani
-linkedIn: 
+linkedIn: https://www.linkedin.com/in/sangil-park-557a56201
 
 author: europani
 copyright: Copyright © 2020-2021
@@ -37,7 +37,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   Google search results) and in your feed.xml site description.
 
 baseurl: "" # the subpath of your site, e.g. /blog
-url: https://europani.github.io/ # the base hostname & protocol for your site, e.g. http://example.com
+url: https://europani.github.io # the base hostname & protocol for your site, e.g. http://example.com
 favicon: "" # the favicon for your site
 
 # Yat date format
