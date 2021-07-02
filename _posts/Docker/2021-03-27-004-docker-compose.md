@@ -8,29 +8,37 @@ tags: [Docker]
 ## docker-compose 
   * 도커 컨테이너 간의 연결
   * 각 컨테이너의 Dockerfile을 사용하여 컨테이너를 만들어 연결한다
+  * docker-compose 에서는 컨테이너를 서비스라고 한다
   * 파일명 : docker-compose.yml
 
 ```yml
-version: "3"        # docker-compose 버전
-services:           # 컨테이너 묶음
-  database:             # 컨테이너 이름
-    build: ./database       # Dockerfile의 위치
+version: "3"            # docker-compose 버전
+services:               # 서비스 묶음
+  database:             # 서비스 이름
+    image: mysql:5.7        # hub에 업로드된 image 파일
+    container_name: mysql   # 컨테이너 이름 설정
     ports:
-      - "3306:3306"
-    volumes:
-      - /my/own/datadir:/var/lib/mysql
+      - "3306:3306"         # 로컬 포트:컨테이너 포트
+    environment:      # -e
+      - MYSQL_ROOT_PASSWORD: {패스워드}
+      - MYSQL_USER: {user명}
+      - MYSQL_PASSWORD: {패스워드}
+      - MYSQL_DATABASE: {db명}
+    volumes:          # -v
+      - /my/own/datadir:/var/lib/mysql      # 외부 디렉토리:컨테이너 디렉토리
+      - /my/own/datadir:/etc/mysql/conf.d
   backend:
-    build: ./backend
+    build: ./backend        # Dockerfile의 위치
     volumes:
       - ./backend:/usr/src/app
     ports:
-      - "8080:8080"             # 로컬 포트:컨테이너 포트
+      - "8080:8080"             
     environment:
-      - DBHOST=database     # 컨테이너명-database
+      - DBHOST=database     # database 서비스(컨테이너) 연결
   frontend:
     build: ./frontend
     volumes:
-      - ./frontend:/usr/src/app  # 외부 디렉토리:컨테이너 디렉토리
+      - ./frontend:/usr/src/app  
     ports:
       - "8080:8080"
 ```
