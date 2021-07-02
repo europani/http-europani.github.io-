@@ -7,6 +7,7 @@ tags: [Docker]
 
 ## docker-compose 
   * 도커 컨테이너 간의 연결
+  * 각 컨테이너의 Dockerfile을 사용하여 컨테이너를 만들어 연결한다
   * 파일명 : docker-compose.yml
 
 ```yml
@@ -16,6 +17,8 @@ services:           # 컨테이너 묶음
     build: ./database       # Dockerfile의 위치
     ports:
       - "3306:3306"
+    volumes:
+      - /my/own/datadir:/var/lib/mysql
   backend:
     build: ./backend
     volumes:
@@ -31,8 +34,12 @@ services:           # 컨테이너 묶음
     ports:
       - "8080:8080"
 ```
+→ DB컨테이너를 먼저 만들고 백엔드 컨테이너를 만들어야 오류가 생기지 않는다  
+→ 위에서부터 순서대로 실행되기 때문에 DB컨테이너를 맨 위에 위치시켜야한다
 
-- 실행
+
+\* 실행
+
 ```bash
 $ docker-compose up
 ```
