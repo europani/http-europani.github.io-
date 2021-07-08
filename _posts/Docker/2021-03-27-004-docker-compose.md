@@ -17,24 +17,42 @@ services:               # 서비스 묶음
   database:             # 서비스 이름
     image: mysql:5.7        # hub에 업로드된 image 파일
     container_name: mysql   # 컨테이너 이름 설정
+    restart: always
     ports:
       - "3306:3306"         # 로컬 포트:컨테이너 포트
     environment:      # -e
-      - MYSQL_ROOT_PASSWORD: {패스워드}
-      - MYSQL_USER: {user명}
-      - MYSQL_PASSWORD: {패스워드}
-      - MYSQL_DATABASE: {db명}
+      - MYSQL_ROOT_PASSWORD= {패스워드}
+      - MYSQL_USER= {user명}
+      - MYSQL_PASSWORD= {패스워드}
+      - MYSQL_DATABASE= {db명}
     volumes:          # -v
-      - /my/own/datadir:/var/lib/mysql      # 외부 디렉토리:컨테이너 디렉토리
-      - /my/own/datadir:/etc/mysql/conf.d
+      - ./database/mysql_data:/var/lib/mysql      # 외부 디렉토리:컨테이너 디렉토리
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
   backend:
-    build: ./backend        # Dockerfile의 위치
-    volumes:
-      - ./backend:/usr/src/app
+    build: 
+      context: ./backend        # Dockerfile의 위치
+      dockerfile: Dockerfile    # Dockerfile 명
+    container_name: backend
+    restart: always
     ports:
-      - "8080:8080"             
-    environment:
-      - DBHOST=database     # database 서비스(컨테이너) 연결
+      - "8000:8000"
+    volumes:
+      - ./backend:/usr/local/edix-net
+      - ./log/backend:/var/log/uwsgi
+    command: uwsgi --ini uwsgi.ini      
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-dev
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/usr/local/edix-net
+      - ./log/nginx:/var/log/nginx
   frontend:
     build: ./frontend
     volumes:
