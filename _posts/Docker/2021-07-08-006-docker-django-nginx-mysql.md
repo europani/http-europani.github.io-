@@ -56,7 +56,7 @@ RUN pip install -r requirements.txt
 COPY . .
 ```
 → `COPY requirements.txt .`를 먼저 실행 해야 의존성 파일을 매번 다운받지 않아도 된다.  
-→ 그 후, `COPY . .`를 실행하여 backend폴더 전체를 컨테이너로 이동시킨다.
+→ 그 후, `COPY . .`를 실행하여 backend폴더 전체를 컨테이너로 복사시킨다.
 
 - uwsgi.ini (uWSGI 설정파일)
 
