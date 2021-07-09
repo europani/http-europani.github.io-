@@ -12,6 +12,7 @@ tags: [Docker]
 # 1. Docker 설치
 $ yum install docker-ce docker-ce-cli containerd.io
 $ systemctl start docker
+$ systemctl enable docker
 
 # 2. docker-compose 설치
 $ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
