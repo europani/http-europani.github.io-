@@ -7,6 +7,18 @@ tags: [Docker]
 
 ### 0. 도커 설치
 
+```bash
+# CentOS
+# 1. Docker 설치
+$ yum install docker-ce docker-ce-cli containerd.io
+$ systemctl start docker
+
+# 2. docker-compose 설치
+$ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+$ chmod +x /usr/local/bin/docker-compose
+$ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+```
+
 
 
 ### 1. Mysql 컨테이너
@@ -30,9 +42,9 @@ services:
       - --character-set-server=utf8mb4          # 인코딩
       - --collation-server=utf8mb4_unicode_ci   # 인코딩
 ```
+→ `MYSQL_ROOT_PASSWORD` 환경변수는 필수값이다
 
-
-### 2. Backend 컨테이너
+### 2. Backend 컨테이너 (Python, Django, uWSGI)
 
 - Backend 도커파일
 
@@ -44,9 +56,9 @@ ENV PYTHONUNBUFFERED 1            #
 RUN apt-get -y update
 RUN apt-get -y install build-essential python3-dev    # 파이썬 패키지 설치에 필요한 패키지 설치
 
-RUN mkdir /usr/local/edix-net
+RUN mkdir /usr/local/mypro
 
-WORKDIR /usr/local/edix-net
+WORKDIR /usr/local/mypro
 
 COPY requirements.txt .                               # 의존성 파일 먼저 복사하여 패키지 설치
 
@@ -94,7 +106,7 @@ logger = file:/var/log/uwsgi/uwsgi.log
 FROM nginx:latest
 
 COPY nginx.conf /etc/nginx/nginx.conf               # nginx 설정파일 복사
-COPY edix.conf /etc/nginx/conf.d/edix.conf          # nginx 기본 설정파일 복사
+COPY mypro.conf /etc/nginx/conf.d/mypro.conf          # nginx 기본 설정파일 복사
 
 CMD ["nginx", "-g", "daemon off;"]
 ```
@@ -126,6 +138,7 @@ server {
 
 ### 4. docker-compose.yml 작성
 - 이제 mysql + backend + nginx 컨테이너를 결합하기 위해 `docker-compose.yml`을 작성한다.
+- docker-compose는 각 서비스의 `Dockerfile`을 빌드한 후 run하여 컨테이너를 실행시키고 각 컨테이너들을 서로 연결하는 역할을 합니다.
 
 ```yml
 version: "3"
@@ -145,7 +158,8 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
   backend:
-    build:
+    image: europani/mypro_backend         # image 이름&태그 설정 (태그 : latest)
+    build:                                # 해당 context의 dockerfile을 사용하여 build 진행
       context: ./backend
       dockerfile: Dockerfile-dev
     container_name: backend
@@ -153,10 +167,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/usr/local/edix-net
+      - ./backend:/usr/local/mypro
       - ./log/backend:/var/log/uwsgi
     command: uwsgi --ini uwsgi.ini
   nginx:
+    image: europani/mypro_nginx
     build:
       context: ./nginx
       dockerfile: Dockerfile-dev
@@ -165,7 +180,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./backend:/usr/local/edix-net
+      - ./backend:/usr/local/mypro
       - ./log/nginx:/var/log/nginx
 ```
 
@@ -178,7 +193,8 @@ services:
  ├── backend         
  │   ├── Dockerfile
  │   ├── Dockerfile-dev
- │   ├── .gitignore
+ │   ├── .dockerignore
+ │   ├── .gitignore     # backend용
  │   ├── manage.py
  │   ├── README.md
  │   ├── requirements.txt
@@ -206,8 +222,35 @@ services:
  │   ├── .gitignore
  │   ├── nginx.conf
  │   └── mypro.conf        # nginx 설정파일 
- │ 
+ │
+ ├── .gitignore            # backend 제외한 나머지 폴더  
  ├── docker-compose.yml
  ├── log/
  └── config/
 ```
+
+
+- `backend/.dockerignore`  
+  - `uwsgi.sock` 파일은 도커 컨테이너로 복사되지 않도록 제외한다.
+
+```dockerignore
+*.sock
+```
+
+
+### 5. 도커 허브에 업로드
+- 빌드 되어 설정된 이미지의 이름&태그 그대로 도커허브에 업로드된다. (europani 계정)
+- 도커 허브에 업로드 하기 위해 `docker-compose.yml`에서 `image` 이름을 계정이름을 포함하여 `europani/mypro_backend`로 설정한 것이다.
+
+```bash
+$ docker push europani/mypro_backend
+$ docker push europani/mypro_nginx
+```
+
+### 정리
+- Host OS : CentOS7
+- 호스트OS에 도커를 설치 한 후 호스트OS위에 올려 독립적인 `database`, `backend`, `nginx` 도커 컨테이너를 올려 실행한다.  
+- 각 도커 컨테이너는 각 `Dockerfile`를 빌드하여 만들어진다.  
+- 각 각의 독립적인 컨테이너을 연결할 때는 `docker-compose.yml`를 이용한다. 
+- `backend` 코드가 변경시 `docker-compose down / up` 명령어를 사용하여 컨테이너를 갱신시켜 주고 `Dockerfile`이 변경시 빌드를 다시 한 다음 컨테이너를 갱신해야 한다.
+
