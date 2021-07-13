@@ -193,12 +193,13 @@ services:
  │
  ├── backend         
  │   ├── Dockerfile
- │   ├── Dockerfile-dev
  │   ├── .dockerignore
  │   ├── .gitignore     # backend용
  │   ├── manage.py
  │   ├── README.md
  │   ├── requirements.txt
+ │   ├── config
+ │   │   └── comfig.yml
  │   ├── mypro
  │   │   ├── __init__.py 
  │   │   ├── asgi.py 
@@ -210,7 +211,6 @@ services:
  │
  ├── frontend           
  │   ├── Dockerfile
- │   ├── Dockerfile-dev
  │   ├── .gitignore
  │   ├── 
  │   
@@ -219,15 +219,14 @@ services:
  │   └── mysql_data       # DB 데이터
  │   
  ├── nginx           
- │   ├── Dockerfile-dev
+ │   ├── Dockerfile
  │   ├── .gitignore
  │   ├── nginx.conf
  │   └── mypro.conf        # nginx 설정파일 
  │
  ├── .gitignore            # backend 제외한 나머지 폴더  
  ├── docker-compose.yml
- ├── log/
- └── config/
+ └── log/
 ```
 
 
