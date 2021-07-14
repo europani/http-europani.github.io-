@@ -35,8 +35,8 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD={root비밀번호}
-      - MYSQL_DATABASE={DB명}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
     volumes:
       - ./database/mysql_data:/var/lib/mysql    # 컨테이너의 데이터를 호스트OS에 저장되도록 설정 
     command:
@@ -44,6 +44,15 @@ services:
       - --collation-server=utf8mb4_unicode_ci   # 인코딩
 ```
 → `MYSQL_ROOT_PASSWORD` 환경변수는 필수값이다
+
+- 비밀번호가 유출되면 안되기 때문에 따로 작성해 놓을 수 있다.
+- `docker-compose.yml`과 같은 경로에 `.env` 파일을 생성한다.
+
+```
+DB_ROOT_PASSWORD=rootpassword
+DB_DATABASE=mypro
+```
+
 
 ### 2. Backend 컨테이너 (Python, Django, uWSGI)
 

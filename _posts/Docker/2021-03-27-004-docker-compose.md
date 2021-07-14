@@ -64,7 +64,27 @@ services:               # 서비스 묶음
 → 위에서부터 순서대로 실행되기 때문에 DB컨테이너를 맨 위에 위치시켜야한다
 
 
-\* 실행
+- 환경변수의 비밀번호 같은 경우 유출되면 안되기 때문에 따로 작성할 수 있다
+- `docker-compose.yml`과 같은 경로에 `.env` 파일을 생성한다
+
+```
+DB_ROOT_PASSWORD=rootpassword
+MYSQL_USER=myuser
+MYSQL_PASSWORD=password
+DB_DATABASE=mypro
+```
+
+- `docker-compose.yml`의 environment 부분은 다음과 같이 변경한다
+
+```yml
+environment:      
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER= ${DB_USER}
+      - MYSQL_PASSWORD= ${DB_PASSWORD}
+      - MYSQL_DATABASE= ${DB_DATABASE}
+```
+
+### 실행
 
 ```bash
 $ docker-compose up
