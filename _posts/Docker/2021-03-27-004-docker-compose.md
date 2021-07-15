@@ -45,7 +45,7 @@ services:               # 서비스 묶음
   nginx:
     build:
       context: ./nginx
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile
     container_name: nginx
     restart: always
     ports:
@@ -87,6 +87,53 @@ environment:
 ### 실행
 
 ```bash
-$ docker-compose up
+$ docker-compose up -d --build
 ```
 → docker-compose.yml 디렉토리에서 실행해야 함.
+
+- `.env` 파일을 사용하여 환경변수를 지정할 경우에 해당 파일을 못읽어올 경우 다음 명령어를 실행해보자
+```bash
+$ source .env
+```
+
+
+```bash 
+$ docker-compose up -d --build
+WARNING: The DB_ROOT_PASSWORD variable is not set. Defaulting to a blank string.
+WARNING: The DB_DATABASE variable is not set. Defaulting to a blank string.
+
+$ docker-compose config
+services:
+  database:
+    command:
+    - --character-set-server=utf8mb4
+    - --collation-server=utf8mb4_unicode_ci
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: ''
+      MYSQL_ROOT_PASSWORD: ''
+    image: mysql:5.7
+    ports:
+    - published: 3306
+      target: 3306
+    restart: always
+
+$ source .env
+$ docker-compose up -d --build
+$ docker-compose config
+services:
+  database:
+    command:
+    - --character-set-server=utf8mb4
+    - --collation-server=utf8mb4_unicode_ci
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: mypro
+      MYSQL_ROOT_PASSWORD: rootpassword
+    image: mysql:5.7
+    ports:
+    - published: 3306
+      target: 3306
+    restart: always
+
+```

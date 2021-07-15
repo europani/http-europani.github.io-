@@ -160,8 +160,8 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD={root비밀번호}
-      - MYSQL_DATABASE={DB명}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
     volumes:
       - ./database/mysql_data:/var/lib/mysql
     command:
