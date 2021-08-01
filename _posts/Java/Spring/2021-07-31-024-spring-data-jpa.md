@@ -4,6 +4,7 @@ title: Spring Data JPA
 categories: Spring
 tags: [Spring, JPA]
 ---
+Spring Data JPA는 데이터 접근 계층에서 지루하고 반복적인 CRUD 문제를 해결하기 위해 기본적인 CRUD를 처리하는 인터페이스가 정의되어 있다.
 
 ### Repository 인터페이스
 - Repository 인터페이스를 생성한후 JpaRepository<Entity, 기본키 타입> 을 상속받으면 **기본적인 CRUD 자동 생성**
