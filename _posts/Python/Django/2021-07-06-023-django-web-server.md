@@ -26,13 +26,13 @@ $ make altinstall    # 설치
 ```bash
 $ python -V
 Python 2.7.5
-$ python3 -V
+$ python3.8 -V
 Python 3.8.11
 
 $ vi ~/.bashrc
 
-alias python=python3 추가
-alias pip=pip3 추가
+alias python=python3.8 추가
+alias pip=pip3.8 추가
 
 $ source ~/.bashrc          # 설정 적용
 ```
