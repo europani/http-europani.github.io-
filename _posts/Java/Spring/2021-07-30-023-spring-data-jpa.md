@@ -163,6 +163,7 @@ public class SimpleJpaRepository<T, ID> implements JpaRepositoryImplementation<T
 #### Query Method 방식
 - findBy 뒤에 키워드가 붙음
 - `findBy` 메서드는 항상 `Optional` 타입으로 반환된다.
+- 쿼리메서드 방식은 메서드명이 길어지기 때문에 일반적으로 선호되지 않는다.
 
 |Keyword|메서드|Query|
 |:---:|:---:|:---:|
@@ -190,6 +191,8 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
 
 #### @Query 방식
 - 이름 길어지는 쿼리메서드 방식 대신 어노테이션을 사용하여 JPQL을 입력하는 방법을 사용할 수 있다.
+- 쿼리메서드 방식보다 선호된다.
+- 다만, 정적 값을 가지는 한계가 있기에 동적 쿼리를 위해서 `QueryDSL`을 사용할 수 있다.
 
 ```java
 @Repository
@@ -200,7 +203,46 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
 }
 ```
 
+### Pageable 인터페이스 (페이징처리)
+- Pageable 인터페이스 : 페이지 처리에 필요한 정보를 전달하는 용도의 타입
+- PageRequest 클래스 : `Pageable`의 구현체
+  - protected 이기 때문에 `new`를 사용하지 못하고 `of()`를 통해 사용한다
 
+
+```java
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+@Test
+public void testpageDefault() {
+    // 1페이지 10개
+    Pageable pageable = PageRequest.of(0, 10);
+    Page<Memo> result = memoReopsitory.findAll(pageable);
+
+    System.out.println(result.getTotalPages());         // 전체 페이지수
+    System.out.println(result.getTotalElements());      // 전체 갯수
+    System.out.println(result.getNumber());             // 현재 페이지번호 (0부터)
+    System.out.println(result.getSize());               // 페이지당 갯수
+    System.out.println(result.hasNext());               // 다음페이지 존재여부
+    System.out.println(result.isFirst());               // 시작페이지 여부
+
+
+    // 정렬
+    Sort sort = Sort.by("mno").descending();
+    Pageable pageable2 = PageRequest.of(0, 10, sort);
+    Page<Memo> result2 = memoReopsitory.findAll(pageable2);
+
+    Sort sort1 = Sort.by("mno").descending();
+    Sort sort2 = Sort.by("mnoText").ascending();
+    Sort sortAll = sort1.and(sort2);
+    Pageable pageable3 = PageRequest.of(0, 10, sortAll);
+    Page<Memo> result3 = memoReopsitory.findAll(pageable3);
+}
+```
+
+`Page<Memo> result = memoReopsitory.findAll(pageable);`  
+→ findAll()에 파라미터로 `pageable`을 넘겨주면 페이징 처리 쿼리가 실행되고 결과를 리턴타입으로 지정된 `Page<Entity타입>` 객체로 저장
 
 
 [Spring-JPA 레퍼런스(링크)](https://docs.spring.io/spring-data/jpa/docs/2.5.0/reference/html/#preface)
