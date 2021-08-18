@@ -44,7 +44,7 @@ https://gitlab.com/
 # 2. token (gitlab project runner에서 확인)
 yboVk-t_P.......So
 
-# 3. descrption
+# 3. descrption - name 설정
 mypro production
 
 # 4. tag (매우중요!!) - gitlab-ci.yml에서 해당 tag를 참조하여 실행함
@@ -96,3 +96,63 @@ deploy-to-production:
 - Feature-Branch 전략을 사용하고 있으며 배포가 `develop`과 `master` 브랜치에서 이루어진다
 - 개발환경-`develop`, 운영환경-`master` 브랜치에 각각 반응하여 배포한다
 - `develop`브랜치에 push되면 `deploy-to-develop`, `master`브랜치에 push되면 `deploy-to-production` job이 작동한다
+
+
+
+### runner 삭제
+- 등록되어 있는 runner를 삭제한다
+```bash
+$ gitlab-runner unregister --url <url> --token <token>    # runner 삭제
+$ gitlab-runner verify --delete                           # 최신정보로 갱신
+```
+
+```bash
+# 1. 등록되어 있는 runner 확인
+$ gitlab-runner list 
+Runtime platform                                    arch=amd64 os=linux pid=235182 revision=1b659122 version=12.8.0
+Listing configured runners                          ConfigFile=/etc/gitlab-runner/config.toml
+mypro production                                    Executor=shell Token=yboVk-t_P.......So URL=https://gitlab.com/
+
+$ cat /etc/gitlab-runner/config.toml
+concurrent = 1
+check_interval = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "mypro production"
+  url = "https://gitlab.com/"
+  token = "yboVk-t_P.......So"
+  executor = "shell"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+
+# 2. runner 삭제
+$ gitlab-runner unregister --url https://gitlab.com/ --token yboVk-t_P.......So
+Runtime platform                                    arch=amd64 os=linux pid=3357 revision=1b659122 version=12.8.0
+Running in system-mode.
+
+Unregistering runner from GitLab succeeded          runner=yboVk-t_
+
+$ gitlab-runner verify --delete
+Runtime platform                                    arch=amd64 os=linux pid=4445 revision=1b659122 version=12.8.0
+Running in system-mode.
+
+ERROR: Verifying runner... is removed               runner=yboVk-t_
+
+
+# 3. runner 삭제 확인
+$ gitlab-runner list
+Runtime platform                                    arch=amd64 os=linux pid=4627 revision=1b659122 version=12.8.0
+Listing configured runners                          ConfigFile=/etc/gitlab-runner/config.toml
+
+$ cat /etc/gitlab-runner/config.toml
+concurrent = 1
+check_interval = 0
+
+[session_server]
+  session_timeout = 1800
+```
