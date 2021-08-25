@@ -98,4 +98,12 @@ $ setsebool -P httpd_can_network_connect on
 ```bash
 $ cd /usr/local/mypro
 $ java -jar mypro-0.0.1-SNAPSHOT.jar
+
+# 백그라운드 실행
+$ nohup java -jar mypro-0.0.1-SNAPSHOT.jar &
+
+# 백그라운드 종료시
+$ ps -ef | grep java
+root     10197  9188 46 12:28 pts/0    00:00:21 java -jar mypro-0.0.1-SNAPSHOT.jar
+$ kill -9 10197
 ```
