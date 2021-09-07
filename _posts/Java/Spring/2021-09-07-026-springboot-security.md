@@ -1,0 +1,262 @@
+---
+layout: post
+title: '[스프링부트] Spring Security'
+categories: Spring
+tags: [Spring, SpringBoot]
+---
+
+### Security 개념
+- Spring Security : 보안솔루션을 제공하는 스프링 하위 프레임워크
+  - Spring Security는 기본적으로 인증 절차를 거친 후 인가 절차를 진행한다
+  - Principal을 아이디, Credential을 비밀번호로 사용하는 Credential 기반 인증 방식을 사용한다
+
+- 인증(Authentication) : 자신이 누구인지 확인하는 작업 
+  - ex) 로그인
+- 권한(Authorization) : 특정 부분에 접근할 수 있는지 확인하는 작업
+  - ex) 등급
+
+### 1. Configuration
+```gradle
+
+dependencies {
+  ...
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+  implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+  ...
+}
+```
+
+#### SecurityConfig
+```java
+@AllArgsConstructor
+@EnableWebSecurity
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final UserService userService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    // static 파일은 권한 통과
+    @Override
+    public void configure(WebSecurity web) throws Exception {     
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+
+    // http 인증 설정
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {    
+        // 페이지 권한 설정
+        http.authorizeRequests()
+                .antMatchers("/jeonnam").hasRole("USER")
+                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers("/").permitAll()
+                .anyRequest().authenticated();    // anyRequest() : 위를 제외한 나머지
+        // 로그인 설정
+        http.formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/login_post")
+                .defaultSuccessUrl("/");
+                .permitAll();
+        // 로그아웃 설정
+        http.logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true);
+        // 403 예외처리
+        http.exceptionHandling()
+                .accessDeniedPage("/denied");
+        // CSRF 비활성화
+        http.csrf().disable();
+    }
+
+    // 로그인 인증 설정
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
+    }
+}
+```
+- `@EnableWebSecurity` : Spring Security 활성화를 위한 어노테이션
+- `WebSecurityConfigurerAdapter` : Spring Security 설정파일로써 사용하기 위해 상속
+
+- 페이지 권한설정
+  - hasRole(role) : 해당 권한만
+  - hasAnyRole(role1, role2, ...) : 해당 권한들만
+  - permitAll() : 권한무관하게 전부 허용
+  - denyAll() : 권한무관하게 전부 제한
+  - authenticated() : 인증된 사용자만 (= 모든 권한)
+  - anonymous() : 인증되지 않은 사용자만
+  - hasIpAddress(String) : 해당 IP만
+
+
+![](https://user-images.githubusercontent.com/48157259/132278915-5e67fd65-ecde-4bae-b99d-e571f781fec7.png)
+- 구현해야 할 인터페이스 : `UserDetails`, `UserDetailsService`
+
+(1) 사용자가 ID, Pwd를 사용하여 `AuthenticationFilter`로 요청이 들어온다  
+(2) `UsernamePasswordAuthenticationToken`이 토큰을 발급한다  
+(3) 생성된 `UsernamePasswordAuthenticationToken`을 `AuthenticationManger`에게 전달한다  
+  \- 매니저는 실제로 인증을 처리할 여러개의 `AuthenticationProvider`를 갖고 있다  
+(4) 전달받은 `UsernamePasswordAuthenticationToken`을 `AuthenticationProvider`에게 전달하여 먼저 아이디를 조회한다.  
+(5) 조회된 아이디는 `UserDetailsService`로 전달되며 전달받은 아이디를 기반으로 데이터를 조회한다.  
+(6) `UserDetails`에 조회된 데이터가 담긴다.  
+(7) 조회된 데이터 `AuthenticationProvider`에게 전달  
+(8) 인증 처리 후 인증된 토큰을 `AuthenticationManger`에게 전달  
+(9) 인증된 토큰을 `AuthenticationFilter`에게 전달  
+(10) 인증된 토큰을 `SecurityContextHolder`에 저장
+
+### 2. Entity, DTO
+#### (1) User
+```java
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String username;
+
+    private String password;
+
+    private String auth;
+}
+```
+
+#### (2) UserDTO
+```java
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class UserDTO {
+    private String username;
+    private String password;
+    private String auth;
+}
+```
+
+#### (3) ★ UserPrincipalDTO
+  - `UserDetails` 구현 - 7개 메서드 오버라이드
+  - `UserDetails` : Spring Security에서 **사용자 정보를 담는 인퍼페이스**
+
+```java
+public class UserPrincipalDTO implements UserDetails {
+
+    private User user;
+
+    public UserPrincipalDTO(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {    // 권한 반환
+        Collection<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
+        auth.add(new SimpleGrantedAuthority(user.getAuth()));
+        return auth;
+    }
+
+    @Override
+    public String getPassword() {     // 비밀번호 반환
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {     // id 반환 (unique 값)
+        return user.getUsername();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {    // 계정만료여부 반환(true : 만료되지 않음)
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {    // 계정잠금여부 반환(true : 잠금되지 않음)
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {    // 비밀번호 만료여부 반환(true : 만료되지 않음)
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {    // 계정 활성화여부 반환(true : 활성화)
+        return true;
+    }
+}
+```
+
+### 3. Repository
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUsername(String username);
+}
+```
+
+### 4. ★ Service
+  - `UserDetailsService` 구현 - `loadUserByUser(String string)` 오버라이드
+  - `UserDetailsService` : Spring Security에서 **사용자 정보를 불러오는 인퍼페이스**
+
+```java
+@AllArgsConstructor
+@Service
+public class UserService implements UserDetailsService {
+
+    private UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return new UserPrincipalDTO(user);
+    }
+
+
+    // 회원가입 추가구현
+    public Long signup(UserDTO userDTO) {
+        // 패스워드 암호화
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        return userRepository.save(dtoToEntity(userDTO)).getId();
+    }
+
+    User dtoToEntity(UserDTO userDTO) {
+        User user = User.builder()
+                .username(userDTO.getUsername())
+                .password(userDTO.getPassword())
+                .build();
+        return user;
+    }
+```
+- `loadUserByUsername`을 통하여 입력된 username으로 해당 계정이 존재하는지 체크한다.
+- 반환 타입으로 `UserDetails`를 사용하며 UserDetails를 구현한 `UserPrincipalDTO`로 데이터를 넘겨준다
+
+
+### 5. Controller
+```java
+@AllArgsConstructor
+@Controller
+public class UserController {
+
+    private UserService userService;
+
+    @PostMapping("/signup")
+    public String signup(UserDTO userDTO) {
+        userService.signup(userDTO);
+
+        return "redirect:/signup";
+    }
+}
+```
