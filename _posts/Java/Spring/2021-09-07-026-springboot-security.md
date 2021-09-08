@@ -34,6 +34,7 @@ dependencies {
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
+    private CustomFailureHandler customFailureHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {     
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+            .antMatchers("/favicon.ico", "/resources/**", "/error");
     }
 
     // http 인증 설정
@@ -51,15 +53,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {    
         // 페이지 권한 설정
         http.authorizeRequests()
-                .antMatchers("/jeonnam").hasRole("USER")
-                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers("/user/**x").hasRole("USER")
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated();    // anyRequest() : 위를 제외한 나머지
         // 로그인 설정
         http.formLogin()
                 .loginPage("/login")
-                .loginProcessingUrl("/login_post")
-                .defaultSuccessUrl("/");
+                .loginProcessingUrl("/loginProcess")    // default: /login(POST) 변경시
+                .defaultSuccessUrl("/")
+                .failureHandler(customFailureHandler)
+             // .usernameParameter("id")                // default: username 변경시
+             // .passwordParameter("pwd")               // default: password 변경시
                 .permitAll();
         // 로그아웃 설정
         http.logout()
@@ -98,9 +103,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 (1) 사용자가 ID, Pwd를 사용하여 `AuthenticationFilter`로 요청이 들어온다  
 (2) `UsernamePasswordAuthenticationToken`이 토큰을 발급한다  
-(3) 생성된 `UsernamePasswordAuthenticationToken`을 `AuthenticationManger`에게 전달한다  
-  \- 매니저는 실제로 인증을 처리할 여러개의 `AuthenticationProvider`를 갖고 있다  
+(3) 생성된 토큰을 `AuthenticationManger`에게 전달한다  
 (4) 전달받은 `UsernamePasswordAuthenticationToken`을 `AuthenticationProvider`에게 전달하여 먼저 아이디를 조회한다.  
+  \- 매니저는 실제로 인증을 처리할 여러개의 `AuthenticationProvider`를 갖고 있다  
 (5) 조회된 아이디는 `UserDetailsService`로 전달되며 전달받은 아이디를 기반으로 데이터를 조회한다.  
 (6) `UserDetails`에 조회된 데이터가 담긴다.  
 (7) 조회된 데이터 `AuthenticationProvider`에게 전달  
@@ -241,7 +246,7 @@ public class UserService implements UserDetailsService {
     }
 ```
 - `loadUserByUsername`을 통하여 입력된 username으로 해당 계정이 존재하는지 체크한다.
-- 반환 타입으로 `UserDetails`를 사용하며 UserDetails를 구현한 `UserPrincipalDTO`로 데이터를 넘겨준다
+- 반환 타입으로 `UserDetails`를 사용하며 UserDetails를 구현한 `UserPrincipalDTO`로 데이터를 넘겨 인증에 사용된다.
 
 
 ### 5. Controller
@@ -252,11 +257,36 @@ public class UserController {
 
     private UserService userService;
 
+    @RequestMapping("/login")       // GET과 POST 모두를 위해 @RequestMapping 사용
+    public String index(){
+
+        return "member/login";
+    }
+
     @PostMapping("/signup")
     public String signup(UserDTO userDTO) {
         userService.signup(userDTO);
 
         return "redirect:/signup";
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/denied")
+    public String denied() {
+        return "403";
+    }
 }
 ```
+
+
+
+
+
+<출처>  
+https://mangkyu.tistory.com/77
