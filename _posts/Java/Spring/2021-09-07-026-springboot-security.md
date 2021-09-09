@@ -21,7 +21,6 @@ tags: [Spring, SpringBoot]
 dependencies {
   ...
   implementation 'org.springframework.boot:spring-boot-starter-security'
-  implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
   ...
 }
 ```
@@ -48,14 +47,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/favicon.ico", "/resources/**", "/error");
     }
 
-    // http 인증 설정
+    // 인가 설정
     @Override
     protected void configure(HttpSecurity http) throws Exception {    
         // 페이지 권한 설정
         http.authorizeRequests()
-                .antMatchers("/user/**x").hasRole("USER")
+                .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/").permitAll()
+                .antMatchers("/", "/login").permitAll()
+                .antMatchers("/image/**").permitAll()
                 .anyRequest().authenticated();    // anyRequest() : 위를 제외한 나머지
         // 로그인 설정
         http.formLogin()
@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(customFailureHandler)
              // .usernameParameter("id")                // default: username 변경시
              // .passwordParameter("pwd")               // default: password 변경시
-                .permitAll();
+                .permitAll();                   // ★ 반드시 필요 (로그인페이지 권한 제거)
         // 로그아웃 설정
         http.logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -104,14 +104,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 (1) 사용자가 ID, Pwd를 사용하여 `AuthenticationFilter`로 요청이 들어온다  
 (2) `UsernamePasswordAuthenticationToken`이 토큰을 발급한다  
 (3) 생성된 토큰을 `AuthenticationManger`에게 전달한다  
-(4) 전달받은 `UsernamePasswordAuthenticationToken`을 `AuthenticationProvider`에게 전달하여 먼저 아이디를 조회한다.  
+(4) 전달받은 토큰을 `AuthenticationProvider`에게 전달하여 아이디와 비밀번호를 조회하는 인증을 요구한다.  
   \- 매니저는 실제로 인증을 처리할 여러개의 `AuthenticationProvider`를 갖고 있다  
-(5) 조회된 아이디는 `UserDetailsService`로 전달되며 전달받은 아이디를 기반으로 데이터를 조회한다.  
+(5) 조회된 아이디는 `UserDetailsService`로 전달되며 전달받은 아이디를 기반으로 사용자의 데이터를 조회한다.  
 (6) `UserDetails`에 조회된 데이터가 담긴다.  
 (7) 조회된 데이터 `AuthenticationProvider`에게 전달  
 (8) 인증 처리 후 인증된 토큰을 `AuthenticationManger`에게 전달  
 (9) 인증된 토큰을 `AuthenticationFilter`에게 전달  
 (10) 인증된 토큰을 `SecurityContextHolder`에 저장
+
+#### 관련 객체 소개
+- `Authentication` 객체 : 인증에 필요한 정보, 인증 후에는 `SecurityContext`에 보관된다
+
+- `AuthenticationManger` : 인증 요청을 받고 Authentication 객체를 적절한 Provider를 찾아 넘긴다. 
+```java
+public interface AuthenticationManager {
+	Authentication authenticate(Authentication authentication) throws AuthenticationException;
+}
+```
+
+- `AuthenticationProvider` : 실제 **인증**이 진행 되는 곳, 인증된 사용자는 `UserDetailsService`로 넘어간다
+```java
+public interface AuthenticationProvider {
+	Authentication authenticate(Authentication authentication) throws AuthenticationException;
+
+	boolean supports(Class<?> authentication);
+}
+```
+
+- `UserDetailsService` : **인가**가 진행 되는 곳, 인증된 사용자의 인가를 위해 데이터를 조회한다 (인터페이스 구현 - 조회 메서드)
+
+- `UserDetails` : 사용자의 데이터가 담기는 객체 (인터페이스 구현 - 데이터 필드 및 옵션)
 
 ### 2. Entity, DTO
 #### (1) User
@@ -210,7 +233,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ### 4. ★ Service
   - `UserDetailsService` 구현 - `loadUserByUser(String string)` 오버라이드
-  - `UserDetailsService` : Spring Security에서 **사용자 정보를 불러오는 인퍼페이스**
+  - `UserDetailsService` : Spring Security에서 인가를 위해 **사용자 정보를 불러오는 인퍼페이스**
 
 ```java
 @AllArgsConstructor
@@ -285,8 +308,48 @@ public class UserController {
 ```
 
 
+### 6. View
+```gradle
+
+dependencies {
+  ...
+  implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+  ...
+}
+```
+
+- authorize : 인증/인가 관련 필터 적용
+  - `isAuthenticated()` : 인증된 회원에게만 출력 (=모든 권한)
+  - `isAnonymous()` : 인증 안된 회원에게만 출력 
+  - `hasRole(role)` : 해당 권한을 갖은 회원에게만 출력
+  - `hasAnyRole(role, ...)` : 해당 권한들을 갖은 회원에게만 출력
+
+- authentication : 인증된 객체 정보 출력
+  - `pricipal` : 인증된 객체의 모든 정보 출력
+  - `principal.authorities` : 인증된 객체의 권한들 출력
+  - `name` : 인증된 객체의 username(ID) 출력
+
+```html
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 
+<div sec:authorize="isAuthenticated()">
+  This content is only shown to authenticated users.
+</div>
+<div sec:authorize="hasRole('ADMIN')">
+  This content is only shown to administrators.
+</div>
+<div sec:authorize="hasRole('xUSER')">
+  This content is only shown to users.
+</div>
 
-<출처>  
+Logged user: <span sec:authentication="name">Bob</span>
+Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
+
+</html>
+```
+
+<츌처>
 https://mangkyu.tistory.com/77
