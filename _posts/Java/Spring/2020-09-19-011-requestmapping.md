@@ -8,15 +8,15 @@ tags: [Spring]
 기존의 맵핑 방법인 @RequestMapping을 보완하여 스프링 4.3버전부터 @GetMapping, @PostMapping, @DeleteMapping, @PutMapping, @PatchMapping 등이 추가됨
 
 ● 기존의 맵핑 방식 (@RequestMapping)
+- `@Requestmapping`를 사용하면 모든 메서드를 허용한다(GET, POST, PUT, PATCH, DELETE) 
 
-```java
-@RequestMapping("/memJoin")		// get방식
-@RequestMapping(value="/memJoin" method="RequestMethod.GET")
+```java	
+@RequestMapping(value="/memJoin" method="RequestMethod.GET") // get방식
 public String Test(HttpServletRequest request, HttpServletResponse response) {
    ....
 }
 
-@RequestMapping(value="/memJoin" method="RequestMethod.POST") 	// post방식(delete, put, patch)
+@RequestMapping(value="/memJoin", method="RequestMethod.POST") 	// post방식(delete, put, patch)
 public String Test2(HttpServletRequest request, HttpServletResponse response) {
    ....
 }

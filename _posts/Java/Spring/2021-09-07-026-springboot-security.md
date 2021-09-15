@@ -78,11 +78,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
     }
 
-    // 로그인 인증 설정
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
-    }
+    // 로그인 인증 설정 (UserDetailsService 구현시 제거)
+    // @Override
+    // protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    //     auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
+    // }
 }
 ```
 - `@EnableWebSecurity` : Spring Security 활성화를 위한 어노테이션
