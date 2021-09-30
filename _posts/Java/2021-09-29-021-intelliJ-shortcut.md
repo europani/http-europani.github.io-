@@ -49,7 +49,7 @@ tags: [Java, IntelliJ]
 |Alt + Insert|<span style="color:blue">⌘ + N</span>|Source 메뉴(getter/setter 등)|
 |Ctrl + Alt + Insert|<span style="color:blue">⌘ + N</span>|새파일 생성|
 |Ctrl + Alt + S|<span style="color:blue">⌘ + ,</span>|환경설정|
-|???|<span style="color:blue">⌘ + ;</span>|프로젝트 설정|
+|??|<span style="color:blue">⌘ + ;</span>|프로젝트 설정|
 
 
 #### <span style="color:red">유용한 기능</span>
@@ -57,8 +57,8 @@ tags: [Java, IntelliJ]
 |윈도우|Mac|설명|
 |:--:|:--:|:--:|
 |F2|(일치)|오류로 이동|
-|Ctrl + I|⌃ + I|Override 메서드 자동완성|
-|Ctrl + O|⌃ + O|Implement 메서드 자동완성|
+|Ctrl + I|span style="color:blue">⌃ + I</span>|Override 메서드 자동완성|
+|Ctrl + O|span style="color:blue">⌃ + O</span>|Implement 메서드 자동완성|
 |Ctrl + P|⌘ + P|파라미터 정보|
 |Ctrl + Q|<span style="color:blue">F1</span>|퀵 document|
 |Alt + Enter|⌥ + Enter|퀵 fix|
@@ -94,6 +94,7 @@ tags: [Java, IntelliJ]
 |Ctrl + F9|⌘ + F9|빌드|
 |Shift + F9|<span style="color:blue">⌃ + D</span>|디버그|
 |Shift + F10|<span style="color:blue">⌃ + R</span>|실행|
+|??|<span style="color:blue">⌃ + ⇧ + R</span>|테스트 코드 실행|
 
 
 #### 테스트

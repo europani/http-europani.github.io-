@@ -163,7 +163,8 @@ public class User {
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class UserDTO {
     private String username;
     private String password;
@@ -171,16 +172,16 @@ public class UserDTO {
 }
 ```
 
-#### (3) ★ UserPrincipalDTO
+#### (3) ★ CustomUserDetails (DTO)
   - `UserDetails` 구현 - 7개 메서드 오버라이드
   - `UserDetails` : Spring Security에서 **사용자 정보를 담는 인퍼페이스**
 
 ```java
-public class UserPrincipalDTO implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private User user;
 
-    public UserPrincipalDTO(User user) {
+    public CustomUserDetails(User user) {
         this.user = user;
     }
 
@@ -247,7 +248,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return new UserPrincipalDTO(user);
+        return new CustomUserDetails(user);
     }
 
 
@@ -269,7 +270,7 @@ public class UserService implements UserDetailsService {
     }
 ```
 - `loadUserByUsername`을 통하여 입력된 username으로 해당 계정이 존재하는지 체크한다.
-- 반환 타입으로 `UserDetails`를 사용하며 UserDetails를 구현한 `UserPrincipalDTO`로 데이터를 넘겨 인증에 사용된다.
+- 반환 타입으로 `UserDetails`를 사용하며 UserDetails를 구현한 `CustomUserDetails`로 데이터를 넘겨 인증에 사용된다.
 
 
 ### 5. Controller
@@ -341,7 +342,7 @@ dependencies {
 <div sec:authorize="hasRole('ADMIN')">
   This content is only shown to administrators.
 </div>
-<div sec:authorize="hasRole('xUSER')">
+<div sec:authorize="hasRole('USER')">
   This content is only shown to users.
 </div>
 
