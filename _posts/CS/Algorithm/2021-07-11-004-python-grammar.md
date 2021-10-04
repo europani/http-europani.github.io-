@@ -108,8 +108,26 @@ print(comr) # 6개
 ```
 
 #### (2) heapq : 힙(우선순위큐)
-- 파이썬의 힙은 최소힙만 제공
-- heappush(), heappop()
+- 파이썬의 힙은 **최소힙**만 제공
+  - 최소힙 : 낮은 숫자의 우선순위가 높음
+  - 우선순위에 마이너스(-)를 붙여 최대힙으로 사용 가능
+- heappush(리스트, 값), heappop()
+
+```python
+import heapq
+heap = []
+
+heapq.heappush(heap, 4)
+heapq.heappush(heap, 9)
+heapq.heappush(heap, 1)
+heapq.heappush(heap, 7)
+
+print(heap)     # [1, 4, 7, 9]
+
+num = heapq.heappop(heap)
+print(num)      # 1
+print(heap)     # [4, 7, 9]
+```
 
 #### (3) bisect : 이진탐색
 - bisect_left(a, x) : 정렬된 순서를 유지하면서 리스트 a에 데이터 x를 삽입할 가장 왼쪽 인덱스를 찾음

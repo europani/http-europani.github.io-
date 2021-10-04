@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 디자인 패턴 소개
-categories: Design Pattern
+categories: [Design Pattern]
 tags: [Design Pattern]
 ---
 
