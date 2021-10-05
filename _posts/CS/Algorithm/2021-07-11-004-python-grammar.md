@@ -111,7 +111,8 @@ print(comr) # 6개
 - 파이썬의 힙은 **최소힙**만 제공
   - 최소힙 : 낮은 숫자의 우선순위가 높음
   - 우선순위에 마이너스(-)를 붙여 최대힙으로 사용 가능
-- heappush(리스트, 값), heappop()
+- heappush(리스트, 값)
+- heappop(리스트)
 
 ```python
 import heapq
