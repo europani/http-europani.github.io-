@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'BaseTimeEntity'
+title: 'BaseTimeEntity - 생성/수정 시간 자동 설정'
 categories: Spring
 tags: [Spring]
 ---
@@ -16,6 +16,7 @@ tags: [Spring]
 public abstract class BaseTimeEntity {
 
     @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdDate;
 
     @LastModifiedDate
@@ -23,6 +24,7 @@ public abstract class BaseTimeEntity {
 }
 
 ```
+- `@MappedSuperclass` : JPA Entity 클래스들이 `BaseTimeEntity`를 상속 할 경우 createdDate, modifiedDate 두 필드도 컬럼으로 인식하도록 설정
 - `@CreatedDate` : 생성시 날짜 자동 생성
 - `@LastModifiedDate` : 수정시 날짜 자동 갱신
 

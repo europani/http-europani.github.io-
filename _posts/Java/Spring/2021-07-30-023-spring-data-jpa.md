@@ -14,6 +14,13 @@ Spring Data JPA는 데이터 접근 계층에서 지루하고 반복적인 CRUD 
 public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
 
      int countByName(String name);
+
+     Optional<Members> findByUsername(String username);
+
+     @Transactional
+     @Modifying     // DML문을 처리할 경우 사용
+     @Query("UPDATE Members m SET m.password=:password WHERE m.username=:username")
+     int changePassword(@Param("username") String username, @Param("password") String password);
 }
 ```
 - 기본적인 CRUD가 구현된 인터페이스를 상속받고 있기 때문에 따로 정의 할 필요는 없음.
@@ -89,7 +96,7 @@ public class MemberController {
     }
 
     @GetMapping("/{id}")
-    public String memberDetail(@PathVariable("id") int id, Model model) {
+    public String memberDetail(@PathVariable("id") Long id, Model model) {
         Optional<MemberEntity> memberWrapper = memberRepository.findById(id);
         MemberEntity member = memberWrapper.get();
 
@@ -106,18 +113,21 @@ public class MemberController {
         return "redirect:/member";
     }
 
-    @PostMapping("/update")
-    public String memberUpdate(MemberEntity memberEntity, RedirectAttributes ra) {
+    @PostMapping("/{id}/update")
+    public String memberUpdate(@PathVariable("id") Long id, MemberEntity memberEntity, 
+                                RedirectAttributes ra) {
 
         memberRepository.save(memberEntity);
+
+        ra.addAttribute("updateId", id);
         ra.addFlashAttribute("msg", "수정에 성공하였습니다.");
 
-        return "redirect:/member/update" + memberEntity.getId();
+        return "redirect:/member/{updateId}/update";
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/{id}/delete")
     @ResponseBody
-    public void memberDelete(@RequestParam("id") int id) {
+    public void memberDelete(@@PathVariable("id") Long id) {
 
         memberRepository.deleteById(id);
     }

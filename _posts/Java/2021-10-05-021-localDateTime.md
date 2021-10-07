@@ -103,7 +103,7 @@ now.isEqual(target);   // false
 
 ```java
 LocalDate now = LocalDate.now();
-LocalDate target = LocalDateTof(2021, 09, 05);
+LocalDate target = LocalDate.of(2021, 09, 05);
 
 Period period = Period.between(now, target);
 
