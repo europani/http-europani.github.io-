@@ -57,8 +57,8 @@ tags: [Java, IntelliJ]
 |윈도우|Mac|설명|
 |:--:|:--:|:--:|
 |F2|(일치)|오류로 이동|
-|Ctrl + I|span style="color:blue">⌃ + I</span>|Override 메서드 자동완성|
-|Ctrl + O|span style="color:blue">⌃ + O</span>|Implement 메서드 자동완성|
+|Ctrl + I|<span style="color:blue">⌃ + I</span>|Override 메서드 자동완성|
+|Ctrl + O|<span style="color:blue">⌃ + O</span>|Implement 메서드 자동완성|
 |Ctrl + P|⌘ + P|파라미터 정보|
 |Ctrl + Q|<span style="color:blue">F1</span>|퀵 document|
 |Alt + Enter|⌥ + Enter|퀵 fix|
