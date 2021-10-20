@@ -4,6 +4,17 @@ title: 알고리즘을 위한 파이썬
 categories: Algorithm
 tags: [Algorithm, CS, Python]
 ---
+### 0. 시간복잡도
+- 파이썬은 초당 2000만번 연산이 가능하다
+
+★시간 제한이 1초인 경우
+
+|N의 범위|시간복잡도|
+|:--:|:--:|
+|500|O(N<sup>3</sup>)|
+|2000|O(N<sup>2</sup>)|
+|100,000|O(NlogN)|
+|10,000,000|O(N)|
 
 ### 1. 리스트(List)
 - 크기가 n이고, 모든 값이 0인 1차원 리스트 초기화
@@ -60,6 +71,7 @@ print(array)
 
 ### 2. 입출력
 - 각 데이터를 공백으로 구분하여 입력
+  - `map(함수, 데이터)` : 모든 데이터에 첫번째 파라미터로 들어온 함수 적용  
 
 ```python
 data = list(map(int, input().split()))
@@ -70,7 +82,7 @@ print(data)
 [34, 65, 75, 90, 99]
 ```
 
-- 한 줄씩 입력
+- 한 줄씩 입력 : 줄바꿈 기호를 제거하기 위해 `rstrip()` 사용
 
 ```python
 import sys
@@ -78,6 +90,12 @@ import sys
 data = sys.stdin.readline().rstrip()
 ```
 
+- 포맷팅 (f-string)
+
+```python
+answer = 7
+print(f"정답은 {answer}입니다.")
+```
 
 ### 3. 라이브러리
 #### (1) itertools : 반복, 순열/조합
@@ -187,4 +205,16 @@ import math
 math.factorial(5)   # 120
 math.sqrt(7)        # 2.6457513110645907
 math.gcd(21, 14)    # 7
+```
+
+### 4. 람다식
+
+```python
+def add(a, b):
+    return a+b
+
+print(add(3, 7))
+
+# 람다식 적용
+print((lambda a,b: a+b)(3,7))
 ```
