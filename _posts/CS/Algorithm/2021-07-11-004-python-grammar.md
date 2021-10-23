@@ -52,6 +52,7 @@ print(array)
 (1) append(v) : 리스트에 v를 삽입 / O(1)  
 (2) insert(i, v) : i 위치에 v를 삽입 / O(N)  
 (3) remove(v) : 리스트에서 v를 삭제, 여러개일 경우 하나만 삭제  
+(4) pop(i) : 리스트에서 i위치의 원소를 꺼냄 (default : 마지막원소)
 
 ```python
 array = [1, 4, 3]
@@ -67,9 +68,37 @@ print(array)
 array.remove(4)
 print(array)
 [1, 5, 3, 2]
+
+array.pop()
+print(array)
+[1, 5, 3]
+v = array.pop(0)
+print(v)    # 1
+print(array)
+[5, 3]
 ```
 
-### 2. 입출력
+### 2. 문자열
+(1) count(word) : word 갯수 세기
+(2) find(word) : word를 찾아 인덱스 반환 **(없을시 -1 출력)**
+(3) index(word) : word를 찾아 인덱스 반환 **(없을시 에러발생)**
+(4) upper(), lower(), capitalize() : 대소문자 변환
+(5) lstrip(), rstrip(), strip() : 공백제거
+(6) replace(a, b) : a를 b로 치환
+(7) split(deli) : 문자열을 deli로 기준으로 나누어 반환
+
+```python
+a='hobby'
+a.count('b')    # 2
+a.find('b')     # 2
+a.find('p')     # -1
+a.index('p')    # 에러발생
+
+a.replace('o', 'a')
+print(a)        # habby
+```
+
+### 3. 입출력
 - 각 데이터를 공백으로 구분하여 입력
   - `map(함수, 데이터)` : 모든 데이터에 첫번째 파라미터로 들어온 함수 적용  
 
@@ -97,7 +126,7 @@ answer = 7
 print(f"정답은 {answer}입니다.")
 ```
 
-### 3. 라이브러리
+### 4. 라이브러리
 #### (1) itertools : 반복, 순열/조합
 ```python
 from itertools import permutations, combinations, product, combination_with_replacement
@@ -207,7 +236,7 @@ math.sqrt(7)        # 2.6457513110645907
 math.gcd(21, 14)    # 7
 ```
 
-### 4. 람다식
+### 5. 람다식
 
 ```python
 def add(a, b):
