@@ -79,13 +79,13 @@ print(array)
 ```
 
 ### 2. 문자열
-(1) count(word) : word 갯수 세기
-(2) find(word) : word를 찾아 인덱스 반환 **(없을시 -1 출력)**
-(3) index(word) : word를 찾아 인덱스 반환 **(없을시 에러발생)**
-(4) upper(), lower(), capitalize() : 대소문자 변환
-(5) lstrip(), rstrip(), strip() : 공백제거
-(6) replace(a, b) : a를 b로 치환
-(7) split(deli) : 문자열을 deli로 기준으로 나누어 반환
+(1) count(word) : word 갯수 세기  
+(2) find(word) : word를 찾아 인덱스 반환 **(없을시 -1 출력)**  
+(3) index(word) : word를 찾아 인덱스 반환 **(없을시 에러발생)**  
+(4) upper(), lower(), capitalize() : 대소문자 변환  
+(5) lstrip(), rstrip(), strip() : 공백제거  
+(6) replace(a, b) : a를 b로 치환  
+(7) split(deli) : 문자열을 deli로 기준으로 나누어 반환  
 
 ```python
 a='hobby'
