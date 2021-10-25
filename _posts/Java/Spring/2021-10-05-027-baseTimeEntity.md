@@ -2,7 +2,7 @@
 layout: post
 title: 'BaseTimeEntity - 생성/수정 시간 자동 설정'
 categories: Spring
-tags: [Spring]
+tags: [Spring, JPA]
 ---
 모든 Entity의 상위 클래스에서 createdDate, updateDate를 자동으로 관리해주는 역할
 
