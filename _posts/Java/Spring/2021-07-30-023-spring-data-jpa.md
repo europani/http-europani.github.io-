@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Spring Data JPA
+title: '[JPA] Spring Data JPA'
 categories: Spring
 tags: [Spring, JPA]
 ---

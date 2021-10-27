@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'BaseTimeEntity - 생성/수정 시간 자동 설정'
+title: '[JPA] BaseTimeEntity - 생성/수정 시간 자동 설정'
 categories: Spring
 tags: [Spring, JPA]
 ---
