@@ -1,6 +1,6 @@
 ---
 layout: post
-title: LocalDateTime 클래스
+title: 'LocalDate, LocalTime, LocalDateTime, YearMonth 클래스'
 categories: Java
 tags: [Java, IntelliJ]
 ---
