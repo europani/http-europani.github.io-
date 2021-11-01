@@ -247,3 +247,25 @@ print(add(3, 7))
 # 람다식 적용
 print((lambda a,b: a+b)(3,7))
 ```
+
+- 람다식을 이용한 정렬 : 리스트의 두번째 인자로 정렬하기
+  
+```python
+n = int(input())
+time = []
+
+for _ in range(n):
+  time.append(list(map(int, input().split())))
+time.sort(key=lambda x: (x[1], x[0]))     # 두번째 인자, 첫번째 인자 오름차순
+
+print(time)
+
+>>> 5
+1 4
+2 3
+3 5
+4 6
+5 7
+
+[[2, 3], [1, 4], [3, 5], [4, 6], [5, 7]]  # 두번째 인자 오름차순 우선
+```
