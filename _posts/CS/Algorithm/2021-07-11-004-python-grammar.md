@@ -78,6 +78,25 @@ print(array)
 [5, 3]
 ```
 
+- 리스트를 공백으로 붙여서 출력
+
+```python
+array = [1, 2, 3, 4]
+
+print("".join(map(str, array)))
+1234
+```
+
+- 리스트 값 출력 : `*`사용
+
+```python
+for x in array:
+  print(x)
+
+# 위와 같은 출력을 보임
+print(*array)
+```
+
 ### 2. 문자열
 (1) count(word) : word 갯수 세기  
 (2) find(word) : word를 찾아 인덱스 반환 **(없을시 -1 출력)**  
@@ -117,6 +136,15 @@ print(data)
 import sys
 
 data = sys.stdin.readline().rstrip()
+```
+
+- 정수와 배열이 한 줄에 입력시 : `*`를 사용하여 가변인자로 받기
+
+```python
+4 10 20 30 40
+3 7 5 12
+
+n, *arr = map(int, input().split())
 ```
 
 - 포맷팅 (f-string)
