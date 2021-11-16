@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Java Configuration 사용
+title: '[스프링] Java Configuration'
 categories: Spring
 tags: [Spring]
 ---
