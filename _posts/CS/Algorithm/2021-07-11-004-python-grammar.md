@@ -78,6 +78,15 @@ print(array)
 [5, 3]
 ```
 
+- 리스트 값 찾기
+  
+```python
+array = [1, 4, 3]
+
+print(1 in array)   # True
+print(5 in array)   # False
+```
+
 - 리스트를 공백으로 붙여서 출력
 
 ```python
@@ -152,6 +161,14 @@ n, *arr = map(int, input().split())
 ```python
 answer = 7
 print(f"정답은 {answer}입니다.")
+```
+
+- 실행 종료
+
+```python
+import sys
+
+sys.exit(0)
 ```
 
 ### 4. 라이브러리
