@@ -5,9 +5,15 @@ categories: Network
 tags: [Network, CS]
 ---
 #### HTTP [TCP : 80]
+- HyperText Transfer Protocol
 - 웹에서 HTML 등을 주고 받기 위한 프로토콜 
 - [(링크)](https://europani.github.io//web/2021/04/16/002-HTTP.html)
 
+#### HTTPS [TCP : 443]
+- HyperText Transfer Protocol over SSL
+- HTTP보다 보안이 강화된 웹 프로토콜
+- 정보를 암호화하는 SSL이나 TLS 프로토콜를 사용한다 (TLS는 SSL의 업그레이드 버전)
+- **SSL 인증서**를 통해 사용자가 사이트에 제공하는 정보를 암호화하여 전송할 수 있다. 이로 인해 중간에서 누군가 전송되는 데이터를 탈취 한다 해도 암호화된 데이터는 해독이 불가능하다
 
 
 ### 주소 변환 및 설정 프로토콜
