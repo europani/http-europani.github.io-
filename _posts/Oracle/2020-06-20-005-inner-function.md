@@ -9,50 +9,39 @@ tags: [Oracle, DB]
 
 ● UPPER, LOWER, INITCAP(문자열) : 문자를 대,소문자로 변환
 
-● LENGTH(문자열) : 문자길이 출력, 
+● LENGTH(문자열) : 문자길이 출력  
+  LENGTHB(문자열) : 문자바이트수 출력
 
-    LENGTHB(문자열) : 문자바이트수 출력
+● CONCAT(문자열1, 문자열2) : 문자열 조합 (\|\| 연산자와 같음)
 
-● CONCAT(문자열1, 문자열2) : 문자열 조합 (|| 연산자와 같음)
+● SUBSTR(문자열, 시작위치, 길이)  
+\- 시작위치가 음수일 때 진행방향은 바뀌지 않고 오른쪽  
+ex) SUBSTR(JOB, 2, 3) : 2번째 글자부터, 3글자 출력 -> 2, 3, 4번째 글자 출력 (오라클은 1부터 시작)    
+    SUBSTR(JOB, -3, 3) : 뒤에서부터 3번째 글자부터, 3글자 출력 -> -3, -2, -1번째 글자 출력 (마지막 글자위치 : -1)
 
-● SUBSTR(문자열, 시작위치, 길이) 
-
- - 시작위치가 음수일 때 진행방향은 바뀌지 않고 오른쪽
-
-  ex) SUBSTR(JOB, 2, 3) : 2번째 글자부터, 3글자 출력 -> 2, 3, 4번째 글자 출력 (오라클은 1부터 시작)
-
-       SUBSTR(JOB, -3, 3) : 뒤에서부터 3번째 글자부터, 3글자 출력 -> -3, -2, -1번째 글자 출력 (마지막 글자위치 : -1)
-
-● INSTR(문자열, 찾는문자, 시작위치\[선택, d:1\], 시작위치로부터 찾는 문자가 몇번째인지\[선택, d:1\])
-
- - 시작위치가 음수일 때 진행방향은 바뀌어 왼쪽
-
-  ex) INSTR('A\*B\*C\*', '\*', 2, 3) : 2번째 글자부터 시작해 3번째 \* 자리수출력 = 6
-
-       INSTR('A\*B\*C\*', '\*',\-3, 2) : 뒤에서부터 3번째 글자부터 시작해 2번째 \* 자리수출력 = 2
+● INSTR(문자열, 찾는문자, 시작위치\[선택, d:1\], 시작위치로부터 찾는 문자가 몇번째인지\[선택, d:1\])  
+\- 시작위치가 음수일 때 진행방향은 바뀌어 왼쪽  
+ex) INSTR('A\*B\*C\*', '\*', 2, 3) : 2번째 글자부터 시작해 3번째 \* 자리수출력 = 6  
+    INSTR('A\*B\*C\*', '\*',\-3, 2) : 뒤에서부터 3번째 글자부터 시작해 2번째 \* 자리수출력 = 2
 
 ● REPLACE(문자열, 대체될문자, 대체할문자\[선택, d:공백\]) 
 
-● LPAD(문자열, 자릿수, 빈공간 채울문자\[선택, d:공백\])
+● LPAD(문자열, 자릿수, 빈공간 채울문자\[선택, d:공백\])  
+    RPAD(문자열, 자릿수, 빈공간 채울문자\[선택, d:공백\])
 
-    RPAD(문자열, 자릿수, 빈공간 채울문자\[선택, d:공백\])
-
-● LTRIM(문자열, 삭제할문자\[선택\])
-
-    RTRIM(문자열, 삭제할문자\[선택\]) 
+● LTRIM(문자열, 삭제할문자\[선택\])  
+    RTRIM(문자열, 삭제할문자\[선택\]) 
 
 ### 숫자관련 함수
 
-● ROUND(숫자, 반올림위치\[선택, d:0\]) : 반올림
+● ROUND(숫자, 반올림위치\[선택, d:0\]) : 반올림  
+● TRUNC(숫자, 버림위치\[선택, d:0\]) : 버림  
 
-● TRUNC(숫자, 버림위치\[선택, d:0\]) : 버림
+ex) 1234.5678
 
- ex) 1234.5678
+<table style="border-collapse: collapse; width: 62.8266%; height: 160px;" border="1"><tbody><tr><td style="width: 20%; text-align: center;">-2</td><td style="width: 20%; text-align: center;">-1</td><td style="width: 20%; text-align: center;">0</td><td style="width: 20%; text-align: center;">1</td><td style="width: 20%; text-align: center;">2</td></tr><tr><td style="width: 20%; text-align: center;">자연수 2자리</td><td style="width: 20%; text-align: center;">자연수 1자리</td><td style="width: 20%; text-align: center;">소수점 1자리</td><td style="width: 20%; text-align: center;">소수점 2자리</td><td style="width: 20%; text-align: center;">소수점 3자리</td></tr><tr><td style="width: 20%; text-align: center;">1200</td><td style="width: 20%; text-align: center;">1230</td><td style="width: 20%; text-align: center;">1235</td><td style="width: 20%; text-align: center;">1234.6</td><td style="width: 20%; text-align: center;">1234.57</td></tr></tbody></table>
 
-<table style="border-collapse: collapse; width: 62.8266%; height: 132px;" border="1"><tbody><tr><td style="width: 20%; text-align: center;">-2</td><td style="width: 20%; text-align: center;">-1</td><td style="width: 20%; text-align: center;">0</td><td style="width: 20%; text-align: center;">1</td><td style="width: 20%; text-align: center;">2</td></tr><tr><td style="width: 20%; text-align: center;">자연수 2자리</td><td style="width: 20%; text-align: center;">자연수 1자리</td><td style="width: 20%; text-align: center;">소수점 1자리</td><td style="width: 20%; text-align: center;">소수점 2자리</td><td style="width: 20%; text-align: center;">소수점 3자리</td></tr><tr><td style="width: 20%; text-align: center;">1200</td><td style="width: 20%; text-align: center;">1230</td><td style="width: 20%; text-align: center;">1235</td><td style="width: 20%; text-align: center;">1234.6</td><td style="width: 20%; text-align: center;">1234.57</td></tr></tbody></table>
-
-● CEIL : 수직선상에서 큰 정수
-
+● CEIL : 수직선상에서 큰 정수  
 ● FLOOR : 수직선상에서 작은 변수
 
 ● MOD : 나머지
@@ -69,25 +58,20 @@ ALTER SESSION SET NLS\_DATE\_FORMAT = 'YYYY-MM-DD'; -> 날짜 포맷 바꾸기
 ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD:HH24:MI:SS';
 ```
 
-날짜 + 1 ☞ +1일, 날짜 - 1 ☞ -1일
+- 날짜 + 1 ☞ +1일, 날짜 - 1 ☞ -1일
+- ADD\_MONTHS(날짜, 1) ☞ +1달
+- 날짜 - 날짜 ☞ 일수 차이
+- 날짜 + 날짜 ☞ X(불가능)
+- MONTHS\_BETWEEN(날짜, 날짜) ☞ 달수 차이
 
-ADD\_MONTHS(날짜, 1) ☞ +1달
-
-날짜 - 날짜 ☞ 일수 차이
-
-날짜 + 날짜 ☞ X(불가능)
-
-MONTHS\_BETWEEN(날짜, 날짜) ☞ 달수 차이
-
-● NEXT\_DAY(날짜, 요일) : 다가오는 요일날짜 출력
-
+● NEXT\_DAY(날짜, 요일) : 다가오는 요일날짜 출력  
 ● LAST\_DAY(날짜) : 날짜의 마지막날 출력
 
-● ROUND(날짜, 년/월/일) 
-
+● ROUND(날짜, 년/월/일)  
 ● TRUNC(날짜, 년/월/일)
 
-◎ 캐스팅 : 숫자 ↔ 문자 ↔ 날짜 (문자를 기준으로 캐스팅됨)
+#### 캐스팅
+숫자 ↔ **문자** ↔ 날짜 (문자를 기준으로 캐스팅됨)
 
 ● TO\_CHAR(날짜 or 숫자, 날짜 or 숫자포맷) : 날짜 or 숫자 -> 문자
 
