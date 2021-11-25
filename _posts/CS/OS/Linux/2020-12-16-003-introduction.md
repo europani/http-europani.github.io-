@@ -2,7 +2,7 @@
 layout: post
 title: Linux
 categories: OS
-tags: [OS, CS, Linux]
+tags: [CS, Linux]
 ---
 
 \- UNIX 기반으로 만들어진 운영체제 
