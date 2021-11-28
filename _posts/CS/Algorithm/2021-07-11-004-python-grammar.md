@@ -90,9 +90,12 @@ print(5 in array)   # False
 - 리스트를 공백으로 붙여서 출력
 
 ```python
-array = [1, 2, 3, 4]
+array = ['a', 'b', 'c']
+print("".join(array))
+abc
 
-print("".join(map(str, array)))
+array2 = [1, 2, 3, 4]
+print("".join(map(str, array2)))
 1234
 ```
 
@@ -104,6 +107,17 @@ for x in array:
 
 # 위와 같은 출력을 보임
 print(*array)
+```
+
+- 리스트 복사 : `슬라이싱[:]` 사용
+
+```python
+a=[1, 2, 3]
+b=a
+c=a[:]
+
+id(a), id(b), id(c)
+8274944 8274944 8274304
 ```
 
 ### 2. 문자열
