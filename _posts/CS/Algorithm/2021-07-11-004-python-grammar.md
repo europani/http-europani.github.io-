@@ -185,6 +185,14 @@ import sys
 sys.exit(0)
 ```
 
+- 최대값, 최소값 설정
+
+```python
+import sys
+max = sys.maxsize
+min = -sys.maxsize
+```
+
 ### 4. 라이브러리
 #### (1) itertools : 반복, 순열/조합
 ```python
@@ -236,7 +244,7 @@ print(num)      # 1
 print(heap)     # [4, 7, 9]
 ```
 
-#### (3) bisect : 이진탐색
+#### (3) ~~bisect : 이진탐색~~(직접구현추천)
 - bisect_left(a, x) : 정렬된 순서를 유지하면서 리스트 a에 데이터 x를 삽입할 가장 왼쪽 인덱스를 찾음
 - bisect_right(a, x) : 정렬된 순서를 유지하면서 리스트 a에 데이터 x를 삽입할 가장 오른쪽 인덱스를 찾음
 
