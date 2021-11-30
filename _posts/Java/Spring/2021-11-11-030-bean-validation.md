@@ -29,7 +29,7 @@ public class MemberDTO {
     private String email;
 
     @NotEmpty
-    @Range(min=8, max=18, message="비밀번호는 8~16자여야 합니다")
+    @Range(min=8, max=16, message="비밀번호는 8~16자여야 합니다")
     private String password;
 
     private String address;
