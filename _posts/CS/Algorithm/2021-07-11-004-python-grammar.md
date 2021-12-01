@@ -86,6 +86,13 @@ array = [1, 4, 3]
 print(1 in array)   # True
 print(5 in array)   # False
 ```
+- 리스트 + 리스트
+  
+```python
+array = [1, 4, 3]
+array = array + [5]
+print(array)  # [1, 4, 3, 5]
+```
 
 - 리스트를 공백으로 붙여서 출력
 

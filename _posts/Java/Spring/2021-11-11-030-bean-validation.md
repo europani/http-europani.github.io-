@@ -21,6 +21,7 @@ implementation 'org.springframework.boot:spring-boot-starter-validation'
 ```java
 @Data
 public class MemberDTO {
+    private Long id;
     @NotBlank
     private String name;
 
@@ -92,6 +93,7 @@ public class MemberController {
 ```html
 <form name="memberForm" method="post" th:object="${member}">
   <table>
+  <input type="hidden" th:field="*{id}">
     <tr>
       <th>
         <label for="name">이름</label>
@@ -126,5 +128,13 @@ public class MemberController {
       </td>
     </tr>
   </table>
+  <th:block th:if="*{id}">
+      <button class="btn btn-primary">수정</button>
+      <button type="button" class="btn btn-cancel" onclick="deleteCheck();" style="float: right;">삭제</button>
+  </th:block>
+  <th:block th:else="*{id}">
+      <button class="btn btn-primary">등록</button>
+  </th:block>
 </form>
 ```
+→`th:if="*{id}"`를 통해 id가 없으면 createForm이기에 등록 표시 / id가 있으면 updateForm이기에 수정&삭제 표시
