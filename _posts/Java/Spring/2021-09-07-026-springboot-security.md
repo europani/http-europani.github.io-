@@ -137,6 +137,21 @@ public interface AuthenticationProvider {
 - `UserDetails` : 사용자의 데이터가 담기는 객체 (인터페이스 구현 - 데이터 필드 및 옵션)
 
 ### 2. Entity, DTO
+#### (0) UserRole
+```java
+@Getter
+@RequiredArgsConstructor
+public enum UserRole {
+    ADMIN("ROLE_ADMIN", "관리자"),
+    MANAGER("ROLE_MANAGER", "직원"),
+    USER("ROLE_USER", "사용자");
+
+    private final String key;
+    private final String description;
+}
+```
+→ 스프링 시큐리티의 권한 코드에는 항상 `ROLE_`이 접두사로 있어야한다
+
 #### (1) User
 ```java
 @Getter
@@ -155,6 +170,9 @@ public class User {
     private String password;
 
     private String auth;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 }
 ```
 
