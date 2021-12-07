@@ -92,6 +92,25 @@ public class ResponseBodyController {
     }
 
 }
-
 ```
 
+- 빌더를 갖고 있기 때문에 빌더패턴도 사용 가능하다
+
+```java
+public ResponseEntity<HelloData> responseBuilder() {
+
+        // 헤더 설정
+        HttpHeaders header = new HttpHeaders(); 
+        header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        header.add("Pragma", "no-cache");
+        header.add("Expires", "0");
+
+        HelloData helloData = new HelloData();
+        helloData.setUsername("catsbi");
+        helloData.setAge(20);
+
+        return ResponseEntity.ok()
+                .headers(header)         // 헤더 삽입
+                .body(helloData);        // 바디 삽입
+    }
+```
