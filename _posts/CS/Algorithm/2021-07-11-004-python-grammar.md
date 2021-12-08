@@ -49,10 +49,11 @@ print(array)
 ```
 
 - 리스트 Method  
-(1) append(v) : 리스트에 v를 삽입 / O(1)  
-(2) insert(i, v) : i 위치에 v를 삽입 / O(N)  
-(3) remove(v) : 리스트에서 v를 삭제, 여러개일 경우 하나만 삭제  
-(4) pop(i) : 리스트에서 i위치의 원소를 꺼냄 (default : 마지막원소)
+(1) append(v) : 리스트에 v를 삽입 [O(1)]  
+(2) insert(i, v) : i 위치에 v를 삽입 [O(N)]  
+(3) remove(v) : 리스트에서 v를 삭제, 여러개일 경우 하나만 삭제 [O(N)]  
+(4) pop(i) : 리스트에서 i위치의 원소를 꺼냄 (default : 마지막원소) [O(N)]  
+  - pop()는 [O(1)]
 
 ```python
 array = [1, 4, 3]
@@ -127,7 +128,64 @@ id(a), id(b), id(c)
 8274944 8274944 8274304
 ```
 
-### 2. 문자열
+### 2. 딕셔너리(Dictionary, Map)
+- 딕셔너리 Method  
+(1) `keys()` : 모든 key값을 리스트로 출력  
+(2) `values()` : 모든 value값을 리스트로 출력  
+(3) `items()` : 모든 key-value쌍을 리스트로 출력  
+<br>
+(4) `get(key값, [false시 출력할 값])` : 해당 key의 value값 출력, 해당 key가 없을시 설정한 값 출력  
+(5) `key값 in dic` : 해당 dic에 key값이 존재하면 True  
+(6) `del dic[key값]` : 딕셔너리에서 삭제
+
+```python
+dic = dict()
+dic['name']='europani'
+dic['age']=20
+
+# get values
+for v in dic.values() {
+    print(v);
+}
+
+# get keys
+for k in dic.keys() {
+    v = v_dic.get(k);
+    print(k, v);
+}
+
+# get keys, values
+for k, v in dic.items() {
+    print(k, v);
+}
+
+dic['name']         # europani
+dic.get('name')     # europani
+
+dic['address']      # ERROR!!
+dic.get('address', 0)   # 0 (default 설정안하면 None)
+
+'age' in dic        # True
+'address' in dic    # False
+
+del dic['age']
+print(dic)          # dic = {'name' : 'europani'}
+```
+
+- `defaultdict(디폴트 자료형)` : 디폴트값을 지정하여 없는 키가 호출됐을 때 디폴트 값을 넣는 딕셔너리
+
+```python
+from collections import defaultdict
+
+dic = defaultdict(list)
+print(dic)     # defaultdict(<class 'list'>, {})
+
+dic['name']='europani'
+dic['hobby']
+print(dic)    # defaultdict(<class 'list'>, {'name': 'europani', 'hobby': []})
+```
+
+### 3. 문자열
 (1) count(word) : word 갯수 세기  
 (2) find(word) : word를 찾아 인덱스 반환 **(없을시 -1 출력)**  
 (3) index(word) : word를 찾아 인덱스 반환 **(없을시 에러발생)**  
@@ -147,7 +205,7 @@ a.replace('o', 'a')
 print(a)        # habby
 ```
 
-### 3. 입출력
+### 4. 입출력
 - 각 데이터를 공백으로 구분하여 입력
   - `map(함수, 데이터)` : 모든 데이터에 첫번째 파라미터로 들어온 함수 적용  
 
@@ -200,7 +258,7 @@ max = sys.maxsize
 min = -sys.maxsize
 ```
 
-### 4. 라이브러리
+### 5. 라이브러리
 #### (1) itertools : 반복, 순열/조합
 ```python
 from itertools import permutations, combinations, product, combination_with_replacement
@@ -310,7 +368,7 @@ math.sqrt(7)        # 2.6457513110645907
 math.gcd(21, 14)    # 7
 ```
 
-### 5. 람다식
+### 6. 람다식
 
 ```python
 def add(a, b):
