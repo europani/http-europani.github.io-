@@ -185,6 +185,33 @@ dic['hobby']
 print(dic)    # defaultdict(<class 'list'>, {'name': 'europani', 'hobby': []})
 ```
 
+- 딕셔너리 sort
+
+```python
+dic = {
+  'a' : 4,
+  'c' : 3,
+  'e' : 1,
+  'b' : 5
+}
+print(dic)          # {'a': 4, 'c': 3, 'e': 1, 'b': 5}
+print(dic.items())  # dict_items([('a', 4), ('c', 3), ('e', 1), ('b', 5)])
+
+# key 오름차순 정렬
+dic_sort1 = sorted(dic.items(), key=lambda x:x[0])
+print(dic_sort1)    # [('a', 4), ('b', 5), ('c', 3), ('e', 1)]
+
+# value 오름차순 정렬
+dic_sort2 = sorted(dic.items(), key=lambda x:x[1])
+print(dic_sort2)    # [('e', 1), ('c', 3), ('a', 4), ('b', 5)]
+
+# value 내림차순 정렬
+dic_sort3 = sorted(dic.items(), key=lambda x:x[1], reverse=True)
+print(dic_sort3)    # [('b', 5), ('a', 4), ('c', 3), ('e', 1)]
+```
+→ `dic.items()`결과 : (key, value) 튜플쌍이 리스트에 담겨서 반환  
+→ `sorted()`결과 : 리스트에 담겨서 반환
+
 ### 3. 문자열
 (1) count(word) : word 갯수 세기  
 (2) find(word) : word를 찾아 인덱스 반환 **(없을시 -1 출력)**  
