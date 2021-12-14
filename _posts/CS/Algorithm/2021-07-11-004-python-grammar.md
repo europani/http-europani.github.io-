@@ -395,6 +395,43 @@ math.sqrt(7)        # 2.6457513110645907
 math.gcd(21, 14)    # 7
 ```
 
+#### (6) zip (내장함수)
+여러 iterable 객체를 인덱스에 따라 튜플로 생성해준다  
+iterable 객체의 길이가 다를경우 짧은 인자 길이를 따르며 **더 긴부분은 버려진다**
+
+```python
+numbers = [1, 2, 3]
+letters = ['A', 'B', 'C']
+
+for pair in zip(numbers, letters):
+    print(pair)
+(1, 'A')
+(2, 'B')
+(3, 'C')
+```
+
+- 컬렉션으로 묶기
+
+```python
+pair_list = list(zip(numbers, letters))
+print(pair_list)
+[(1, 'A'), (2, 'B'), (3, 'C')]
+
+pair_dict = dict(zip(numbers, letters))
+print(pair_dict)
+{1: 'A', 2: 'B', 3: 'C'}
+```
+
+- 컬렉션에서 분리하기
+  
+```python
+numbers, letters = zip(*pair_list)
+print(numbers)
+(1, 2, 3)
+print(letters)
+('A', 'B', 'C')
+```
+
 ### 6. 람다식
 
 ```python
