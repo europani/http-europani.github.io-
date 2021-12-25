@@ -1,9 +1,11 @@
 ---
 layout: post
-title: 응용 계층
+title: 응용 계층(L7)
 categories: Network
 tags: [Network, CS]
 ---
+
+## 프로토콜
 #### HTTP [TCP : 80]
 - HyperText Transfer Protocol
 - 웹에서 HTML 등을 주고 받기 위한 프로토콜 
