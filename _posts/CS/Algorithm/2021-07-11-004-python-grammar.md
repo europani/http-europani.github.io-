@@ -128,6 +128,16 @@ id(a), id(b), id(c)
 8274944 8274944 8274304
 ```
 
+- 2차원 리스트에 최대값, 최소값 구하기 : `map`함수 사용
+
+```python
+m, n = map(int, input().split())
+graph = [list(map(int, input().split())) for _ in range(n)]
+
+max_value = max(map(max, graph))
+min_value = min(map(min, graph))
+```
+
 ### 2. 딕셔너리(Dictionary, Map)
 - 딕셔너리 Method  
 (1) `keys()` : 모든 key값을 리스트로 출력  
