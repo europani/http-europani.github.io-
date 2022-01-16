@@ -2,7 +2,7 @@
 layout: post
 title: '[스프링부트] Spring Security'
 categories: Spring
-tags: [Spring, SpringBoot]
+tags: [Spring, Spring Security]
 ---
 
 ### Security 개념
