@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {     
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-            .antMatchers("/favicon.ico", "/resources/**", "/error");
+            .antMatchers("/h2-console/**", "/scss/**", "/error");
     }
 
     // 인가 설정
@@ -89,6 +89,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 - `@EnableWebSecurity` : Spring Security 활성화를 위한 어노테이션
 - `WebSecurityConfigurerAdapter` : Spring Security 설정파일로써 사용하기 위해 상속
 
+1\. `configure(WebSecurity web)` : 처음으로 WebSecurity에 거치게 된다
+  - PathRequest.toStaticResources().atCommonLocations() : `/src/main/resources/static/` 이하의 기본 정적폴더들은 통과시킨다
+    - `/css/**`, `/js/**`, `/images/**`, `/webjars/**`, `/favicon.*` 등
+  - antMatchers(Matchers) : `/src/main/resources/static/` 이하의 다음과 같은 Matchers들을 추가로 통과시킨다
+
+<br/>
+
+2\. `configure(HttpSecurity http)` : WebSecurity를 통과 한 다음 HttpSecurity를 거치게 된다
 - 페이지 권한설정
   - hasRole(role) : 해당 권한만
   - hasAnyRole(role1, role2, ...) : 해당 권한들만
