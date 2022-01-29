@@ -168,7 +168,9 @@ public class SimpleJpaRepository<T, ID> implements JpaRepositoryImplementation<T
 }
 ```
 1. 생성[persist] : entity의 id 값이 없을 때는 create를 실행한다
-2. 수정[merge] : entity의 id 값이 존재할 때는 select -> update를 실행한다.
+2. 수정[merge] : entity의 id 값이 존재할 때는 select -> update를 실행한다. 
+   - HTTP PUT처럼 update 쿼리실행 : 모든 컬럼의 데이터가 변경된다
+   - <span style="color:red">update 쿼리를 사용하고 싶으면 merge보단 변경감지(Dirty Check) 사용을 추천한다</span> 
 
 #### Query Method 방식
 - findBy 뒤에 키워드가 붙음
@@ -213,11 +215,22 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
 }
 ```
 
-### Pageable 인터페이스 (페이징처리)
-- Pageable 인터페이스 : 페이지 처리에 필요한 정보를 전달하는 용도의 타입
-- PageRequest 클래스 : `Pageable`의 구현체
-  - protected 이기 때문에 `new`를 사용하지 못하고 `of()`를 통해 사용한다
+### 벌크 연산
+- **벌크 연산은 영속성 컨텍스트를 무시하고 DB에 직접 쿼리를 날린다**
+  - 데이터 유효성을 이해 벌크 연산 후 영속성 컨텍스트를 초기화 한 후 데이터를 사용해야 한다(clear)
+  - `clearAutomatically = true` 옵션을 사용하면 쿼리 실행 후 clear를 자동으로 한다
 
+```java
+@Modifying(clearAutomatically = true)       // clearAutomatically 설정
+@Query("update Member m set m.age = m.age + 1 where m.age >= :age")
+int bulkAgePlus(@Param("age") int age);
+```
+
+
+### Pageable 인터페이스 (페이징처리)
+- `Pageable` 인터페이스 : 페이지 처리에 필요한 정보를 전달하는 용도의 타입
+- `PageRequest` 클래스 : `Pageable`의 구현체
+  - protected 이기 때문에 `new`를 사용하지 못하고 `of()`를 통해 사용한다
 
 ```java
 import org.springframework.data.domain.Page;
@@ -253,6 +266,68 @@ public void testpageDefault() {
 
 `Page<Memo> result = memoReopsitory.findAll(pageable);`  
 → findAll()에 파라미터로 `pageable`을 넘겨주면 페이징 처리 쿼리가 실행되고 결과를 리턴타입으로 지정된 `Page<Entity타입>` 객체로 저장
+
+#### Page 객체
+- **추가적인 count 쿼리 결과**를 같이 반환하는 타입
+- 페이지 번호가 0부터 시작
+
+```java
+public interface Page<T> extends Slice<T> {
+    int getTotalPages();     //전체 페이지 수
+    long getTotalElements(); //전체 데이터 수
+    <U> Page<U> map(Function<? super T, ? extends U> converter);    //변환기
+}
+```
+→ 갯수를 출력할 수 있는 메소드를 갖고 있다
+
+- count 쿼리 분리가능 : `countQuery` 속성 사용
+  - 여러 테이블을 조인하는 쿼리일 경우 **count 쿼리에도 조인이 걸리기** 때문에 성능에 문제가 생기기에 분리 하는 것이 좋다
+
+```java
+@Query(value = “select m from Member m”,
+         countQuery = “select count(m.username) from Member m”)
+Page<Member> findMemberAllCountBy(Pageable pageable);
+```
+
+#### Slice 객체
+- count 결과는 없고 다음페이지 여부(더보기) 확인을 위해 **limit+1**개를 결과를 반환하는 타입
+
+```java
+public interface Slice<T> extends Streamable<T> {
+    int getNumber();
+    int getSize();
+    int getNumberOfElements();
+    List<T> getContent();
+    boolean hasContent();
+    Sort getSort();
+    boolean isFirst();
+    boolean isLast();
+    boolean hasNext();
+    boolean hasPrevious();
+    Pageable getPageable();
+    Pageable nextPageable();
+    Pageable previousPageable();    //이전 페이지 객체
+    <U> Slice<U> map(Function<? super T, ? extends U> converter);   //변환기
+}
+
+```
+
+#### Controller에서 페이징 사용
+- Spring data JPA는 페이징과 정렬 기능을 Controller에서 사용 할 수 있게 제공해 준다
+
+```java
+@GetMapping("/members")
+public Page<Member> list(Pageable pageable) {
+    Page<Member> page = memberRepository.findAll(pageable);
+    return page;
+}
+```
+- 파라미터로 `Pageable`을 받으면 `PageRequest` 객체를 생성해서 요청 파라미터를 담는다
+- 요청 파라미터 종류
+  - `/members?page=0&size=3&sort=id,desc&sort=username,desc`
+  - page : 현재 페이지 (0부터 시작)
+  - size : 한 페이지당 갯수
+  - sort : 정렬 조건  ex) sort=속성,정렬방향
 
 
 [Spring-JPA 레퍼런스(링크)](https://docs.spring.io/spring-data/jpa/docs/2.5.0/reference/html/#preface)

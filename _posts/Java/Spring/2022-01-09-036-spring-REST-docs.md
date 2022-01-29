@@ -5,7 +5,7 @@ categories: Spring
 tags: [Spring]
 ---
 REST API 문서를 자동화 하는 도구에는 `Spring REST Docs`와 `Swagger` 등이 있다.  
-- df`Spring REST Docs`의 장점 : 테스트가 성공해야 문서가 작성되며 실제 코드에는 추가되는 코드가 없다
+- `Spring REST Docs`의 장점 : 테스트가 성공해야 문서가 작성되며 실제 코드에는 추가되는 코드가 없다
 - `AsciiDoc`의 형태로 문서가 작성된다
 
 ### 1. 설정
