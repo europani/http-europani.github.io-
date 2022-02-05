@@ -10,6 +10,8 @@ REST API 문서를 자동화 하는 도구에는 `Spring REST Docs`와 `Swagger`
 
 ### 1. 설정
 
+1\. `build.gradle`
+
 ```gradle
 plugins { 
 	id "org.asciidoctor.convert" version "1.5.9.2"
@@ -21,7 +23,7 @@ dependencies {
 }
 
 ext { 
-	snippetsDir = file('build/generated-snippets')    // 해당 폴더에 문서생성
+	snippetsDir = file('build/generated-snippets')    // 해당 폴더에 스니펫 문서생성
 }
 
 test {
@@ -40,7 +42,24 @@ bootJar {   // JAR파일에 문서를 같이 빌드하기 위한 설정
 	}
 }
 ```
-`test` → `asciidoctor` → `bootJar` 순으로 실행
+- `test` → `asciidoctor` → `bootJar` 순으로 실행
+
+2\. `test.java.project.common.RestDocsConfig`
+- 출력 형태가 가독성 좋게 출력되도록 설정
+- Test 클래스에서 `@Import`해서 설정을 사용
+
+```java
+@TestConfiguration
+public class RestDocsConfig {
+
+    @Bean
+    public RestDocsMockMvcConfigurationCustomizer restDocsMockMvcConfigurationCustomizer() {
+        return configurer -> configurer.operationPreprocessors()
+                .withRequestDefaults(prettyPrint())
+                .withResponseDefaults(prettyPrint());
+    }
+}
+```
 
 
 ### 2. Entity, Controller
@@ -52,12 +71,14 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	private String title;
+	private String content;
 
 }
 ```
 
 ```java
-@RequestMapping("/event")
+@RequestMapping("/api/event")
 @RequiredArgsConstructor
 @RestController
 public class EventController {
@@ -65,23 +86,52 @@ public class EventController {
     private final EventService eventService;
 
 
-
-
+	@GetMapping("/{id}")
+	public ResponseEntity getEvent(@PathVariable Long id) {
+		Event event = eventService.getEvent(id);
+		return ResponseEntity.ok(event);
+	}
 }
 ```
 
 
 ### 3. Test
+- `@AutoConfigureRestDocs` : Rest Docs를 사용하기 위한 어노테이션
 
 ```java
 @AutoConfigureRestDocs(uriScheme = "https", uriHost = "docs.api.com")
 @WebMvcTest(EventController.class)
+@Import(RestDocsConfig.class)
 public class EventControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+	@Autowired
+    ObjectMapper objectMapper;
+
     @MockBean
-    private MemberService memberService;
+    private EventService eventService;
+
+	@Test
+    @DisplayName("이벤트 1건 조회")
+    public void getEventTest() throw Exception {
+        // given
+        Event event = Event.builder()
+                .id(1L)
+                .title("test")
+				.content("test content")
+                .build();
+
+        // when & then
+        mvc.perform(get("/api/event/{id}", event.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                // .content(objectMapper.writeValueAsString(id)))       // Request Body 필요없음
+            .andExpect(status().isOk())
+            .andExpect(header().string(HttpHeaders.CONTENT_TYPE))
+            .andExpect(jsonPath("$.id").value(1L))
+            .andExpect(jsonPath("$.title").exists())
+            .andDo(print());
+    }
 }
 ```
