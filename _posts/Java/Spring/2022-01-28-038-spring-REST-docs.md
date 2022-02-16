@@ -2,7 +2,7 @@
 layout: post
 title: 'Spring REST Docs'
 categories: Spring
-tags: [Spring]
+tags: [Spring, 'Rest Docs']
 ---
 REST API 문서를 자동화 하는 도구에는 `Spring REST Docs`와 `Swagger` 등이 있다.  
 - `Spring REST Docs`의 장점 : 테스트가 성공해야 문서가 작성되며 실제 코드에는 추가되는 코드가 없다
@@ -193,6 +193,7 @@ public class EventControllerTest {
         }
         given(eventService.getEventList()).willReturn(eventList);
 
+        // when & then
         mvc.perform(get("/api/event")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaTypes.HAL_JSON))
@@ -248,7 +249,7 @@ requestHeaders(
 ),
 ```
 
-3\. RequestFields ResponseFields - Http 바디 필드
+3\. RequestFields, ResponseFields - Http 바디 필드
 - Http 바디 필드의 스니펫 조각을 생성
 - `fieldWithPath(필드명).description(설명)` : 해당 필드의 이름과 설명을 설정
 

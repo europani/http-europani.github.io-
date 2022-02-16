@@ -223,6 +223,7 @@ public class EventControllerTest {
         }
         given(eventService.getEventList()).willReturn(eventList);
 
+        // when & then
         mvc.perform(get("/api/event")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaTypes.HAL_JSON))
