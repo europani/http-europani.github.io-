@@ -167,6 +167,27 @@ max_value = max(map(max, graph))
 min_value = min(map(min, graph))
 ```
 
+- 리스트 중복제거 : `set`이용
+
+```python
+array = [1, 4, 3, 4]
+
+print(list(set(array)))   # [1, 3, 4]
+```
+
+- 2차원 리스트 중복 제거 : `set`과 `tuple`이용
+  - 2차원 리스트를 set으로 변환하려고 하면 에러가 발생한다.
+  - 내부 list를 tuple로 변환한 다음 set으로 변환시키면 된다.
+
+```python
+array = [[5, 6], [5, 6]]
+
+# TypeError: unhashable type: 'list'
+print(set(array))
+
+print(set(map(tuple, array)))
+```
+
 ### 2. 딕셔너리(Dictionary, Map)
 - 딕셔너리 Method  
 (1) `keys()` : 모든 key값을 리스트로 출력  
