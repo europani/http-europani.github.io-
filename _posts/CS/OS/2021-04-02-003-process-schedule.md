@@ -7,7 +7,31 @@ tags: [OS, CS]
 
 CPU를 사용하려는 프로세스들 사이의 우선순위를 관리하는 작업
 
-<table style="border-collapse: collapse; width: 100%;" border="1" data-ke-style="style4"><tbody><tr><td style="width: 30.9303%;">대기시간</td><td style="width: 69.0697%;">프로세서에 도착(프로세스 입력)해서 실행대기큐에 대기한 시간</td></tr><tr><td style="width: 30.9303%;"><span style="color: #333333;">서비스시간(실행시간)<br>(Burst time)</span></td><td style="width: 69.0697%;"><span style="color: #333333;">프로세스 시작~끝(결과도출) 걸린시간</span></td></tr><tr><td style="width: 30.9303%;"><span style="color: #333333;">반환시간 or 응답시간</span><br><span style="color: #333333;">(Turnaround time or Response time)</span></td><td style="width: 69.0697%;"><span style="color: #333333;">프로세스가 입력~ 결과도출 걸린 시간</span><br><span style="color: #333333;">대기시간 + 서비스시간</span></td></tr><tr><td style="width: 30.9303%;"><span style="color: #333333;">도착 시간(at)</span></td><td style="width: 69.0697%;">프로세서에 도착한 시간</td></tr><tr><td style="width: 30.9303%;">종료 시간(at)</td><td style="width: 69.0697%;">결과가 도출된 시간</td></tr></tbody></table>
+<table style="border-collapse: collapse;" data-ke-style="style4"><tbody>
+<tr>
+<td>대기시간<br>(Waiting time)</td>
+<td>프로세서에 도착(프로세스 입력)해서 실행대기큐에 대기한 시간</td>
+</tr>
+<tr>
+<td>서비스시간(실행시간)<br>(Burst time)</td>
+<td>프로세스 시작~끝(결과도출) 걸린시간</td>
+</tr>
+<tr>
+<td>반환시간<br>(Turnaround time)</td>
+<td>프로세스가 입력~결과도출 걸린 시간<br>대기시간 + 서비스시간</td>
+</tr>
+<tr>
+<td>응답시간<br>(Response time)</td>
+<td>처음으로 CPU를 배정받을 때까지의 시간</td>
+</tr>
+<tr>
+<td>도착 시간(at)</td>
+<td>프로세서에 도착한 시간</td>
+</tr>
+<tr>
+<td>종료 시간(at)</td>
+<td>결과가 도출된 시간</td>
+</tr></tbody></table>
 
 ### 비선점형 스케줄링 
 : CPU를 할당받으면 작업이 끝나 CPU가 반환될 때 까지 다른 프로세스가 CPU 점유 불가능
@@ -17,10 +41,15 @@ CPU를 사용하려는 프로세스들 사이의 우선순위를 관리하는 �
 
 #### 1. FCFS = FIFO (First Come First Served)
 : CPU 요청을 먼저 한 순서대로 처리
+- 콘보이 효과(Convoy Effect) 발생 : 앞의 긴 서비스 시간을 갖는 프로세스 때문에 뒤의 짧은 시간의 프로세스가 지연되는 것
 
 #### 2. SJF(Shortest Job First)
-: 도착 시점에 따라 그 당시 가장 작은 서비스시간을 갖은 프로세스에게 할당, 기아현상 발생 (Aging으로 예방)
- - 기아현상(starvation) : 한 프로세스가 처리되지 못하고 계속 연기
+: 도착 시점에 따라 그 당시 가장 작은 서비스시간을 갖은 프로세스에게 할당
+- 평균 대기시간(Waiting Time)이 가장 짧은 방법
+- 긴 서비스 시간을 갖는 프로세스는 기아현상이 발생
+- 기아현상(starvation) : 프로세스가 처리되지 못하고 계속 연기
+    - 에이징으로 기아현상 해결 가능
+    - 에이징(Aging) : 시간이 지나면 우선순위를 높여준다
 
 #### 3. HRN (Highest Response Ratio Next) 
 : 응답률이 가장 높은 프로세스에게 할당 
@@ -28,6 +57,8 @@ CPU를 사용하려는 프로세스들 사이의 우선순위를 관리하는 �
 
 #### 4. 우선순위 (Priority) 
 : 특정 규칙에 따라 프로세스에 우선순위를 매겨 순서대로 할당
+- 우선순위는 정수로 메기는데 낮을 수록 높은 우선순위를 갖는다
+- 우선순위가 낮은 프로세스는 기아현상이 발생
 
 #### 5. 기한부 (Deadline) 
 : 일정 시간동안 프로세스가 완료되지 않으면 삭제하고 다시 실행
@@ -40,13 +71,17 @@ CPU를 사용하려는 프로세스들 사이의 우선순위를 관리하는 �
 - 단점 : 많은 오버헤드 발생
 
 #### 1. RR (Round Robin)
-: 시분할 시스템 - 프로세스들에게 순서대로(FIFO) 같은 시간(Time Slice) 동안 CPU할당
+: 시분할 시스템 - 프로세스들에게 순서대로(FCFS) 같은 시간(Time Slice) 동안 CPU할당
+- 타임 슬라이스가 너무 길면 FCFS와 동일해 진다
+- 평균 응답시간(Response Time)이 가장 짧은 방법
 
 #### 2. SRT (Shortest Remaining Time First)
 : 가장 짧은 시간이 소요되는 프로세스에게 할당, 더 짧게 소요되는 프로세스가 큐에 추가되면 선점
+- 현재 CPU가 할당된 프로세스의 남은 시간과 추가된 프로세스의 시간을 비교해서 더 짧은 프로세스에게 CPU 배정
+- SJF보다 평균 대기시간(Waiting Time)이 더 짧다
 
 #### 3. 다단계 큐
-: 프로세스들을 분류해서 다양한 스케줄링 방법을 사용하는 다수의 작업큐로 할당
+: 여러 개의 레디큐를 준비해 프로세스를 배정하고 큐의 우선순위에 따라 실행
 - 한번 특정 큐로 할당된 프로세스는 다른 큐로 이동 불가
 
 #### 4. 다단계 피드백 큐
