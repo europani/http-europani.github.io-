@@ -5,16 +5,41 @@ categories: Algorithm
 tags: [Algorithm, CS, Python]
 ---
 ### 0. 시간복잡도
-- 파이썬은 초당 2000만번 연산이 가능하다
+- 파이썬은 초당 `20,000,000`번 연산이 가능하다
 
 ★시간 제한이 1초인 경우
 
 |N의 범위|시간복잡도|
 |:--:|:--:|
+|10|O(n!)|
+|20|O(2<sup>n</sup>)|
 |500|O(N<sup>3</sup>)|
 |2000|O(N<sup>2</sup>)|
 |100,000|O(NlogN)|
 |10,000,000|O(N)|
+
+#### (1) List
+
+|함수|시간복잡도|
+|:--:|:--:|
+|l[i] [인덱싱]|O(1)|
+|l[a:b] [슬라이싱]|O(b-a)|
+|append(5), pop()|O(1)|
+|insert(), remove(), pop(5), reverse(), copy()|O(N)|
+|sort()|O(NlogN)|
+
+#### (2) Set
+
+|함수|시간복잡도|
+|:--:|:--:|
+|add(), uodate(), remove()|O(1)|
+|copy()|O(N)|
+
+#### (3) Dict
+
+|함수|시간복잡도|
+|:--:|:--:|
+|d[k]=v, del d[k], get(k), pop(k), keys()|O(1)|
 
 ### 1. 리스트(List)
 - 크기가 n이고, 모든 값이 0인 1차원 리스트 초기화

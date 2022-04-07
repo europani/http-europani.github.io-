@@ -20,6 +20,11 @@ java-1.7.0-openjdk-devel.x86_64    1:1.7.0.261-2.6.22.2.amzn2.0.1     amzn2-core
 java-1.8.0-openjdk-devel.x86_64    1:1.8.0.302.b08-0.amzn2.0.1        amzn2-core
 ```
 
+- `amaazon-linus-extras`를 이용해서도 설치가 가능하다.
+```bash
+$ sudo amazon-linux-extras install -y java-openjdk11
+```
+
 #### 1. 패키지 관리자에 `Corretto RPM` 리포지토리 추가
 
 ```bash
