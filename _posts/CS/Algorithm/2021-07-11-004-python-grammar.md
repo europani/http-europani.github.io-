@@ -32,7 +32,7 @@ tags: [Algorithm, CS, Python]
 
 |함수|시간복잡도|
 |:--:|:--:|
-|add(), uodate(), remove()|O(1)|
+|add(), update(), remove()|O(1)|
 |copy()|O(N)|
 
 #### (3) Dict
