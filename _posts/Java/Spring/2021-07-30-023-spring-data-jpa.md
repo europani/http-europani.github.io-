@@ -217,7 +217,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
 
 ### 벌크 연산
 - **벌크 연산은 영속성 컨텍스트를 무시하고 DB에 직접 쿼리를 날린다**
-  - 데이터 유효성을 이해 벌크 연산 후 영속성 컨텍스트를 초기화 한 후 데이터를 사용해야 한다(clear)
+  - 데이터 유효성을 위해 벌크 연산 후 영속성 컨텍스트를 초기화 한 후 데이터를 사용해야 한다(clear)
   - `clearAutomatically = true` 옵션을 사용하면 쿼리 실행 후 clear를 자동으로 한다
 
 ```java
