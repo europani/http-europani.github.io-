@@ -465,7 +465,7 @@ print(bisect_right(a, x))  # 4
 - append(x) : 마지막 인덱스에 삽입
 
 ```python
-from Colletions import deque
+from collections import deque
 
 data = deque([2, 3, 4])
 data.appendleft(1)
@@ -478,7 +478,7 @@ print(data)
 2\. 카운터
 
 ```python
-form collections import Counter
+from collections import Counter
 
 counter = Counter(['red', 'blue', 'red', 'green', 'blue', 'blue'])
 
