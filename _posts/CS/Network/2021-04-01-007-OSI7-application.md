@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 응용 계층(L7)
+title: 애플리케이션 계층(L7)
 categories: Network
 tags: [Network, CS]
 ---
@@ -14,8 +14,29 @@ tags: [Network, CS]
 #### HTTPS [TCP : 443]
 - HyperText Transfer Protocol over SSL
 - HTTP보다 보안이 강화된 웹 프로토콜
-- 정보를 암호화하는 SSL이나 TLS 프로토콜를 사용한다 (TLS는 SSL의 업그레이드 버전)
+- 정보를 암호화하는 SSL이나 TLS 프로토콜를 사용
 - **SSL 인증서**를 통해 사용자가 사이트에 제공하는 정보를 암호화하여 전송할 수 있다. 이로 인해 중간에서 누군가 전송되는 데이터를 탈취 한다 해도 암호화된 데이터는 해독이 불가능하다
+
+### 보안 프로토콜
+#### SSL(Secure Socket Layer)
+![image](https://user-images.githubusercontent.com/48157259/165896091-17d29de3-4664-4718-84a6-025259faab9a.png)
+
+- 7계층의 어느 Layer에서도 보안기능을 제공하지 않는다
+- 부족한 보안기능을 제공해주는 부분
+    - 새로운 Layer가 아닌 `애플리케이션 Layer`에 속하는 부분이다
+    - SSL의 업그레이드 버전이 **TLS(Transport Layer Secure)**이다
+
+1. SSL 레코드
+- 레코드 : SSL의 전송단위
+- SSL은 애플리케이션 계층에서 만든 메시지를 레코드로 변환한다
+![image](https://user-images.githubusercontent.com/48157259/165896168-952ac319-ef41-456f-91e2-f7c878a00190.png)
+- 헤더 : Type, Version, Length
+- MAC(Message Authentication Code)
+
+2. MAC(Message Authentication Code)
+- 메시지`m`을 해싱하여 해시값`H(m)`을 만들 수 있다
+- 하지만 얼마든지 조작이 가능하기 때문에 둘만아는 인증키`s`를 사용해야 한다
+- **인증키를 포함시킨 해시값 `H(m+s)`가 MAC이다**
 
 
 ### 주소 변환 및 설정 프로토콜
