@@ -43,15 +43,7 @@ bootJar {   // JAR파일에 문서를 같이 빌드하기 위한 설정
 ```
 - `test` → `asciidoctor` → `bootJar` 순으로 실행
 
-- 작동순서
-
-1. Controller 테스트를 실행하고 테스트에 성공하면 스니펫이 만들어진다. (`build/generated-snippets` 경로)
-2. `src/docs/asciidoc/index.adoc` 베이스 아스키닥스 파일에서 만들어진 스니펫을 조합하여 문서를 작성한다.
-3. 문서 작성을 완료하고 build하면 베이스 아스키닥스 파일을 기반으로 `build/docs/asciidoc/index.html`이 만들어 진다.
-4. 추가 설정을 하면 build폴더에 생성된 `index.html`을 프로젝트의 static 폴더에도 복사 할 수 있다.  `src/main/resources/static/docs`
-   - 이렇게 복사하면 서버에서 `http://localhost:8080/docs/index.html`를 통해 문서를 읽을 수 있다
-
-### 설정
+### Configuration
 - `test.java.project.common.RestDocsConfig`
   - 출력 형태가 가독성 좋게 출력되도록 설정
   - Test 클래스에서 `@Import`해서 설정을 사용
@@ -68,7 +60,6 @@ public class RestDocsConfig {
     }
 }
 ```
-
 
 ### Entity, Controller
 
@@ -115,6 +106,13 @@ public class EventController {
 }
 ```
 
+## 작동순서
+
+1. Controller 테스트를 실행하고 테스트에 성공하면 스니펫이 만들어진다. (`build/generated-snippets` 경로)
+2. `src/docs/asciidoc/index.adoc` 베이스 아스키닥스 파일에서 만들어진 스니펫을 조합하여 문서를 작성한다.
+3. 문서 작성을 완료하고 build하면 베이스 아스키닥스 파일을 기반으로 `build/docs/asciidoc/index.html`이 만들어 진다.
+4. 추가 설정을 하면 build폴더에 생성된 `index.html`을 프로젝트의 static 폴더에도 복사 할 수 있다.  `src/main/resources/static/docs`
+   - 이렇게 복사하면 서버에서 `http://localhost:8080/docs/index.html`를 통해 문서를 읽을 수 있다
 
 ### 1. Test를 통해 스니펫 생성
 - `@AutoConfigureRestDocs` : Rest Docs를 사용하기 위한 어노테이션

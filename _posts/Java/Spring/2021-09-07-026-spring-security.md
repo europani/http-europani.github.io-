@@ -5,7 +5,7 @@ categories: Spring
 tags: [Spring, Spring Security]
 ---
 
-### Security 개념
+## Security 개념
 - Spring Security : 보안솔루션을 제공하는 스프링 하위 프레임워크
   - Spring Security는 기본적으로 인증 절차를 거친 후 인가 절차를 진행한다
   - Principal을 아이디, Credential을 비밀번호로 사용하는 Credential 기반 인증 방식을 사용한다
@@ -15,6 +15,52 @@ tags: [Spring, Spring Security]
 - 권한(Authorization) : 특정 부분에 접근할 수 있는지 확인하는 작업
   - ex) 등급
 
+
+### Spring Security 절차
+![](https://user-images.githubusercontent.com/48157259/132278915-5e67fd65-ecde-4bae-b99d-e571f781fec7.png)
+- 구현해야 할 인터페이스 : `UserDetails`, `UserDetailsService`
+
+(1) 사용자가 ID, Pwd를 사용하여 `AuthenticationFilter`로 요청이 들어온다  
+(2) `UsernamePasswordAuthenticationToken`이 토큰을 발급한다  
+(3) 생성된 토큰을 `AuthenticationManger`에게 전달한다  
+(4) 전달받은 토큰을 `AuthenticationProvider`에게 전달하여 아이디와 비밀번호를 조회하는 인증을 요구한다.  
+  \- 매니저는 실제로 인증을 처리할 여러개의 `AuthenticationProvider`를 갖고 있다  
+(5) 조회된 아이디는 `UserDetailsService`로 전달되며 전달받은 아이디를 기반으로 사용자의 데이터를 조회한다.  
+(6) `UserDetails`에 조회된 데이터가 담긴다.  
+(7) 조회된 데이터 `AuthenticationProvider`에게 전달  
+(8) 인증 처리 후 인증된 토큰을 `AuthenticationManger`에게 전달  
+(9) 인증된 토큰을 `AuthenticationFilter`에게 전달  
+(10) 인증된 토큰을 `SecurityContextHolder`에 저장
+
+
+3\. `AuthenticationManger` 
+- 인증 요청을 받고 Authentication 객체를 적절한 Provider를 찾아 넘긴다. 
+```java
+public interface AuthenticationManager {
+	Authentication authenticate(Authentication authentication) throws AuthenticationException;
+}
+```
+
+4\. `AuthenticationProvider` 
+- 실제 **인증**이 진행 되는 곳, 인증된 사용자는 `UserDetailsService`로 넘어간다
+```java
+public interface AuthenticationProvider {
+	Authentication authenticate(Authentication authentication) throws AuthenticationException;
+
+	boolean supports(Class<?> authentication);
+}
+```
+
+5\. `UserDetailsService`[(링크)](#4--service)
+- **인가**가 진행 되는 곳, 인증된 사용자의 인가를 위해 데이터를 조회한다 (인터페이스 구현 - 조회 메서드)
+
+6\. `UserDetails`[(링크)](#3--customuserdetails-dto)
+- 사용자의 데이터가 담기는 객체 (인터페이스 구현 - 데이터 필드 및 옵션)
+
+10\. `Authentication` 객체
+- 인증에 필요한 정보, 인증 후에는 `SecurityContext`에 보관된다
+
+## Spring Security 구현
 ### 1. Configuration
 ```gradle
 
@@ -105,45 +151,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   - authenticated() : 인증된 사용자만 (= 모든 권한)
   - anonymous() : 인증되지 않은 사용자만
   - hasIpAddress(String) : 해당 IP만
-
-
-![](https://user-images.githubusercontent.com/48157259/132278915-5e67fd65-ecde-4bae-b99d-e571f781fec7.png)
-- 구현해야 할 인터페이스 : `UserDetails`, `UserDetailsService`
-
-(1) 사용자가 ID, Pwd를 사용하여 `AuthenticationFilter`로 요청이 들어온다  
-(2) `UsernamePasswordAuthenticationToken`이 토큰을 발급한다  
-(3) 생성된 토큰을 `AuthenticationManger`에게 전달한다  
-(4) 전달받은 토큰을 `AuthenticationProvider`에게 전달하여 아이디와 비밀번호를 조회하는 인증을 요구한다.  
-  \- 매니저는 실제로 인증을 처리할 여러개의 `AuthenticationProvider`를 갖고 있다  
-(5) 조회된 아이디는 `UserDetailsService`로 전달되며 전달받은 아이디를 기반으로 사용자의 데이터를 조회한다.  
-(6) `UserDetails`에 조회된 데이터가 담긴다.  
-(7) 조회된 데이터 `AuthenticationProvider`에게 전달  
-(8) 인증 처리 후 인증된 토큰을 `AuthenticationManger`에게 전달  
-(9) 인증된 토큰을 `AuthenticationFilter`에게 전달  
-(10) 인증된 토큰을 `SecurityContextHolder`에 저장
-
-#### 관련 객체 소개
-- `Authentication` 객체 : 인증에 필요한 정보, 인증 후에는 `SecurityContext`에 보관된다
-
-- `AuthenticationManger` : 인증 요청을 받고 Authentication 객체를 적절한 Provider를 찾아 넘긴다. 
-```java
-public interface AuthenticationManager {
-	Authentication authenticate(Authentication authentication) throws AuthenticationException;
-}
-```
-
-- `AuthenticationProvider` : 실제 **인증**이 진행 되는 곳, 인증된 사용자는 `UserDetailsService`로 넘어간다
-```java
-public interface AuthenticationProvider {
-	Authentication authenticate(Authentication authentication) throws AuthenticationException;
-
-	boolean supports(Class<?> authentication);
-}
-```
-
-- `UserDetailsService` : **인가**가 진행 되는 곳, 인증된 사용자의 인가를 위해 데이터를 조회한다 (인터페이스 구현 - 조회 메서드)
-
-- `UserDetails` : 사용자의 데이터가 담기는 객체 (인터페이스 구현 - 데이터 필드 및 옵션)
 
 ### 2. Entity, DTO
 #### (0) UserRole

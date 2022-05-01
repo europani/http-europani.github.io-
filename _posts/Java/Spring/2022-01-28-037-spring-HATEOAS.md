@@ -6,7 +6,7 @@ tags: [Spring, HATEOAS]
 ---
 ### HATEOAS란?
 Hypermedia As The Engine Of Application State의 약자이며 **하이퍼미디어를 통해 정보를 동적으로 제공**할 수 있습니다  
-API에서 리소스에 대해 어떤 행동을 할 수 있는지에 대해 하이퍼미디어(링크)를 제공하여 다른 상태로 전이가 가능합니다  
+API에서 리소스에 대해 어떤 행동을 할 수 있는지에 대해 하이퍼미디어(=링크)를 제공하여 다른 상태로 전이가 가능합니다  
 REST API의 구성요소 중 하나인데 HATEOAS를 만족해야 진정한 REST API라고 할 수 있습니다  
 
 - Uniform Interface of REST API
