@@ -24,8 +24,8 @@ tags: [Algorithm, CS, Python]
 |:--:|:--:|
 |l[i] [인덱싱]|O(1)|
 |l[a:b] [슬라이싱]|O(b-a)|
-|append(5), pop()|O(1)|
-|insert(), remove(), pop(5), reverse(), copy()|O(N)|
+|append(5), pop(), len(l)|O(1)|
+|in, insert(), remove(), pop(5), reverse(), copy(), count(), min(), max(), index()|O(N)|
 |sort()|O(NlogN)|
 
 #### (2) Set
@@ -39,7 +39,7 @@ tags: [Algorithm, CS, Python]
 
 |함수|시간복잡도|
 |:--:|:--:|
-|d[k]=v, del d[k], get(k), pop(k), keys()|O(1)|
+|in, d[k]=v, del d[k], get(k), pop(k), keys()|O(1)|
 
 ### 1. 리스트(List)
 - 크기가 n이고, 모든 값이 0인 1차원 리스트 초기화
@@ -476,11 +476,15 @@ print(data)
 ```
 
 2\. 카운터
+- most_common(n) : 가장 많은 원소를 n개까지 튜플로 출력
 
 ```python
 from collections import Counter
 
 counter = Counter(['red', 'blue', 'red', 'green', 'blue', 'blue'])
+
+counter.most_common(2)
+[('blue', 3), ('red', 2)]
 
 print(counter(['blue'])
 3
