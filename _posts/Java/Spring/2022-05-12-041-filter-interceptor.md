@@ -21,18 +21,35 @@ tags: [Spring]
 
 ```java
 public interface Filter {
-    public default void init(FilterConfig filterConfig) throws ServletException {}
+	public default void init(FilterConfig filterConfig) throws ServletException {}
 
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException;
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException;
 
-    public default void destroy() {}
+	public default void destroy() {}
 }
 ```
 
 1. `init()` : 서블릿 컨테이너 생성 시 필터 객체를 초기화하는 메서드
 2. `doFilter()` : request시 필터 실행
 3. `destory()` : 서블릿 컨테이너 종료 시 필터 객체를 제거하는 메서드
+
+### 필터 등록
+- `FilterRegistrationBean`으로 등록
+
+```java
+@Configuration
+public class WebConfig {
+	@Bean
+	public FilterRegistrationBean logFilter() {
+		FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
+		filterRegistrationBean.setFilter(new LogFilter());
+		filterRegistrationBean.setOrder(1);
+		filterRegistrationBean.addUrlPatterns("/*");
+		return filterRegistrationBean;
+	} 
+}
+```
 
 
 ## 인터셉터(Interceptor)
@@ -41,11 +58,13 @@ public interface Filter {
 - 스프링 컨테이너에서 관리한다
 - Spring MVC에서 프론트 컨트롤러인 `DispatcherServlet`으로 요청이 호출되기 후에 동작한다
 - DispatcherServlet이 `HandlerMapping`을 통해 적절한 핸들러(=컨트롤러)를 찾는데 인터셉터가 찾은 컨트롤러에 관여한다면 동작한다
-- 단, 인터셉터가 동작하는 시기를 설정할 수 있다
+- 단, 인터셉터가 동작하는 시기를 설정할 수 있다 (prehandle, postHandle, afterCompletion)
+- 인터셉터 등록시 URI를 세밀하게 적용할 수 있다
 
 ![image](https://user-images.githubusercontent.com/48157259/168004911-1cc5afe6-cb7a-4753-81b8-f0f808eb0200.png)
 
 ### 인터셉터 메서드
+ ![image](https://user-images.githubusercontent.com/48157259/169636949-ad18ce46-49d6-4df1-ae2d-d35981170de5.png)
 
 ```java
 public interface HandlerInterceptor {
@@ -61,14 +80,35 @@ public interface HandlerInterceptor {
 	default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
 			@Nullable Exception ex) throws Exception {
 	}
-
 }
 ```
 
-1. `preHandler()` : 컨트롤러가 실행되기 전에 동작하는 메서드, 반환값이 false면 그 뒤는 진행되지 않는다.
+1. `preHandler()` : 컨트롤러가 실행되기 전에 동작하는 메서드
+   - 반환값이 false면 어댑터 핸들러가 호출되지 않는다
 2. `postHandler()` : 컨트롤러가 실행된 후에 동작하는 메서드
+   - 컨트롤러 실행 결과인 `ModelAndView`를 갖고 있다
+   - 컨트롤러에서 **예외 발생시 호출되지 않는다**
 3. `afterCompletion()` : 뷰가 렌더링 되어 모든 작업이 완료 된 후에 동작하는 메서드
+   - `Exception`을 갖고 있다 
+   - 컨트롤러에서 **예외 발생시에도 호출된다**
 
+### 인터셉터 등록
+- `WebMvcConfigurer` 구현
+- URL를 세밀하게 적용할 수 있다
+
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new LogInterceptor())
+				.order(1)
+				.addPathPatterns("/**")
+				.excludePathPatterns("/css/**", "/*.ico", "/error");
+	}
+	//...
+}
+```
 
 ## 필터와 인터셉터 사용용도
 
