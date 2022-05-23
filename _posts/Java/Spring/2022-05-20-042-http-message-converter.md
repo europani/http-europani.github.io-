@@ -67,7 +67,8 @@ public interface HttpMessageConverter<T> {
 ### 동작 방식
 ![image](https://user-images.githubusercontent.com/48157259/169652241-8724937b-2417-47fc-aa47-60280aba97d6.png)
 
-- `HttpMessageConverter`는 스프링 MVC에서 @RequestMapping를 처리하는 **`RequestMappingHandlerAdapter`를 통해 동작**한다
+- `HttpMessageConverter`는 스프링 MVC에서 request-`ArgumentResolver`, response-`ReturnValueHandler`에 의해 호출 된다
+- 또 이 둘은 @RequestMapping를 처리하는 **`RequestMappingHandlerAdapter`를 통해 동작**한다
   
 #### ArgumentResolver
 - `RequestMappingHandlerAdapter`는 `ArgumentResolver`를 호출하여 다양한 파라미터를 맵핑할 수 있다
