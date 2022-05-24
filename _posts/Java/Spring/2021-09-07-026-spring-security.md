@@ -16,7 +16,7 @@ tags: [Spring, Spring Security]
   - ex) 등급
 
 
-### Spring Security 절차
+## Spring Security 절차
 ![](https://user-images.githubusercontent.com/48157259/132278915-5e67fd65-ecde-4bae-b99d-e571f781fec7.png)
 - 구현해야 할 인터페이스 : `UserDetails`, `UserDetailsService`
 
@@ -30,19 +30,59 @@ tags: [Spring, Spring Security]
 (7) 조회된 데이터 `AuthenticationProvider`에게 전달  
 (8) 인증 처리 후 인증된 토큰을 `AuthenticationManger`에게 전달  
 (9) 인증된 토큰을 `AuthenticationFilter`에게 전달  
-(10) 인증된 토큰을 `SecurityContextHolder`에 저장
+(10) 인증된 토큰을 `SecurityContextHolder`에 저장  
+  -> 인증에 성공해 토큰이 정상 발급되면 `successHandler`가 실행되고 exception이 발생해 실패하면 `failureHandler`가 실행
 
+### 2. UsernamePasswordAuthenticationToken
+```java
+public class UsernamePasswordAuthenticationToken extends AbstractAuthenticationToken {
 
-3\. `AuthenticationManger` 
-- 인증 요청을 받고 Authentication 객체를 적절한 Provider를 찾아 넘긴다. 
+  private final Object principal;   // ID
+
+  private Object credentials;       // Password
+
+  // 인증 전 입력받은 id/pw 로 토큰 생성시 사용
+  public UsernamePasswordAuthenticationToken(Object principal, Object credentials) {
+    super(null);
+    this.principal = principal;
+    this.credentials = credentials;
+    setAuthenticated(false);
+  }
+
+  // 인증 후 토큰 생성시 사용
+  public UsernamePasswordAuthenticationToken(Object principal, Object credentials,
+      Collection<? extends GrantedAuthority> authorities) {
+    super(authorities);
+    this.principal = principal;
+    this.credentials = credentials;
+    super.setAuthenticated(true); // must use super, as we override
+  }
+
+  @Override
+  public Object getCredentials() {
+    return this.credentials;
+  }
+
+  @Override
+  public Object getPrincipal() {
+    return this.principal;
+  }
+  ...
+}
+```
+
+### 3. AuthenticationManger
+- 인증 요청을 받고 Authentication 객체를 적절한 Provider를 찾아 넘긴다
+- 인증이 완료되면 Provider로 부터 받은 리턴값을 `AuthenticationFilter`에게 넘긴다
 ```java
 public interface AuthenticationManager {
 	Authentication authenticate(Authentication authentication) throws AuthenticationException;
 }
 ```
 
-4\. `AuthenticationProvider` 
-- 실제 **인증**이 진행 되는 곳, 인증된 사용자는 `UserDetailsService`로 넘어간다
+### 4. AuthenticationProvider
+- 실제 **인증**이 진행 되는 곳
+- DB에서 가져온 데이터인 `UserDetails`로 인증이 완료되면 `Authentication`을 리턴 값으로 만들어 `AuthenticationManger`에게 넘긴다
 ```java
 public interface AuthenticationProvider {
 	Authentication authenticate(Authentication authentication) throws AuthenticationException;
@@ -51,14 +91,33 @@ public interface AuthenticationProvider {
 }
 ```
 
-5\. `UserDetailsService`[(링크)](#4--service)
-- **인가**가 진행 되는 곳, 인증된 사용자의 인가를 위해 데이터를 조회한다 (인터페이스 구현 - 조회 메서드)
+### 5. UserDetailsService[(링크)](#4--service)
+- DB로 부터 데이터를 조회해 `UserDetails` 객체로 반환한다 (인터페이스 구현 - 조회 메서드)
 
-6\. `UserDetails`[(링크)](#3--customuserdetails-dto)
+![image](https://user-images.githubusercontent.com/48157259/169965007-85f8500d-7e08-43cd-909f-246b53fda720.png)
+
+### 6. UserDetails[(링크)](#3--customuserdetails-dto)
 - 사용자의 데이터가 담기는 객체 (인터페이스 구현 - 데이터 필드 및 옵션)
+- `Authentication`객체를 구현한 `UsernamePasswordAuthenticationToken`을 생성하기 위해 사용된다
 
-10\. `Authentication` 객체
-- 인증에 필요한 정보, 인증 후에는 `SecurityContext`에 보관된다
+### 10. Authentication
+- 현재 접근하는 주체의 정보와 권한은 담는 인터페이스
+- 인증 후에 `SecurityContext`에 보관된다
+```java
+public interface Authentication extends Principal, Serializable {
+	Collection<? extends GrantedAuthority> getAuthorities();    // 권한
+
+	Object getCredentials();  // 비밀번호
+
+	Object getDetails();
+
+	Object getPrincipal();    // Principal 객체
+
+	boolean isAuthenticated();
+
+	void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException;
+}
+```
 
 ## Spring Security 구현
 ### 1. Configuration
