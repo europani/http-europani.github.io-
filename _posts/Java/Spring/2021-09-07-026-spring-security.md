@@ -99,6 +99,7 @@ public interface AuthenticationProvider {
 ### 6. UserDetails[(링크)](#3--customuserdetails-dto)
 - 사용자의 데이터가 담기는 객체 (인터페이스 구현 - 데이터 필드 및 옵션)
 - `Authentication`객체를 구현한 `UsernamePasswordAuthenticationToken`을 생성하기 위해 사용된다
+  - 일반적으로 `Authentication`의 `Object principal`에 이 객체를 넣는다
 
 ### 10. Authentication
 - 현재 접근하는 주체의 정보와 권한은 담는 인터페이스

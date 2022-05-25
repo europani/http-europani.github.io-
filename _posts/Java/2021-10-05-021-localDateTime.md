@@ -2,7 +2,7 @@
 layout: post
 title: 'LocalDate, LocalTime, LocalDateTime, YearMonth 클래스'
 categories: Java
-tags: [Java, IntelliJ]
+tags: [Java]
 ---
 
 - 8버전부터 날짜와 시간을 다루는 클래스인 `LocalDate`, `LocalTime`, `LocalDateTime`이 추가되었다 (java.time)
