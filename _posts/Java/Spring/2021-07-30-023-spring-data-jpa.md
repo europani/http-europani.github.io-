@@ -220,6 +220,13 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
   - 데이터 유효성을 위해 벌크 연산 후 영속성 컨텍스트를 초기화 한 후 데이터를 사용해야 한다(clear)
   - `clearAutomatically = true` 옵션을 사용하면 쿼리 실행 후 clear를 자동으로 한다
 
+#### @Modifying
+- `@Query`를 사용해 INSERT, UPDATE, DELETE 쿼리를 사용할 떄 추가하는 어노테이션
+- `JpaRepository`에서 제공하는 메서드나 쿼리 메서드 방식에는 적용되지 않는다
+
+- `clearAutomatically` 속성 : 쿼리 실행 직후 영속성 컨텍스트를 초기화한다
+- `flushAutomatically` 속성 : 해당 쿼리를 실행하기 전에 영속성 컨텍스트를 flush한다
+
 ```java
 @Modifying(clearAutomatically = true)       // clearAutomatically 설정
 @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
