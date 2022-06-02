@@ -78,10 +78,12 @@ class Main {
             this.age = age;
         }
 
+        @Override
         public int hashCode() {
             return Objects.hash(name, age);
         }
 
+        @Override
         public boolean equals(Object o) {
             Person p = (Person) o;
             return (name.equals(p.name)) && age==p.age;
@@ -142,3 +144,7 @@ class Main {
 
 ### hashCode만 오버라이드 하는 경우 
 - `equals()`를 통해 동등성을 판단하는데 재정의를 하지 않으면 알다시피 `Object.equals()`를 사용하기 때문에 동일성을 비교하게 된다
+
+- `equals()`에서 true가 반환된다면 두 객체의 `hashCode()`는 반드시 같아야 한다
+- `equals()`에서 false가 반환되는 두 객체의 해시코드가 같아도 상관없지만, 되도록 다른 해시코드를 가져야 한다
+  - 서로 다른 객체가 같은 해시코드를 갖게 되면 해시 자료구조에서 중복이 많아져 검색속도가 떨어진다 
