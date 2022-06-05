@@ -72,13 +72,30 @@ class EnglishTeacher extends Teacher {
 ```java
 public class Main {
     public static void main(String args[]){
-        KoreanTeacher kr = new KoreanTeacher();
-        MathTeacher mt = new MathTeacher();
-        EnglishTeacher en = new EnglishTeacher();
+        Teacher kr = new KoreanTeacher();
+        Teacher mt = new MathTeacher();
+        Teacher en = new EnglishTeacher();
 
         kr.work();
         mt.work();
         en.work();
+    }
+}
+```
+
+#### 익명 내부클래스 사용
+- 클래스가 계속 늘어나는 것을 막기 위해 익명 내부클래스를 사용할 수도 있다
+
+```java
+public class Main {
+    public static void main(String args[]){
+        Teacher teacher = new Teacher() {
+            @Override
+            public void teach() {
+                System.out.println("선생님이 수업합니다.");
+            }
+        };
+        teacher.work();
     }
 }
 ```
@@ -90,4 +107,9 @@ public class Main {
 
 ### 단점
 1. LSP를 위배할 수도 있다
-2. 알고리즘 구조가 복잡할 수록 템플릿을 유지하기 어려워진다
+   - 자식클래스는 부모클래스의 기능을 전혀 사용하고 있지 않다 
+2. 상속을 통해 부모클래스를 의존하고 있다 
+   - 부모클래스에 변경이 일어나면 자식클래스에도 영향을 미친다
+3. 알고리즘 구조가 복잡할 수록 템플릿을 유지하기 어려워진다
+
+- 템플릿 메소드보다 전략패턴을 선택하면 1, 2번을 해결할 수 있다

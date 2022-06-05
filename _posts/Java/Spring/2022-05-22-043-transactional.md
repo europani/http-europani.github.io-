@@ -1,20 +1,23 @@
 ---
 layout: post
-title: '@Transactional 어노테이션'
+title: '[스프링] 트랜잭션과 @Transactional 어노테이션'
 categories: Spring
-tags: [Spring]
+tags: [Spring, JDBC]
 ---
+## 트랜잭션
 - 트랜잭션이란 논리적 작업 단위를 의미한다
 - 스프링에서는 트랜잭션을 직접 설정할 수 있다
+- 트랜잭션을 시작한다는 의미는 **수동 커밋 모드**를 설정한다는 것을 의미 할 수 있다
+  - 자동 커밋 모드는 SQL마다 커밋이 실행된다
+- 사용자 요청마다 커넥션을 생성하면 커넥션은 세션을 만들고 세션은 트랜잭션을 시작한다
+![](https://user-images.githubusercontent.com/48157259/172029619-f63e8514-1714-4f1b-8c89-5085ecc1c2de.png)
 
-## @Transactional
-- 스프링에서 선언적 트랜잭션을 설정하는 어노테이션
-- **클래스**나 **메서드** 레벨에서 사용해서 트랜잭션을 설정할 수 있다
-- AOP를 사용해 **프록시 패턴**으로 구현된다
-- 프록시객체는 `PlatformTransactionManager`를 사용해 트랜잭션을 시작하고 결과에 따라 commit or rollback을 한다
+### 트랜잭션 매니저
+- 트랜잭션을 시작하고 결과에 따라 `commit` or `rollback`을 한다
 
 ```java
 public interface PlatformTransactionManager extends TransactionManager {
+   // 트랜잭션 시작
    TransactionStatus getTransaction(@Nullable TransactionDefinition definition) throws TransactionException;
 
    void commit(TransactionStatus status) throws TransactionException;
@@ -22,6 +25,43 @@ public interface PlatformTransactionManager extends TransactionManager {
    void rollback(TransactionStatus status) throws TransactionException;
 }
 ```
+
+- 각 플랫폼은 `PlatformTransactionManager`를 구현한 구현체를 갖고 있다
+
+![](https://user-images.githubusercontent.com/48157259/172029548-40068ee1-71e1-4c14-b5e8-2241d4b1fe34.png)
+
+#### 트랜잭션 동기화 매니저
+- 트랜잭션을 유지하기 위해서는 처음부터 끝까지 같은 커넥션을 사용해야 한다
+- 트랜잭션이 시작된 커넥션을 보관하는 역할을 한다
+
+```java
+public abstract class TransactionSynchronizationManager {
+   private static final ThreadLocal<Map<Object, Object>> resources = new NamedThreadLocal<>("Transactional resources");
+   ...
+   @Nullable
+   public static Object getResource(Object key) {
+      Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
+      return doGetResource(actualKey);
+   }
+   ...
+}
+```
+
+![](https://user-images.githubusercontent.com/48157259/172029867-eebbaba8-b1b9-44db-bfca-8ed0d4521c55.png)
+1. 트랜잭션 매니저가 데이터소스를 통해 커넥션을 만들고 트랜잭션을 시작
+2. 트랜잭션 매니저는 트랜잭션이 시작된 커넥션을 동기화 매니저에 보관
+3. 리포지토리는 보관된 커낵션을 꺼내 사용
+4. 트랜잭션이 종료되면 트랜잭션 메니저는 결과에 따라 `commit` or `rollback`을 하고 보관된 커넥션을 들고와 트랜잭션을 종료하고 커넥션을 종료
+
+
+## @Transactional
+`org.springframework.transaction.annotation`
+- 스프링에서 선언적 트랜잭션을 설정하는 어노테이션
+- **클래스**나 **메서드** 레벨에서 사용해서 트랜잭션을 설정할 수 있다
+- AOP를 사용해 **프록시 패턴**으로 구현된다
+- 프록시객체는 `PlatformTransactionManager`를 사용해 트랜잭션을 시작하고 결과에 따라 commit or rollback을 한다
+
+![](https://user-images.githubusercontent.com/48157259/172030736-65835e07-5623-4ab2-bd19-c2aa50ba4c52.png)
 
 ### ReadOnly
 - 트랜잭션을 읽기전용으로 설정하여 데이터가 의도치않게 변경되는 것을 방지한다
