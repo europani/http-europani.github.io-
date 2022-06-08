@@ -2,7 +2,7 @@
 layout: post
 title: '[스프링] 트랜잭션과 @Transactional 어노테이션'
 categories: Spring
-tags: [Spring, JDBC]
+tags: [Spring, JDBC, AOP]
 ---
 ## 트랜잭션
 - 트랜잭션이란 논리적 작업 단위를 의미한다
