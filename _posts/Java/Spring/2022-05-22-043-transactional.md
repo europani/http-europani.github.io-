@@ -224,7 +224,36 @@ void inner_commit() {
 
 #### 2. REQUIRES_NEW
 - 항상 새로운 트랜잭션을 생성한다
+  - 항상 다른 트랜잭션을 쓰기 때문에 다른 커넥션을 사용한다
 - 기존 트랜잭션이 있다면 잠시 보류시킨다
+
+```java
+@Test
+void inner_rollback_requires_new() {
+   log.info("외부 트랜잭션 시작");
+   TransactionStatus outer = txManager.getTransaction(new DefaultTransactionAttribute());
+   log.info("outer.isNewTransaction()={}", outer.isNewTransaction());  // true
+
+   log.info("내부 트랜잭션 시작");
+   DefaultTransactionAttribute definition = new DefaultTransactionAttribute();
+   definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+   TransactionStatus inner = txManager.getTransaction(definition);
+   log.info("inner.isNewTransaction()={}", inner.isNewTransaction());  // true
+   
+   log.info("내부 트랜잭션 롤백");
+   txManager.rollback(inner);
+   log.info("외부 트랜잭션 커밋");
+   txManager.commit(outer);
+}
+```
+
+![](https://user-images.githubusercontent.com/48157259/173177332-e9617557-bd53-452f-b87c-3c2f3ab01bf8.png)
+- 내부 트랜잭션에서도 새로운 트랜잭션을 생성하기 때문에 새로운 커넥션을 열어 트랜잭션 동기화 매니저에 보관한다
+- 여기서 `con2`가 새로 생성되면 기존에 실행되던 `con1`은 연결이 확립된 상태로 보류상태가 된다
+
+![](https://user-images.githubusercontent.com/48157259/173177535-1b6275c2-cc52-48a9-b629-af7520611b76.png)
+- 내부 트랜잭션 역시 새로운 트랜잭션이기 때문에 내부 트랜잭션은 물리 롤백이 실행되고 종료된다
+- 그 후 보류되었던 외부 트랜잭션이 이어서 실행된다 
   
 #### 3. SUPPORT
 - 기존 트랜잭션이 없다면 트랜잭션 없이 로직을 수행한다
