@@ -204,6 +204,7 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
 #### @Query 방식
 - 이름 길어지는 쿼리메서드 방식 대신 어노테이션을 사용하여 JPQL을 입력하는 방법을 사용할 수 있다.
 - 쿼리메서드 방식보다 선호된다.
+- 쿼리메서드와 `@Query`가 같이 있으면 쿼리메서드는 무시되고 어노테이션이 적용 된다
 - 다만, 정적 값을 가지는 한계가 있기에 동적 쿼리를 위해서 `QueryDSL`을 사용할 수 있다.
 
 ```java
