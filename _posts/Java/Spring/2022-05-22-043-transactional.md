@@ -148,6 +148,7 @@ public class TxBasicTest {
 #### 3. READ_COMMITTED (L1)
 - 커밋된 데이터만 읽기 허용
 - 즉, 어떤 데이터가 변경되는 중일때 해당 데이터에 다른 트랜잭션이 접근 할 수 없다 
+- 일반적으로 많이 사용하는 레벨
 - `Dirty Read` 방지
 
 #### 4. REPEATABLE_READ (L2)
