@@ -14,6 +14,7 @@ tags: [Spring]
 - 필터는 **서블릿**에서 제공한다 
 - 스프링 컨테이너가 아닌 톰캣같은 서블릿 컨테이너(=웹 컨테이너)에 의해 관리된다
 - Spring MVC에서 프론트 컨트롤러인 `DispatcherServlet`으로 요청이 호출되기 전에 동작한다
+- 예외발생시 Web Application에서 처리
 
 ![image](https://user-images.githubusercontent.com/48157259/168003827-9771917b-d4c6-46ca-b6fe-9413d68c1e7f.png)
 
@@ -57,6 +58,7 @@ public class WebConfig {
 - 인터셉터는 **스프링**에서 제공한다. 
 - 스프링 컨테이너에서 관리한다
 - Spring MVC에서 프론트 컨트롤러인 `DispatcherServlet`으로 요청이 호출되기 후에 동작한다
+- 예외발생시 스프링 컨테이너에서 처리
 - DispatcherServlet이 `HandlerMapping`을 통해 적절한 핸들러(=컨트롤러)를 찾는데 인터셉터가 찾은 컨트롤러에 관여한다면 동작한다
 - 단, 인터셉터가 동작하는 시기를 설정할 수 있다 (prehandle, postHandle, afterCompletion)
 - 인터셉터 등록시 URI를 세밀하게 적용할 수 있다
@@ -114,5 +116,5 @@ public class WebConfig implements WebMvcConfigurer {
 
 |구분|용도|
 |:--:|:--:|
-|필터|공통 보안작업(보안공격), 모든 요청의 감시, 인코딩 등|
-|인터셉터|세부 보안작업(인가), API 호출의 감시, Controller로 넘겨주는 데이터 가공 등|
+|필터|공통 보안작업(보안공격), 모든 요청의 감시, 인코딩변환 등|
+|인터셉터|세부 보안작업(인증/인가), API 호출의 감시, Controller로 넘겨주는 데이터 가공 등|
