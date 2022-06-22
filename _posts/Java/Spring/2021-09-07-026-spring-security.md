@@ -71,7 +71,7 @@ public class UsernamePasswordAuthenticationToken extends AbstractAuthenticationT
 }
 ```
 
-### 3. AuthenticationManger
+### 3. AuthenticationManager
 - 인증 요청을 받고 Authentication 객체를 적절한 Provider를 찾아 넘긴다
 - 인증이 완료되면 Provider로 부터 받은 리턴값을 `AuthenticationFilter`에게 넘긴다
 ```java

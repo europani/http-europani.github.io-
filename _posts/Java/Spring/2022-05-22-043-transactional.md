@@ -61,15 +61,15 @@ public abstract class TransactionSynchronizationManager {
 `org.springframework.transaction.annotation`
 - 스프링에서 선언적 트랜잭션을 설정하는 어노테이션
 - **클래스**나 **메서드** 레벨에서 사용해서 트랜잭션을 설정할 수 있다
-- AOP를 사용해 **프록시 패턴**으로 구현된다
+- Spring AOP를 사용해 **프록시 패턴**으로 구현된다
 - 프록시객체는 `PlatformTransactionManager`를 사용해 트랜잭션을 시작하고 결과에 따라 commit or rollback을 한다
 
 ![](https://user-images.githubusercontent.com/48157259/172030736-65835e07-5623-4ab2-bd19-c2aa50ba4c52.png)
 
 - `public`에만 트랜잭션 적용
   - 스프링의 트랜잭션 AOP는 `public`에만 적용되도록 기본으로 설정되어 있다. 
-  - `protected`, `default`, `private`에 `@Transactional`을 붙이면 그냥 무시된다
   - 왜냐하면 트랜잭션은 주로 비즈니스 로직의 시작점에 걸게 되는데 이 부분은 대부분 외부에 열어주는 포인트이다
+  - `private`: 실제 객체를 상속받을 수 없어 프록시 생성 불가능 
 
 ### 트랜잭션 프록시 동작방식
 
@@ -170,8 +170,8 @@ public class TxBasicTest {
 - 물리 트랜잭션 : 실제 DB에 적용되는 트랜잭션
 - 물리 트랜잭션 안에 논리 트랜잭션을 포함시킨다
 - 원칙
-  - 모든 논리 트랜잭션이 `commit`되어야 물리 트랜잭션이 커밋된다
-  - 하나의 논리 트랜잭션이라도 `rollback`되면 물리 트랜잭션도 롤백된다
+  - 모든 논리 트랜잭션이 `commit`되어야 물리 트랜잭션이 커밋된다 `AND조건`
+  - 하나의 논리 트랜잭션이라도 `rollback`되면 물리 트랜잭션도 롤백된다 `OR조건`
 
 #### 1. REQUIRED (기본값)
 - 기존 트랜잭션이 있다면 그 트랜잭션에 참여해 하나의 트랜잭션처럼 만들어 준다  
