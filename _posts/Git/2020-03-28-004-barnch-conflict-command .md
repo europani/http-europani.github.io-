@@ -44,23 +44,23 @@ $ git checkout test
   $ git checkout -b test
   ```
 
-#### merge 병합할브랜치명
+#### merge
 - 현재 branch에 병합할 branch를 병합함 (HEAD는 현재 작업중인 브랜치를 의미함)
 
-ex) master 브랜치로 돌아와서 작업한 test branch를 master 브랜치에서 병합함  
+ex) master 브랜치로 돌아와서 작업한 test branch를 master 브랜치에 병합
 ```git
 $ git checkout master
 $ git merge test
 ```
 
-#### rebase 병합할브랜치명 
-- 현재 브랜치가 가리키는 커밋을 다른 브랜치가 가리키는 커밋 뒤에 그대로 잇는 작업
-- 즉, 현재 브랜치에서 작업하던 내용을 병할할브랜치로 들고가서 병합
+#### rebase 
+- 현재 브랜치의 base를 변경하는 작업
+- 현재 브랜치를 다른 브랜치로 base를 변경해 그대로 잇는 작업
 
-ex) test 브랜치에서 작업이 끝나 master 브랜치로 병합함
+ex) test 브랜치에서 작업이 끝나 master 브랜치로 rebase
 ```git
-$ git branch test
 $ git checkout test
-....(작업)
 $ git rebase master
+$ git checkout master
+$ git merge test
 ```

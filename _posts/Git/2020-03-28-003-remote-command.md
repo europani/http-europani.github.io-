@@ -41,7 +41,6 @@ $ git pull
 
 #### clone
 - 해당주소의 원격저장소로부터 자료를 로컬저장소로 복제해옴.
-- 로컬저장소로 복제만 해오지 tracked 되진 않음.(그냥 Copy&Paste)
 ```git
 $ git clone https://github.com/europani/Web.git [바꾸고싶은 폴더명]
 ```
