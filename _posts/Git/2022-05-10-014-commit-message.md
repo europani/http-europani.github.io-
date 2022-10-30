@@ -11,34 +11,46 @@ tags: [Git]
 2. 더 나은 협업과 리뷰 프로세스
 3. 더 쉬운 코드 유지보수
 
+### [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+
 ```
-제목(Subject)
+type: subject
 
 본문(Body) - 선택
 
 푸터(footer) - 선택
 ```
 
-- 제목 : 50자이내, 명령문, 첫글자는 대문자, 마침표금지
+- 제목 : 50자이내, 명령문, 첫글자 대문자 또는 모두 소문자, 마침표,관사 생략
 - 내용 : 한줄에 72자이내
 - 푸터 : Issue번호
 
-### 커밋 메시지 작성 방법 7가지
-본 규칙은 영어에 특화되어 있습니다. 
+### 커밋 컨벤션
 1. 제목과 본문 사이는 빈 칸으로 구분
-2. 제목은 50자 이내
-3. 제목의 첫글자는 대문자 
-   - ex) Refectoring login process
-4. 제목 끝에 마침표(.) 금지
-5. 제목은 명령문으로 작성(동사로 시작) 
+2. 제목: 50자 이내
+3. 제목: 첫글자는 대문자 또는 모두 소문자 
+   - ex) refactor: refectoring login process
+4. 제목: 마침표(.), 관사(a/an/the) 생략
+5. 제목: 명령문으로 작성(동사로 시작) 
    - 문장이 아닌 단어로 연결 (ex XXXX 수정)
-6. 내용은 영문 기준 한 줄에는 72자이내
+6. 내용: 영문 기준 한 줄에는 72자이내
 7. How 보단 `What`, `Why` 기록
 
 - 제목에는 50자 이내의 요약문장을 작성
 - 내용에 추가적인 설명을 작성
 
-### 자주 쓰는 단어
+### 제목 type
+1. feat : 새로운 기능 추가
+2. fix : 버그 수정
+3. docs : 사이트/문서 업데이트
+4. style : 코드 포맷팅, 스타일 변경
+5. refactor : 리펙토링(중복 코드 제거, 변수명 변경, 코드 단순화 등)
+6. test : 테스트 관련 코드수정
+7. build : 빌드 관련 코드수정
+8. merge : 브랜치 병합
+9. chore : 기타 코드수정
+
+### 자주 쓰는 동사
 - 키워드
   - `in` : 어느 파일에서 수정했는지 명시
   - `to` or `for` : 수정 이유 명시
@@ -49,12 +61,12 @@ tags: [Git]
 
 - Fix A in B : B에서 A를 수정했습니다
 ```
-Fix type in abcController
+fix: fix type in abcController
 ```
 
 - Fix A when B : B일때 발생하는 A를 수정했습니다
 ```
-Fix crash when removing root nodes
+fix: fix crash when removing root nodes
 ```
 
 #### 2. Add
@@ -62,12 +74,12 @@ Fix crash when removing root nodes
 
 - Add A for B : B를 위해 A를 추가했습니다
 ```
-Add documentation for the defaultPort option
+feat: add documentation for the defaultPort option
 ```
 
 - Add A to B : A에 B를 추가했습니다
 ```
-Add deprecation notice to SwipeableListView
+feat: add deprecation notice to SwipeableListView
 ```
   
 #### 3. Remove
@@ -76,7 +88,7 @@ Add deprecation notice to SwipeableListView
 
 - Remove A from B : B에서 A를 삭제했습니다
 ```
-Remove absolute path parameter from transformers
+fix: remove absolute path parameter from transformers
 ```
 
 #### 4. Refactor
@@ -90,7 +102,7 @@ Remove absolute path parameter from transformers
 
 - Update A to B : A를 B로 업데이트합니다
 ```
-Update acorn to 6.1.0
+chore: update acorn to 6.1.0
 ```
 
 #### 7. Prevent
@@ -98,7 +110,7 @@ Update acorn to 6.1.0
 
 - Prevent A from B : A가 B하지 못하게 막습니다
 ```
-Prevent event handlers from receiving extra argument in development
+fix: prevent event handlers from receiving extra argument in development
 ```
 
 #### 8. Move
@@ -106,7 +118,7 @@ Prevent event handlers from receiving extra argument in development
 
 - Move A to B : A를 B로 이동합니다
 ```
-Move function from header to source file
+fix: move function from header to source file
 ```
 
 #### 9. Rename
@@ -114,7 +126,7 @@ Move function from header to source file
 
 - Rename A to B : A를 B로 이름 변경합니다
 ```
-Rename node-report to report
+fix: rename node-report to report
 ```
 
 <hr>
