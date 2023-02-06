@@ -37,3 +37,77 @@ tags: ['Spring Batch']
 #### 5. JobRepository
 - 모든 배치 정보를 갖고 있는 메커니즘
 - Job이 실행되게 되면 JobRepository에 JobExecution과 StepExecution을 생성하게 되며 JobRepository에서 Execution 정보들을 저장하고 조회하며 사용한다
+
+
+```gradle
+implementation "org.springframework.boot:spring-boot-starter-batch"
+```
+
+```java
+@Configuration
+@RequiredArgsConstructor
+@EnableBatchProcessing
+public class ExampleJobConfig {
+
+    public static final String JOB_NAME = "example";
+
+    public JobBuilderFactory jobBuilderFactory;
+    private final Step exampleStep;
+    private final Step exStep;
+
+    @Bean(JOB_NAME)
+    public Job ExampleJob(){
+
+        Job exampleJob = jobBuilderFactory
+                .get(JOB_NAME)
+                .incrementer(new UniqueRunIdIncrementer())
+                .start(exampleStep)
+                .next(exStep)
+                .build();
+
+        return exampleJob;
+    }
+}
+```
+
+```java
+@Slf4j
+@Component
+@JobScope
+@RequiredArgsConstructor
+public class ExampleStepConfig {
+
+    public static final String STEP_NAME = "example";
+
+    public StepBuilderFactory stepBuilderFactory;
+
+
+    @Bean(STEP_NAME)
+    public Step ExampleStep(){
+
+        Step exampleStep = stepBuilderFactory
+                .get(STEP_NAME)
+                .tasklet((contribution, chunkContext) -> {
+                    log.info("Start Step!");
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+
+        return exampleStep;
+    }
+
+    @Bean("ex")
+    public Step ExStep(){
+
+        Step exampleStep = stepBuilderFactory
+                .get("ex")
+                .tasklet((contribution, chunkContext) -> {
+                    log.info("End Step!");
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+
+        return exampleStep;
+    }
+}
+```
