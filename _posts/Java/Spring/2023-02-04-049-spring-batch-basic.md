@@ -15,6 +15,9 @@ tags: ['Spring Batch']
   - 특정한 시점에 스케줄러를 통해 자동화된 작업이 필요한 경우
   - 대용량 데이터의 포맷을 변경, 유효성 검사 등의 작업을 트랜잭션 안에서 처리 후 기록해야하는 경우
 
+```gradle
+implementation "org.springframework.boot:spring-boot-starter-batch"
+```
 
 ### 구조
 ![image](https://user-images.githubusercontent.com/109575750/216747019-b91c12ea-cb96-4f0c-99bf-55b1a6fb612e.png)
@@ -67,6 +70,65 @@ public class JobParameters implements Serializable {
 - 모든 배치 정보를 갖고 있는 메커니즘 (메타데이터 저장소)
 - Job이 실행되게 되면 JobRepository에 JobExecution과 StepExecution을 생성하게 되며 JobRepository에서 Execution 정보들을 DB에 저장하고 조회하며 사용한다
 
+
+```java
+@Configuration
+@RequiredArgsConstructor
+@EnableBatchProcessing
+public class ExampleJobConfig {
+
+    public static final String JOB_NAME = "example";
+
+    private final JobBuilderFactory jobBuilderFactory;
+    private final Step exampleStep;
+    private final Step exStep;
+
+    @Bean(JOB_NAME)
+    public Job ExampleJob(){
+
+        Job exampleJob = jobBuilderFactory  // JobBuilderFactory
+                .get(JOB_NAME)              // JobBuilder
+                .start(exampleStep)         // SimpleJobBuilder
+                .next(exStep)
+ //             .incrementer(new UniqueRunIdIncrementer())
+                .incrementer(new CustomJobParametersIncrementer())
+                .validator(new CustomJobParametersValidator())
+                .preventRestart(false)              // default : true
+                .build();                   // SimpleJob
+
+        return exampleJob;
+    }
+}
+```
+
+- Validator 
+
+```java
+public class CustomJobParametersValidator implements JobParametersValidator {
+
+    @Override
+    public void validate(JobParameters parameters) throws JobParametersInvalidException {
+        if (parameters.getString("name") == null) {
+            throw new JobParametersInvalidException();
+        }
+    }
+}
+```
+
+- Incrementer
+
+```java
+public class CustomJobParametersIncrementer implements JobParametersIncrementer {
+    static final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd-hhmmss");
+
+    @Override
+    public JobParameters getNext(JobParameters parameters) {
+        String id = format.format(new Date());
+        return new JobParametersBuilder().addString("run.id", id).toJobParameters();
+    }
+}
+```
+
 ### Step
 - Job의 배치처리 과정을 정의하고 순차적으로 실행되는 객체 (Job의 세부 과정)
 - 구현체 : `TaskletStep`, `PartitionStep`, `JobStep`, `FlowStep`
@@ -99,36 +161,7 @@ public interface Tasklet {
 
 ---
 
-```gradle
-implementation "org.springframework.boot:spring-boot-starter-batch"
-```
 
-```java
-@Configuration
-@RequiredArgsConstructor
-@EnableBatchProcessing
-public class ExampleJobConfig {
-
-    public static final String JOB_NAME = "example";
-
-    public JobBuilderFactory jobBuilderFactory;
-    private final Step exampleStep;
-    private final Step exStep;
-
-    @Bean(JOB_NAME)
-    public Job ExampleJob(){
-
-        Job exampleJob = jobBuilderFactory
-                .get(JOB_NAME)
-                .incrementer(new UniqueRunIdIncrementer())
-                .start(exampleStep)
-                .next(exStep)
-                .build();
-
-        return exampleJob;
-    }
-}
-```
 
 ```java
 @Slf4j
