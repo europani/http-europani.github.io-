@@ -80,16 +80,16 @@ public class ExampleJobConfig {
     public static final String JOB_NAME = "example";
 
     private final JobBuilderFactory jobBuilderFactory;
-    private final Step exampleStep;
-    private final Step exStep;
+    private final Step taskStep;
+    private final Step chunkStep;
 
     @Bean(JOB_NAME)
     public Job ExampleJob(){
 
         Job exampleJob = jobBuilderFactory  // JobBuilderFactory
                 .get(JOB_NAME)              // JobBuilder
-                .start(exampleStep)         // SimpleJobBuilder
-                .next(exStep)
+                .start(taskStep)         // SimpleJobBuilder
+                .next(chunkStep)
  //             .incrementer(new UniqueRunIdIncrementer())
                 .incrementer(new CustomJobParametersIncrementer())
                 .validator(new CustomJobParametersValidator())
@@ -138,7 +138,7 @@ public interface Step {
     void execute(StepExecution stepExecution) throws JobInterruptedException;
 }
 ```
- 
+
 #### 1. StepExecution
 - Step의 실행시도 객체, Step별로 StepExecution이 생성됨
 - JobExecution에 저장되는 정보 외에 read 수, write 수, commit 수, skip 수 등의 정보도 저장 
@@ -147,21 +147,45 @@ public interface Step {
 - Step의 StepExecution이 하나라도 실패하면 JobExecution은 실패처리 된다
 ![image](https://user-images.githubusercontent.com/109575750/230754683-ca8b5eec-a3ee-4f66-8fde-843867b9118b.png)
 
-### Tasklet
+
+- StepBuilder
+  - 호출하는 메서드에 따라 사용하는 하위 StepBuilder가 다르며 그에 따른 Step이 생성된다
+
 ```java
-public interface Tasklet {
-    @Nullable
-    RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception;
+public class StepBuilder extends StepBuilderHelper<StepBuilder> {
+
+	// Tasklet 사용
+	public TaskletStepBuilder tasklet(Tasklet tasklet) {
+		return new TaskletStepBuilder(this).tasklet(tasklet);
+	}
+
+	// Chunk 기반의 Tasklet 사용
+	public <I, O> SimpleStepBuilder<I, O> chunk(int chunkSize) {
+		return new SimpleStepBuilder<I, O>(this).chunk(chunkSize);
+	}
+	public <I, O> SimpleStepBuilder<I, O> chunk(CompletionPolicy completionPolicy) {
+		return new SimpleStepBuilder<I, O>(this).chunk(completionPolicy);
+	}
+
+	// PartitionStep
+	public PartitionStepBuilder partitioner(String stepName, Partitioner partitioner) {
+		return new PartitionStepBuilder(this).partitioner(stepName, partitioner);
+	}
+	public PartitionStepBuilder partitioner(Step step) {
+		return new PartitionStepBuilder(this).step(step);
+	}
+
+	// JobStep
+	public JobStepBuilder job(Job job) {
+		return new JobStepBuilder(this).job(job);
+	}
+
+	// FlowStep
+	public FlowStepBuilder flow(Flow flow) {
+		return new FlowStepBuilder(this).flow(flow);
+	}
 }
-
 ```
-
-#### 1. ItemReader, ItemWriter, ItemProcesseor
-- Step 과정에서 Item을 읽어 데이터를 처리한 다음 결과를 처리하는 객체
-
----
-
-
 
 ```java
 @Slf4j
@@ -170,37 +194,58 @@ public interface Tasklet {
 @RequiredArgsConstructor
 public class ExampleStepConfig {
 
-    public static final String STEP_NAME = "example";
+    public final StepBuilderFactory stepBuilderFactory;
 
-    public StepBuilderFactory stepBuilderFactory;
-
-
-    @Bean(STEP_NAME)
-    public Step ExampleStep(){
-
-        Step exampleStep = stepBuilderFactory
-                .get(STEP_NAME)
-                .tasklet((contribution, chunkContext) -> {
-                    log.info("Start Step!");
+    @Bean
+    public Step taskStep(){
+        Step taskStep = stepBuilderFactory     // StepBuilderFactory
+                .get("taskStep")               // StepBuilder
+                .tasklet((contribution, chunkContext) -> {  // TaskletStepBuilder
+                    log.info("taskStep is executed!");
                     return RepeatStatus.FINISHED;
                 })
-                .build();
+                .build();                   // TaskletStep
 
-        return exampleStep;
+        return taskStep;
     }
 
-    @Bean("ex")
-    public Step ExStep(){
-
-        Step exampleStep = stepBuilderFactory
-                .get("ex")
-                .tasklet((contribution, chunkContext) -> {
-                    log.info("End Step!");
-                    return RepeatStatus.FINISHED;
-                })
+    @Bean
+    public Step chunkStep(){
+        Step chunkStep = stepBuilderFactory
+                .get("chunkStep")
+                .<String, String>chunk(10)
+                .reader(new CustomReader())
+                .writer(new CustomWriter())
                 .build();
 
-        return exampleStep;
+        return chunkStep;
     }
 }
 ```
+
+### Tasklet
+- Step 내에서 실행되는 객체, 주로 단일 task를 수행
+- `TaskletStep`에 의해 반복적으로 실행(While loop)되며 반환값에 따라 실행/종료 된다
+  - `RepeatStatus.CONTINUABLE` : 반복
+  - `RepeatStatus.FINISHED` : 종료
+- Step:Tasklet = `1:1`
+
+```java
+public interface Tasklet {
+    @Nullable
+    RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception;
+}
+```
+![image](https://user-images.githubusercontent.com/109575750/232190334-20a17381-27b9-45ac-a2fb-ef36aaceac0d.png)
+
+#### 1. Task 기반
+- 단일 작업 기반으로 처리하는 방식
+![image](https://user-images.githubusercontent.com/109575750/232186883-8e9b2f79-b155-46ff-ad97-9dee19f10585.png)
+
+#### 2. Chunk 기반 (COT)
+- Chunk기반 tasklet의 구현체 `ChunkOrientedTasklet` 사용
+- 하나의 큰 덩어리를 N개씩 나누어 처리하는 방식
+![image](https://user-images.githubusercontent.com/109575750/232186927-13a042e0-2310-41cf-8e6c-a511058fb6f9.png)
+
+- ItemReader, ItemWriter, ItemProcesseor
+  - Step 과정에서 Item을 읽어 데이터를 처리한 다음 결과를 처리하는 객체
