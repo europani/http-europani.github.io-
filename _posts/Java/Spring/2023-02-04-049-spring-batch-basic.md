@@ -204,19 +204,20 @@ public class ExampleStepConfig {
                     log.info("taskStep is executed!");
                     return RepeatStatus.FINISHED;
                 })
-                .build();                   // TaskletStep
+                .build();                       // TaskletStep
 
         return taskStep;
     }
 
     @Bean
     public Step chunkStep(){
-        Step chunkStep = stepBuilderFactory
-                .get("chunkStep")
-                .<String, String>chunk(10)
+        Step chunkStep = stepBuilderFactory     // StepBuilderFactory
+                .get("chunkStep")               // StepBuilder
+                .<String, String>chunk(10)      // SimpleStepBuilder
                 .reader(new CustomReader())
+                .processor(new CustomProcessor())
                 .writer(new CustomWriter())
-                .build();
+                .build();                       // TaskletStep
 
         return chunkStep;
     }
@@ -245,7 +246,27 @@ public interface Tasklet {
 #### 2. Chunk 기반 (COT)
 - Chunk기반 tasklet의 구현체 `ChunkOrientedTasklet` 사용
 - 하나의 큰 덩어리를 N개씩 나누어 처리하는 방식
+- Chunk 단위로 트랜잭션을 처리한다
 ![image](https://user-images.githubusercontent.com/109575750/232186927-13a042e0-2310-41cf-8e6c-a511058fb6f9.png)
+
+```java
+public class Chunk<W> implements Iterable<W> {
+
+    private List<W> items = new ArrayList<>();
+    private List<SkipWrapper<W>> skips = new ArrayList<>();
+    private List<Exception> errors = new ArrayList<>();
+
+    public void add(W item) {
+        items.add(item);
+    }
+    public class ChunkIterator implements Iterator<W> {
+        ...
+    }
+}
+```
 
 - ItemReader, ItemWriter, ItemProcesseor
   - Step 과정에서 Item을 읽어 데이터를 처리한 다음 결과를 처리하는 객체
+  - ItemReader와 ItemProcesseor는 Chunk 내의 개별 item을 처리하지만 ItemWriter는 Chunk 모든 items를 일괄 처리 한다
+  
+![image](https://user-images.githubusercontent.com/109575750/232303769-922b4275-7acc-4ffe-8f8e-0f17dc1c3ecd.png)
