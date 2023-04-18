@@ -267,6 +267,54 @@ public class Chunk<W> implements Iterable<W> {
 
 - ItemReader, ItemWriter, ItemProcesseor
   - Step 과정에서 Item을 읽어 데이터를 처리한 다음 결과를 처리하는 객체
-  - ItemReader와 ItemProcesseor는 Chunk 내의 개별 item을 처리하지만 ItemWriter는 Chunk 모든 items를 일괄 처리 한다
+  - `ItemReader`와 `ItemProcesseor`는 Chunk 내의 개별 item을 처리하지만 `ItemWriter`는 Chunk 모든 items를 일괄 처리 한다
+  - `ItemReader`와 `ItemWriter`는 필수요소 지만 `ItemProcesseor`는 선택요소이다
+
+#### 1. ItemReader
+  - input 데이터를 읽어오는 인터페이스
+
+```java
+public interface ItemReader<T> {
+	T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException;
+}
+```
+
+- 구현체
+  - `FlatFileItemReader` : txt, csv 등 파일
+  - `JsonItemReader` : json 파일
+  - `MultiResourceItemReader` : 여러 개의 파일 조합
+  - `JdbcCursorItemReader` : JDBC
+  - `JpaCursorItemReader` : JPA
+  - `JdbcPagingItemReader` : JDBC Paging
+  - `JpaPagingItemReader` : JPA Paging
+  - `SynchronizeditemStreamReader` : Thread-safe ItemReader
+  - `CustomItemReader` : Custom ItemReader
+  
+
+#### 2. ItemWriter
+  - Chunk 단위로 데이터를 받아 일괄 출력하는 인터페이스
+  - 출력이 완료되면 트랜잭션이 종료되고 새로운 Chunk 단위 프로세스로 이동한다
+
+```java
+public interface ItemWriter<T> {
+	void write(List<? extends T> items) throws Exception;
+}
+```
+
+- 구현체
+  - `FlatFileItemWriter` : txt, csv 등 파일
+  - `JsonFileItemWriter` : json 파일
+  - `JdbcBatchItemWriter` : JDBC
+  - `JpaItemWriter` : JPA
+  - `CustomItemWriter` : Custom ItemWriter
+
+#### 3. ItemProcessor
+- 데이터를 출력하기 전에 데이터를 가공, 변형, 필터링 하는 역할
+
+```java
+public interface ItemProcessor<I, O> {
+	O process(@NonNull I item) throws Exception;
+}
+```
   
 ![image](https://user-images.githubusercontent.com/109575750/232303769-922b4275-7acc-4ffe-8f8e-0f17dc1c3ecd.png)
