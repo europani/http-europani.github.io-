@@ -4,7 +4,7 @@ title: '[Batch] 스프링 배치(Spring Batch)'
 categories: Spring
 tags: ['Spring Batch']
 ---
-### Spring Batch
+## Spring Batch
 - 배치(Batch) : 일괄 처리 방식을 의미
 - 스프링 배치는 로깅/추적, 트랜잭션 관리, 작업 처리 통계, 작업 재시작, 건너뛰기, 리소스 관리 등 대용량 레코드 처리에 필수적인 기능을 제공
 - 배치가 실패하여 작업 재시작을 하게 된다면 처음부터가 아닌 실패한 지점부터 실행
@@ -19,15 +19,15 @@ tags: ['Spring Batch']
 implementation "org.springframework.boot:spring-boot-starter-batch"
 ```
 
-### 구조
+## 구조
 ![image](https://user-images.githubusercontent.com/109575750/216747019-b91c12ea-cb96-4f0c-99bf-55b1a6fb612e.png)
 
-### Job
+## Job
 - 배치처리 과정을 하나의 단위로 만들어 놓은 객체
 - 1개의 Job에는 1개 이상의 Step이 구성되야 한다 (Job:Step = `1:N`)
 - 구현체 : `SimpleJob`, `FlowJob`
 
-#### 1. JobLauncher
+### 1. JobLauncher
 - Job과 JobParameter를 사용하여 Job을 실행시키는 객체
 - 배치처리를 완료 한 다음에 Client에게 JobExecution을 반환한다 (동기적 실행)
     - 비동기적 실행도 가능함
@@ -38,12 +38,12 @@ public interface JobLauncher {
 }
 ```
 
-#### 2. JobInstance
+### 2. JobInstance
 - Job의 논리적 실행단위 객체로써 고유하게 식별 가능한 작업실행
 - JobName + JobParameter 가 같을 경우 동일한 JobInstance를 리턴해 Exception 발생 (중복불가)
 - Job:JobInstance = `1:N`
 
-#### 3. JobParameters
+### 3. JobParameters
 - Job 실행 시 사용되는 파라미터
 - 여러 개의 JobInstance를 구분하기 위한 용도
 - JobParameters:JobInstance = `1:1`
@@ -59,14 +59,14 @@ public class JobParameters implements Serializable {
 }
 ```
 
-#### 4. JobExecution
+### 4. JobExecution
 - JobInstance의 실행시도 객체
 - JobInstance 실행상태, 시작시간, 종료시간, 생성시간 등의 정보를 저장
 - 실행상태가 `FAILED`이면 재실행 가능하며 새로운 `JobExecution`이 생성됨 
     - `COMPLITED`이면 재실행이 불가하며 실행시도시 `JobInstanceAlreadyCompleteException` 발생
 - JobInstance:JobExecution = `1:N`
 
-#### 5. JobRepository
+### 5. JobRepository
 - 모든 배치 정보를 갖고 있는 메커니즘 (메타데이터 저장소)
 - Job이 실행되게 되면 JobRepository에 JobExecution과 StepExecution을 생성하게 되며 JobRepository에서 Execution 정보들을 DB에 저장하고 조회하며 사용한다
 
@@ -129,7 +129,7 @@ public class CustomJobParametersIncrementer implements JobParametersIncrementer 
 }
 ```
 
-### Step
+## Step
 - Job의 배치처리 과정을 정의하고 순차적으로 실행되는 객체 (Job의 세부 과정)
 - 구현체 : `TaskletStep`, `PartitionStep`, `JobStep`, `FlowStep`
 
@@ -139,7 +139,7 @@ public interface Step {
 }
 ```
 
-#### 1. StepExecution
+### 1. StepExecution
 - Step의 실행시도 객체, Step별로 StepExecution이 생성됨
 - JobExecution에 저장되는 정보 외에 read 수, write 수, commit 수, skip 수 등의 정보도 저장 
 - JobExecution:StepExecution = `1:N`
@@ -224,7 +224,7 @@ public class ExampleStepConfig {
 }
 ```
 
-### Tasklet
+## Tasklet
 - Step 내에서 실행되는 객체, 주로 단일 task를 수행
 - `TaskletStep`에 의해 반복적으로 실행(While loop)되며 반환값에 따라 실행/종료 된다
   - `RepeatStatus.CONTINUABLE` : 반복
@@ -239,11 +239,11 @@ public interface Tasklet {
 ```
 ![image](https://user-images.githubusercontent.com/109575750/232190334-20a17381-27b9-45ac-a2fb-ef36aaceac0d.png)
 
-#### 1. Task 기반
+### 1. Task 기반
 - 단일 작업 기반으로 처리하는 방식
 ![image](https://user-images.githubusercontent.com/109575750/232186883-8e9b2f79-b155-46ff-ad97-9dee19f10585.png)
 
-#### 2. Chunk 기반 (COT)
+### 2. Chunk 기반 (COT)
 - Chunk기반 tasklet의 구현체 `ChunkOrientedTasklet` 사용
 - 하나의 큰 덩어리를 N개씩 나누어 처리하는 방식
 - Chunk 단위로 트랜잭션을 처리한다
@@ -283,13 +283,25 @@ public interface ItemReader<T> {
   - `FlatFileItemReader` : txt, csv 등 파일
   - `JsonItemReader` : json 파일
   - `MultiResourceItemReader` : 여러 개의 파일 조합
-  - `JdbcCursorItemReader` : JDBC
-  - `JpaCursorItemReader` : JPA
+  - `JdbcCursorItemReader` : JDBC Cursor
+  - `JpaCursorItemReader` : JPA Cursor 
   - `JdbcPagingItemReader` : JDBC Paging
   - `JpaPagingItemReader` : JPA Paging
   - `SynchronizeditemStreamReader` : Thread-safe ItemReader
   - `CustomItemReader` : Custom ItemReader
-  
+
+\* JDBC
+- Cursor Base
+  - 현재 행에 커서를 유지하며 다음 데이터를 호출하면 다음 행으로 커서를 이동하며 데이터 반환을 이루는 Streaming 방식의 I/O
+  - DB connection이 연결되면 배치 처리가 완료될 때까지 데이터를 읽어온다 (Timeout 시간이 충분히 길 필요가 있음)
+  - 모든 결과를 메모리에 올리기 때문에 메모리 사용량이 많다
+  - Thread-safe 하지 않다
+
+- **Paging Base**
+  - 페이지 단위로 데이터를 조회하는 방식으로 Page Size 만큼 한번에 데이터를 가지고 온 다음 한 개씩 읽는다 (Offset, Limit 사용)
+  - 한 페이지를 읽을 때마다 Connection을 맺고 끊는다
+  - 페이징 단위의 결과만 메모리에 올려 메모리 사용량이 적다
+  - Thread-safe 하다
 
 #### 2. ItemWriter
   - Chunk 단위로 데이터를 받아 일괄 출력하는 인터페이스
