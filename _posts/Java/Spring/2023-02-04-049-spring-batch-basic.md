@@ -275,7 +275,7 @@ public class Chunk<W> implements Iterable<W> {
 
 ```java
 public interface ItemReader<T> {
-	T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException;
+    T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException;
 }
 ```
 
@@ -309,7 +309,7 @@ public interface ItemReader<T> {
 
 ```java
 public interface ItemWriter<T> {
-	void write(List<? extends T> items) throws Exception;
+    void write(List<? extends T> items) throws Exception;
 }
 ```
 
@@ -317,15 +317,21 @@ public interface ItemWriter<T> {
   - `FlatFileItemWriter` : txt, csv 등 파일
   - `JsonFileItemWriter` : json 파일
   - `JdbcBatchItemWriter` : JDBC
+    - JDBC Batch 기능을 사용해 bulk update 처리
   - `JpaItemWriter` : JPA
+    - Entity를 하나씩 chunk 크기만큼 update 처리
   - `CustomItemWriter` : Custom ItemWriter
 
 #### 3. ItemProcessor
 - 데이터를 출력하기 전에 데이터를 가공, 변형, 필터링 하는 역할
 
+- 구현체
+  - `CompositeItemProcessor` : ItemProcessor들을 체이닝 실행
+  - `ClassifierCompositeItemProcessor` : 라우팅으로 ItemProcessor들 중 하나를 호출
+
 ```java
 public interface ItemProcessor<I, O> {
-	O process(@NonNull I item) throws Exception;
+    O process(@NonNull I item) throws Exception;
 }
 ```
   
