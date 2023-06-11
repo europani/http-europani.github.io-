@@ -22,6 +22,48 @@ implementation "org.springframework.boot:spring-boot-starter-batch"
 ## 구조
 ![image](https://user-images.githubusercontent.com/109575750/216747019-b91c12ea-cb96-4f0c-99bf-55b1a6fb612e.png)
 
+## ExecutionContext
+- 프레임워크에서 Execution의 상태를 저장하는 공유 객체
+- Job 재 시작시 이미 처리한 Row 데이터는 건너뛰고 이후로 수행하도록 할 때 상태 정보를 활용한다
+- 종류 : JobExecution, StepExecution
+
+- JobExecution : 각 Job에 생성되며 Job 간에 공유되지 않는다. 다만, Job에 포함된 Step 간에는 공유된다
+- StepExecution : 각 Step에 생성되며 Step 간에 공유되지 않는다.
+
+```java
+public class ExecutionContext {
+    Map<String, Object> map = new ConcurrentHashMap();
+} 
+```
+
+## Batch Scope
+- Scope : 스프링 컨테이너에서 빈이 관리되는 범위
+  - ex) singleton, prototype, request, session, application 등
+
+- Spring Batch에서만 제공하는 스코프가 존재한다
+  - `@JobScope`, `@StepScpoe`
+  - Job 과 Step 의 빈 생성과 실행에 관여하는 스코프
+  - 해당 스코프가 선언되면 빈이 생성이 어플리케이션 구동시점이 아닌 빈의 실행시점에 이루어진다 (Lazy Binding)
+  - **어플리케이션 구동시점에 프록시 객체를 생성해 놓고 실행시점`step()`에 실제 빈을 생성하면서 value를 바인딩한다**
+
+- `@Value`를 사용해 빈의 실행시점에 값을 주입할 수 있다
+```java
+@Value("#{jobParameters[파라미터명]}")
+@Value("#{jobExecutionContext[파라미터명]”})
+@Value("#{stepExecutionContext[파라미터명]”})
+```
+- @Value 를 사용할 경우 @Bean에 @JobScope, @StepScope 를 정의하지 않으면 오류 발생
+
+### 1. @JobScope
+- Step에 정의
+- @Value : jobParameter, jobExecutionContext 사용가능
+
+### 2. @StepScope
+- Tasklet이나 ItemReader, ItemWriter, ItemProcessor에 정의
+- @Value : jobParameter, jobExecutionContext, stepExecutionContext 사용가능
+
+
+
 ## Job
 - 배치처리 과정을 하나의 단위로 만들어 놓은 객체
 - 1개의 Job에는 1개 이상의 Step이 구성되야 한다 (Job:Step = `1:N`)
@@ -50,11 +92,11 @@ public interface JobLauncher {
 
 ```java
 public class JobParameters implements Serializable {
-    private final Map<String,JobParameter> parameters;
+    private final Map<String, JobParameter> parameters;
 
-	public JobParameters() {
-		this.parameters = new LinkedHashMap<>();
-	}
+    public JobParameters() {
+        this.parameters = new LinkedHashMap<>();
+    }
     ...
 }
 ```
@@ -154,36 +196,36 @@ public interface Step {
 ```java
 public class StepBuilder extends StepBuilderHelper<StepBuilder> {
 
-	// Tasklet 사용
-	public TaskletStepBuilder tasklet(Tasklet tasklet) {
-		return new TaskletStepBuilder(this).tasklet(tasklet);
-	}
+    // Tasklet 사용
+    public TaskletStepBuilder tasklet(Tasklet tasklet) {
+        return new TaskletStepBuilder(this).tasklet(tasklet);
+    }
 
-	// Chunk 기반의 Tasklet 사용
-	public <I, O> SimpleStepBuilder<I, O> chunk(int chunkSize) {
-		return new SimpleStepBuilder<I, O>(this).chunk(chunkSize);
-	}
-	public <I, O> SimpleStepBuilder<I, O> chunk(CompletionPolicy completionPolicy) {
-		return new SimpleStepBuilder<I, O>(this).chunk(completionPolicy);
-	}
+    // Chunk 기반의 Tasklet 사용
+    public <I, O> SimpleStepBuilder<I, O> chunk(int chunkSize) {
+        return new SimpleStepBuilder<I, O>(this).chunk(chunkSize);
+    }
+    public <I, O> SimpleStepBuilder<I, O> chunk(CompletionPolicy completionPolicy) {
+        return new SimpleStepBuilder<I, O>(this).chunk(completionPolicy);
+    }
 
-	// PartitionStep
-	public PartitionStepBuilder partitioner(String stepName, Partitioner partitioner) {
-		return new PartitionStepBuilder(this).partitioner(stepName, partitioner);
-	}
-	public PartitionStepBuilder partitioner(Step step) {
-		return new PartitionStepBuilder(this).step(step);
-	}
+    // PartitionStep
+    public PartitionStepBuilder partitioner(String stepName, Partitioner partitioner) {
+        return new PartitionStepBuilder(this).partitioner(stepName, partitioner);
+    }
+    public PartitionStepBuilder partitioner(Step step) {
+        return new PartitionStepBuilder(this).step(step);
+    }
 
-	// JobStep
-	public JobStepBuilder job(Job job) {
-		return new JobStepBuilder(this).job(job);
-	}
+    // JobStep
+    public JobStepBuilder job(Job job) {
+        return new JobStepBuilder(this).job(job);
+    }
 
-	// FlowStep
-	public FlowStepBuilder flow(Flow flow) {
-		return new FlowStepBuilder(this).flow(flow);
-	}
+    // FlowStep
+    public FlowStepBuilder flow(Flow flow) {
+        return new FlowStepBuilder(this).flow(flow);
+    }
 }
 ```
 
@@ -328,7 +370,7 @@ public interface ItemWriter<T> {
 - 구현체
   - `CompositeItemProcessor` : ItemProcessor들을 체이닝 실행
   - `ClassifierCompositeItemProcessor` : 라우팅으로 ItemProcessor들 중 하나를 호출
-
+  
 ```java
 public interface ItemProcessor<I, O> {
     O process(@NonNull I item) throws Exception;
