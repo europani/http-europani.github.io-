@@ -104,7 +104,7 @@ public class JobParameters implements Serializable {
 ### 4. JobExecution
 - JobInstance의 실행시도 객체
 - JobInstance 실행상태, 시작시간, 종료시간, 생성시간 등의 정보를 저장
-- 실행상태가 `FAILED`이면 재실행 가능하며 새로운 `JobExecution`이 생성됨 
+- ExitStatus가 `FAILED`이면 재실행 가능하며 새로운 `JobExecution`이 생성됨 
     - `COMPLITED`이면 재실행이 불가하며 실행시도시 `JobInstanceAlreadyCompleteException` 발생
 - JobInstance:JobExecution = `1:N`
 
@@ -287,6 +287,7 @@ public interface Tasklet {
 
 ### 2. Chunk 기반 (COT)
 - Chunk기반 tasklet의 구현체 `ChunkOrientedTasklet` 사용
+  - Chunk 마다 새로운 `ChunkOrientedTasklet`을 생성해서 사용한다??? (확인필요)
 - 하나의 큰 덩어리를 N개씩 나누어 처리하는 방식
 - Chunk 단위로 트랜잭션을 처리한다
 ![image](https://user-images.githubusercontent.com/109575750/232186927-13a042e0-2310-41cf-8e6c-a511058fb6f9.png)
@@ -306,6 +307,41 @@ public class Chunk<W> implements Iterable<W> {
     }
 }
 ```
+
+```java
+public class ChunkOrientedTasklet<I> implements Tasklet {
+    private final ChunkProvider<I> chunkProvider;       // reader
+    private final ChunkProcessor<I> chunkProcessor;     // processor, writer
+    
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        ...
+
+        Chunk<I> inputs = (Chunk<I>) chunkContext.getAttribute(INPUTS_KEY);
+        if (inputs == null) {
+            inputs = chunkProvider.provide(contribution);       // (1)
+            ...
+        }
+
+        chunkProcessor.process(contribution, inputs);           // (2)
+        chunkProvider.postProcess(contribution, inputs);
+
+        ...
+
+        chunkContext.removeAttribute(INPUTS_KEY);
+        chunkContext.setComplete();
+        ...
+
+        return RepeatStatus.continueIf(!inputs.isEnd());        // (3)
+
+	}
+}
+```
+
+(1) Item 을 Chunk size 만큼 반복해서 읽은 다음 Chunk<I> 에 저장하고 반환  
+(2) ChunkProvider 로 부터 받은 Chunk<I> 의 아이템 개수만큼 데이터를 가공하고 저장  
+(3) 읽을 Item 이 더 존재하는지 체크해서 존재하면 Chunk 프로세스 반복하고 null 일경우 RepeatStaus.FINISHED 반환하고 Chunk 프로세스 종료
+
 
 - ItemReader, ItemWriter, ItemProcesseor
   - Step 과정에서 Item을 읽어 데이터를 처리한 다음 결과를 처리하는 객체
@@ -378,3 +414,5 @@ public interface ItemProcessor<I, O> {
 ```
   
 ![image](https://user-images.githubusercontent.com/109575750/232303769-922b4275-7acc-4ffe-8f8e-0f17dc1c3ecd.png)
+
+![image](https://github.com/europani/europani.github.io/assets/48157259/c6ccd8f0-40df-437c-9e15-3eb69880310c)
