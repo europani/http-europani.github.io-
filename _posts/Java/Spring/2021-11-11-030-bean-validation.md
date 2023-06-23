@@ -39,6 +39,8 @@ public class MemberDTO {
 ```
 
 - `@NotNull` : null 허용 안함
+  - cf) `@NonNull` : Spring의 어노테이션으로 null 값이 들어오면 NPE를 발생  
+   (`@Validated` 없이 동작, Java의 `@Nonnull`을 wrapping 하고 있음) 
 - `@NotEmpty` : null과 공백값("")을 허용 안함
 - `@NotBlank` : null과 빈값(" ")을 허용 안함
 - `@Max` : 최대 값 설정
