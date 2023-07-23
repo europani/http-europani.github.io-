@@ -54,6 +54,15 @@ $ git checkout master
 $ git merge develop
 ```
 
+- feature 브랜치에서 dev 브랜치 rebase 후 force push
+
+```git
+$ git checkout feat/abc-123
+$ git rebase origin/dev
+... Resolve Conflict
+$ git push -f
+```
+
 
 <hr>
 \<출처>  
