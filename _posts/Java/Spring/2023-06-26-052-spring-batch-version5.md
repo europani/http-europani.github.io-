@@ -268,7 +268,7 @@ public class ExampleStepConfig {
     public Step exampleStep(
             JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder(STEP_NAME, jobRepository)
-                .<Customer, Customer>chunk(jobParameter.getChunkSize(), transactionManager)
+                .<User, User>chunk(jobParameter.getChunkSize(), transactionManager)
                 .reader(exampleItemReader())
                 .writer(exampleItemWriter())
                 .build();
