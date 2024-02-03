@@ -14,15 +14,20 @@ tags: [Design Pattern]
 - Concrete Class : 특정 작업을 처리하는 서브클래스
 
 ### 구현
-- Abstract Class
+- Abstract Class 
+  - Hook(후크) : 추상 클래스에 선언되지만 기본적인 내용만 구현되어 있거나 아무것도 들어 있지 않은 메서드
+  - 후크를 하위 클래스에서 오버라이드 할 수도 있고 그냥 넘어갈 수도 있다
+  - 상황에 따라 알고리즘의 진행을 변경할 수 있다
 
 ```java
 public abstract class Teacher {
-    public void work() {
+    public final void work() {        // 템플릿 메서드
         inside();
         attendance();
         teach();
-        outside();
+        if (!hasNextClass()) {
+          outside();
+        }
     }
 
     // 서브 클래스에서 확장이 필요한 부분
@@ -38,6 +43,10 @@ public abstract class Teacher {
     private void outside() {
         System.out.println("선생님이 강의실을 나갑니다.");
     }
+
+    public boolean hasNextClass() {     // Hook
+        return false;
+    }
     
 }
 ```
@@ -45,10 +54,14 @@ public abstract class Teacher {
 - Concrete Class
 
 ```java
-class KoreanTeacher extends Teacher{
+class KoreanTeacher extends Teacher {
     @Override
     public void teach() {
         System.out.println("선생님이 국어를 수업합니다.");
+    }
+    @Override
+    public boolean hasNextClass() {     
+        return true;
     }
 }
  
@@ -56,6 +69,10 @@ class MathTeacher extends Teacher {
     @Override
     public void teach() {
         System.out.println("선생님이 수학을 수업합니다.");
+    }
+    @Override
+    public boolean hasNextClass() {     
+        return true;
     }
 }
 
@@ -113,3 +130,13 @@ public class Main {
 3. 알고리즘 구조가 복잡할 수록 템플릿을 유지하기 어려워진다
 
 - 템플릿 메소드보다 전략패턴을 선택하면 1, 2번을 해결할 수 있다
+
+### 예시
+- 정렬이 필요한 곳에 `Comparable`를 implement하여 `compareTo()` 구현
+
+
+### 템플릿 메서드 VS 전략
+- 템플릿 메서드
+  - 알고리즘의 개요를 정의하고(템플릿) 일부 처리를 하위 클래스에게 넘겨 불완전한 알고리즘을 보충구현한다
+- 전략
+  - 사용하는 클래스의 알고리즘을 완전히 구현한다
