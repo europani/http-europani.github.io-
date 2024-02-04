@@ -44,6 +44,7 @@ data class personDto(
 @AllArgsConstructor
 public enum Contury {
   KOREA("KO"),
+  JAPAN("JP"),
   USA("US");
 
   private final String code;
@@ -53,7 +54,13 @@ public enum Contury {
 ↓↓↓
 
 ```kotlin
-enum Class Contury(
+enum class Contury(
   private val code: String,
-) 
+) {
+  KOREA("KO"),
+  JAPAN("JP"),
+  USA("US");
+
+  val isAsia get() = this.code == "KO" || "JP"
+}
 ```
