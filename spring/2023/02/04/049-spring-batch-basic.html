@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[Batch] 스프링 배치(Spring Batch) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[Batch] 스프링 배치(Spring Batch)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Spring Batch 배치(Batch) : 일괄 처리 방식을 의미 스프링 배치는 로깅/추적, 트랜잭션 관리, 작업 처리 통계, 작업 재시작, 건너뛰기, 리소스 관리 등 대용량 레코드 처리에 필수적인 기능을 제공 배치가 실패하여 작업 재시작을 하게 된다면 처음부터가 아닌 실패한 지점부터 실행 중복 실행을 막기 위해 성공한 이력이 있는 Batch는 동일한 Parameters로 실행 시 Exception이 발생">
+<meta property="og:description" content="Spring Batch 배치(Batch) : 일괄 처리 방식을 의미 스프링 배치는 로깅/추적, 트랜잭션 관리, 작업 처리 통계, 작업 재시작, 건너뛰기, 리소스 관리 등 대용량 레코드 처리에 필수적인 기능을 제공 배치가 실패하여 작업 재시작을 하게 된다면 처음부터가 아닌 실패한 지점부터 실행 중복 실행을 막기 위해 성공한 이력이 있는 Batch는 동일한 Parameters로 실행 시 Exception이 발생">
+<link rel="canonical" href="https://europani.github.io/spring/2023/02/04/049-spring-batch-basic.html">
+<meta property="og:url" content="https://europani.github.io/spring/2023/02/04/049-spring-batch-basic.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-02-04T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[Batch] 스프링 배치(Spring Batch)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2023-02-04T00:00:00+00:00","datePublished":"2023-02-04T00:00:00+00:00","description":"Spring Batch 배치(Batch) : 일괄 처리 방식을 의미 스프링 배치는 로깅/추적, 트랜잭션 관리, 작업 처리 통계, 작업 재시작, 건너뛰기, 리소스 관리 등 대용량 레코드 처리에 필수적인 기능을 제공 배치가 실패하여 작업 재시작을 하게 된다면 처음부터가 아닌 실패한 지점부터 실행 중복 실행을 막기 위해 성공한 이력이 있는 Batch는 동일한 Parameters로 실행 시 Exception이 발생","headline":"[Batch] 스프링 배치(Spring Batch)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2023/02/04/049-spring-batch-basic.html"},"url":"https://europani.github.io/spring/2023/02/04/049-spring-batch-basic.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[Batch] 스프링 배치(Spring Batch)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-02-04T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-02-04
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 15 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Spring%20Batch">#Spring Batch</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="spring-batch">Spring Batch</h2>
+<ul>
+  <li>배치(Batch) : 일괄 처리 방식을 의미</li>
+  <li>스프링 배치는 로깅/추적, 트랜잭션 관리, 작업 처리 통계, 작업 재시작, 건너뛰기, 리소스 관리 등 대용량 레코드 처리에 필수적인 기능을 제공</li>
+  <li>배치가 실패하여 작업 재시작을 하게 된다면 처음부터가 아닌 실패한 지점부터 실행</li>
+  <li>
+    <p>중복 실행을 막기 위해 성공한 이력이 있는 Batch는 동일한 Parameters로 실행 시 Exception이 발생</p>
+  </li>
+  <li>배치 작업이 필요한 이유
+    <ul>
+      <li>대용량의 비지니스 데이터를 복잡한 작업으로 처리해야하는 경우</li>
+      <li>특정한 시점에 스케줄러를 통해 자동화된 작업이 필요한 경우</li>
+      <li>대용량 데이터의 포맷을 변경, 유효성 검사 등의 작업을 트랜잭션 안에서 처리 후 기록해야하는 경우</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-gradle highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">implementation</span> <span class="s2">"org.springframework.boot:spring-boot-starter-batch"</span>
+</code></pre></div></div>
+
+<h2 id="구조">구조</h2>
+<p><img src="https://user-images.githubusercontent.com/109575750/216747019-b91c12ea-cb96-4f0c-99bf-55b1a6fb612e.png" alt="image"></p>
+
+<h2 id="executioncontext">ExecutionContext</h2>
+<ul>
+  <li>프레임워크에서 Execution의 상태를 저장하는 공유 객체</li>
+  <li>Job 재 시작시 이미 처리한 Row 데이터는 건너뛰고 이후로 수행하도록 할 때 상태 정보를 활용한다</li>
+  <li>
+    <p>종류 : JobExecution, StepExecution</p>
+  </li>
+  <li>JobExecution : 각 Job에 생성되며 Job 간에 공유되지 않는다. 다만, Job에 포함된 Step 간에는 공유된다</li>
+  <li>StepExecution : 각 Step에 생성되며 Step 간에 공유되지 않는다.</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExecutionContext</span> <span class="o">{</span>
+    <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ConcurrentHashMap</span><span class="o">();</span>
+<span class="o">}</span> 
+</code></pre></div></div>
+
+<h2 id="batch-scope">Batch Scope</h2>
+<ul>
+  <li>Scope : 스프링 컨테이너에서 빈이 관리되는 범위
+    <ul>
+      <li>ex) singleton, prototype, request, session, application 등</li>
+    </ul>
+  </li>
+  <li>Spring Batch에서만 제공하는 스코프가 존재한다
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">@JobScope</code>, <code class="language-plaintext highlighter-rouge">@StepScpoe</code>
+</li>
+      <li>Job 과 Step 의 빈 생성과 실행에 관여하는 스코프</li>
+      <li>해당 스코프가 선언되면 빈이 생성이 어플리케이션 구동시점이 아닌 빈의 실행시점에 이루어진다 (Lazy Binding)</li>
+      <li><strong>어플리케이션 구동시점에 프록시 객체를 생성해 놓고 실행시점<code class="language-plaintext highlighter-rouge">step()</code>에 실제 빈을 생성하면서 value를 바인딩한다</strong></li>
+    </ul>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@Value</code>를 사용해 빈의 실행시점에 값을 주입할 수 있다
+    <div class="language-java highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nd">@Value</span><span class="o">(</span><span class="s">"#{jobParameters[파라미터명]}"</span><span class="o">)</span>
+<span class="nd">@Value</span><span class="o">(</span><span class="s">"#{jobExecutionContext[파라미터명]”})
+@Value("</span><span class="err">#</span><span class="o">{</span><span class="n">stepExecutionContext</span><span class="o">[</span><span class="n">파라미터명</span><span class="o">]</span><span class="err">”</span><span class="o">})</span>
+</code></pre></div>    </div>
+  </li>
+  <li>@Value 를 사용할 경우 @Bean에 @JobScope, @StepScope 를 정의하지 않으면 오류 발생</li>
+</ul>
+
+<h3 id="1-jobscope">1. @JobScope</h3>
+<ul>
+  <li>Step에 정의</li>
+  <li>@Value : jobParameter, jobExecutionContext 사용가능</li>
+</ul>
+
+<h3 id="2-stepscope">2. @StepScope</h3>
+<ul>
+  <li>Tasklet이나 ItemReader, ItemWriter, ItemProcessor에 정의</li>
+  <li>@Value : jobParameter, jobExecutionContext, stepExecutionContext 사용가능</li>
+</ul>
+
+<h2 id="job">Job</h2>
+<ul>
+  <li>배치처리 과정을 하나의 단위로 만들어 놓은 객체</li>
+  <li>1개의 Job에는 1개 이상의 Step이 구성되야 한다 (Job:Step = <code class="language-plaintext highlighter-rouge">1:N</code>)</li>
+  <li>구현체 : <code class="language-plaintext highlighter-rouge">SimpleJob</code>, <code class="language-plaintext highlighter-rouge">FlowJob</code>
+</li>
+</ul>
+
+<h3 id="1-joblauncher">1. JobLauncher</h3>
+<ul>
+  <li>Job과 JobParameter를 사용하여 Job을 실행시키는 객체</li>
+  <li>배치처리를 완료 한 다음에 Client에게 JobExecution을 반환한다 (동기적 실행)
+    <ul>
+      <li>비동기적 실행도 가능함</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">JobLauncher</span> <span class="o">{</span>
+    <span class="nc">JobExecution</span> <span class="nf">run</span><span class="o">(</span><span class="nc">Job</span> <span class="n">job</span><span class="o">,</span> <span class="nc">JobParameters</span> <span class="n">jobParameters</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="2-jobinstance">2. JobInstance</h3>
+<ul>
+  <li>Job의 논리적 실행단위 객체로써 고유하게 식별 가능한 작업실행</li>
+  <li>JobName + JobParameter 가 같을 경우 동일한 JobInstance를 리턴해 Exception 발생 (중복불가)</li>
+  <li>Job:JobInstance = <code class="language-plaintext highlighter-rouge">1:N</code>
+</li>
+</ul>
+
+<h3 id="3-jobparameters">3. JobParameters</h3>
+<ul>
+  <li>Job 실행 시 사용되는 파라미터</li>
+  <li>여러 개의 JobInstance를 구분하기 위한 용도</li>
+  <li>JobParameters:JobInstance = <code class="language-plaintext highlighter-rouge">1:1</code>
+</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">JobParameters</span> <span class="kd">implements</span> <span class="nc">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">JobParameter</span><span class="o">&gt;</span> <span class="n">parameters</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">JobParameters</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">parameters</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LinkedHashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="o">}</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="4-jobexecution">4. JobExecution</h3>
+<ul>
+  <li>JobInstance의 실행시도 객체</li>
+  <li>JobInstance 실행상태, 시작시간, 종료시간, 생성시간 등의 정보를 저장</li>
+  <li>ExitStatus가 <code class="language-plaintext highlighter-rouge">FAILED</code>이면 재실행 가능하며 새로운 <code class="language-plaintext highlighter-rouge">JobExecution</code>이 생성됨
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">COMPLITED</code>이면 재실행이 불가하며 실행시도시 <code class="language-plaintext highlighter-rouge">JobInstanceAlreadyCompleteException</code> 발생</li>
+    </ul>
+  </li>
+  <li>JobInstance:JobExecution = <code class="language-plaintext highlighter-rouge">1:N</code>
+</li>
+</ul>
+
+<h3 id="5-jobrepository">5. JobRepository</h3>
+<ul>
+  <li>모든 배치 정보를 갖고 있는 메커니즘 (메타데이터 저장소)</li>
+  <li>Job이 실행되게 되면 JobRepository에 JobExecution과 StepExecution을 생성하게 되며 JobRepository에서 Execution 정보들을 DB에 저장하고 조회하며 사용한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@RequiredArgsConstructor</span>
+<span class="nd">@EnableBatchProcessing</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleJobConfig</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">JOB_NAME</span> <span class="o">=</span> <span class="s">"example"</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">JobBuilderFactory</span> <span class="n">jobBuilderFactory</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Step</span> <span class="n">taskStep</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">Step</span> <span class="n">chunkStep</span><span class="o">;</span>
+
+    <span class="nd">@Bean</span><span class="o">(</span><span class="no">JOB_NAME</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">Job</span> <span class="nf">ExampleJob</span><span class="o">(){</span>
+
+        <span class="nc">Job</span> <span class="n">exampleJob</span> <span class="o">=</span> <span class="n">jobBuilderFactory</span>  <span class="c1">// JobBuilderFactory</span>
+                <span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="no">JOB_NAME</span><span class="o">)</span>              <span class="c1">// JobBuilder</span>
+                <span class="o">.</span><span class="na">start</span><span class="o">(</span><span class="n">taskStep</span><span class="o">)</span>         <span class="c1">// SimpleJobBuilder</span>
+                <span class="o">.</span><span class="na">next</span><span class="o">(</span><span class="n">chunkStep</span><span class="o">)</span>
+ <span class="c1">//             .incrementer(new UniqueRunIdIncrementer())</span>
+                <span class="o">.</span><span class="na">incrementer</span><span class="o">(</span><span class="k">new</span> <span class="nc">CustomJobParametersIncrementer</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">validator</span><span class="o">(</span><span class="k">new</span> <span class="nc">CustomJobParametersValidator</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">preventRestart</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>              <span class="c1">// default : true</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>                   <span class="c1">// SimpleJob</span>
+
+        <span class="k">return</span> <span class="n">exampleJob</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Validator</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomJobParametersValidator</span> <span class="kd">implements</span> <span class="nc">JobParametersValidator</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">validate</span><span class="o">(</span><span class="nc">JobParameters</span> <span class="n">parameters</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">JobParametersInvalidException</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">parameters</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"name"</span><span class="o">)</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">JobParametersInvalidException</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Incrementer</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomJobParametersIncrementer</span> <span class="kd">implements</span> <span class="nc">JobParametersIncrementer</span> <span class="o">{</span>
+    <span class="kd">static</span> <span class="kd">final</span> <span class="nc">SimpleDateFormat</span> <span class="n">format</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SimpleDateFormat</span><span class="o">(</span><span class="s">"yyyyMMdd-hhmmss"</span><span class="o">);</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">JobParameters</span> <span class="nf">getNext</span><span class="o">(</span><span class="nc">JobParameters</span> <span class="n">parameters</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">id</span> <span class="o">=</span> <span class="n">format</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="k">new</span> <span class="nc">Date</span><span class="o">());</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">JobParametersBuilder</span><span class="o">().</span><span class="na">addString</span><span class="o">(</span><span class="s">"run.id"</span><span class="o">,</span> <span class="n">id</span><span class="o">).</span><span class="na">toJobParameters</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="step">Step</h2>
+<ul>
+  <li>Job의 배치처리 과정을 정의하고 순차적으로 실행되는 객체 (Job의 세부 과정)</li>
+  <li>구현체 : <code class="language-plaintext highlighter-rouge">TaskletStep</code>, <code class="language-plaintext highlighter-rouge">PartitionStep</code>, <code class="language-plaintext highlighter-rouge">JobStep</code>, <code class="language-plaintext highlighter-rouge">FlowStep</code>
+</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Step</span> <span class="o">{</span>
+    <span class="kt">void</span> <span class="nf">execute</span><span class="o">(</span><span class="nc">StepExecution</span> <span class="n">stepExecution</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">JobInterruptedException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="1-stepexecution">1. StepExecution</h3>
+<ul>
+  <li>Step의 실행시도 객체, Step별로 StepExecution이 생성됨</li>
+  <li>JobExecution에 저장되는 정보 외에 read 수, write 수, commit 수, skip 수 등의 정보도 저장</li>
+  <li>JobExecution:StepExecution = <code class="language-plaintext highlighter-rouge">1:N</code>
+</li>
+  <li>Job이 재시작되더라도 이미 성공된 Step은 스킵되고 실패한 Step만 실행된다 (Step의 <code class="language-plaintext highlighter-rouge">allowStartIfComplete=true</code>이면 스킵되지 않게 설정가능  )</li>
+  <li>
+    <p>Step의 StepExecution이 하나라도 실패하면 JobExecution은 실패처리 된다
+<img src="https://user-images.githubusercontent.com/109575750/230754683-ca8b5eec-a3ee-4f66-8fde-843867b9118b.png" alt="image"></p>
+  </li>
+  <li>StepBuilder
+    <ul>
+      <li>호출하는 메서드에 따라 사용하는 하위 StepBuilder가 다르며 그에 따른 Step이 생성된다</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StepBuilder</span> <span class="kd">extends</span> <span class="nc">StepBuilderHelper</span><span class="o">&lt;</span><span class="nc">StepBuilder</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="c1">// Tasklet 사용</span>
+    <span class="kd">public</span> <span class="nc">TaskletStepBuilder</span> <span class="nf">tasklet</span><span class="o">(</span><span class="nc">Tasklet</span> <span class="n">tasklet</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">TaskletStepBuilder</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">tasklet</span><span class="o">(</span><span class="n">tasklet</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Chunk 기반의 Tasklet 사용</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">I</span><span class="o">,</span> <span class="no">O</span><span class="o">&gt;</span> <span class="nc">SimpleStepBuilder</span><span class="o">&lt;</span><span class="no">I</span><span class="o">,</span> <span class="no">O</span><span class="o">&gt;</span> <span class="nf">chunk</span><span class="o">(</span><span class="kt">int</span> <span class="n">chunkSize</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">SimpleStepBuilder</span><span class="o">&lt;</span><span class="no">I</span><span class="o">,</span> <span class="no">O</span><span class="o">&gt;(</span><span class="k">this</span><span class="o">).</span><span class="na">chunk</span><span class="o">(</span><span class="n">chunkSize</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">I</span><span class="o">,</span> <span class="no">O</span><span class="o">&gt;</span> <span class="nc">SimpleStepBuilder</span><span class="o">&lt;</span><span class="no">I</span><span class="o">,</span> <span class="no">O</span><span class="o">&gt;</span> <span class="nf">chunk</span><span class="o">(</span><span class="nc">CompletionPolicy</span> <span class="n">completionPolicy</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">SimpleStepBuilder</span><span class="o">&lt;</span><span class="no">I</span><span class="o">,</span> <span class="no">O</span><span class="o">&gt;(</span><span class="k">this</span><span class="o">).</span><span class="na">chunk</span><span class="o">(</span><span class="n">completionPolicy</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// PartitionStep</span>
+    <span class="kd">public</span> <span class="nc">PartitionStepBuilder</span> <span class="nf">partitioner</span><span class="o">(</span><span class="nc">String</span> <span class="n">stepName</span><span class="o">,</span> <span class="nc">Partitioner</span> <span class="n">partitioner</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">PartitionStepBuilder</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">partitioner</span><span class="o">(</span><span class="n">stepName</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="nc">PartitionStepBuilder</span> <span class="nf">partitioner</span><span class="o">(</span><span class="nc">Step</span> <span class="n">step</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">PartitionStepBuilder</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">step</span><span class="o">(</span><span class="n">step</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// JobStep</span>
+    <span class="kd">public</span> <span class="nc">JobStepBuilder</span> <span class="nf">job</span><span class="o">(</span><span class="nc">Job</span> <span class="n">job</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">JobStepBuilder</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">job</span><span class="o">(</span><span class="n">job</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// FlowStep</span>
+    <span class="kd">public</span> <span class="nc">FlowStepBuilder</span> <span class="nf">flow</span><span class="o">(</span><span class="nc">Flow</span> <span class="n">flow</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">FlowStepBuilder</span><span class="o">(</span><span class="k">this</span><span class="o">).</span><span class="na">flow</span><span class="o">(</span><span class="n">flow</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="nd">@JobScope</span>
+<span class="nd">@RequiredArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleStepConfig</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">final</span> <span class="nc">StepBuilderFactory</span> <span class="n">stepBuilderFactory</span><span class="o">;</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">Step</span> <span class="nf">taskStep</span><span class="o">(){</span>
+        <span class="nc">Step</span> <span class="n">taskStep</span> <span class="o">=</span> <span class="n">stepBuilderFactory</span>     <span class="c1">// StepBuilderFactory</span>
+                <span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"taskStep"</span><span class="o">)</span>               <span class="c1">// StepBuilder</span>
+                <span class="o">.</span><span class="na">tasklet</span><span class="o">((</span><span class="n">contribution</span><span class="o">,</span> <span class="n">chunkContext</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>  <span class="c1">// TaskletStepBuilder</span>
+                    <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"taskStep is executed!"</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="nc">RepeatStatus</span><span class="o">.</span><span class="na">FINISHED</span><span class="o">;</span>
+                <span class="o">})</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>                       <span class="c1">// TaskletStep</span>
+
+        <span class="k">return</span> <span class="n">taskStep</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">Step</span> <span class="nf">chunkStep</span><span class="o">(){</span>
+        <span class="nc">Step</span> <span class="n">chunkStep</span> <span class="o">=</span> <span class="n">stepBuilderFactory</span>     <span class="c1">// StepBuilderFactory</span>
+                <span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"chunkStep"</span><span class="o">)</span>               <span class="c1">// StepBuilder</span>
+                <span class="o">.&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span><span class="n">chunk</span><span class="o">(</span><span class="mi">10</span><span class="o">)</span>      <span class="c1">// SimpleStepBuilder</span>
+                <span class="o">.</span><span class="na">reader</span><span class="o">(</span><span class="k">new</span> <span class="nc">CustomReader</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">processor</span><span class="o">(</span><span class="k">new</span> <span class="nc">CustomProcessor</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">writer</span><span class="o">(</span><span class="k">new</span> <span class="nc">CustomWriter</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>                       <span class="c1">// TaskletStep</span>
+
+        <span class="k">return</span> <span class="n">chunkStep</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="tasklet">Tasklet</h2>
+<ul>
+  <li>Step 내에서 실행되는 객체, 주로 단일 task를 수행</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">TaskletStep</code>에 의해 반복적으로 실행(While loop)되며 반환값에 따라 실행/종료 된다
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">RepeatStatus.CONTINUABLE</code> : 반복</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">RepeatStatus.FINISHED</code> : 종료</li>
+    </ul>
+  </li>
+  <li>Step:Tasklet = <code class="language-plaintext highlighter-rouge">1:1</code>
+</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Tasklet</span> <span class="o">{</span>
+    <span class="nd">@Nullable</span>
+    <span class="nc">RepeatStatus</span> <span class="nf">execute</span><span class="o">(</span><span class="nc">StepContribution</span> <span class="n">contribution</span><span class="o">,</span> <span class="nc">ChunkContext</span> <span class="n">chunkContext</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p><img src="https://user-images.githubusercontent.com/109575750/232190334-20a17381-27b9-45ac-a2fb-ef36aaceac0d.png" alt="image"></p>
+
+<h3 id="1-task-기반">1. Task 기반</h3>
+<ul>
+  <li>단일 작업 기반으로 처리하는 방식
+<img src="https://user-images.githubusercontent.com/109575750/232186883-8e9b2f79-b155-46ff-ad97-9dee19f10585.png" alt="image">
+</li>
+</ul>
+
+<h3 id="2-chunk-기반-cot">2. Chunk 기반 (COT)</h3>
+<ul>
+  <li>Chunk기반 tasklet의 구현체 <code class="language-plaintext highlighter-rouge">ChunkOrientedTasklet</code> 사용
+    <ul>
+      <li>Chunk 마다 새로운 <code class="language-plaintext highlighter-rouge">ChunkOrientedTasklet</code>을 생성해서 사용한다??? (확인필요)</li>
+    </ul>
+  </li>
+  <li>하나의 큰 덩어리를 N개씩 나누어 처리하는 방식</li>
+  <li>Chunk 단위로 트랜잭션을 처리한다
+<img src="https://user-images.githubusercontent.com/109575750/232186927-13a042e0-2310-41cf-8e6c-a511058fb6f9.png" alt="image">
+</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Chunk</span><span class="o">&lt;</span><span class="no">W</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="nc">Iterable</span><span class="o">&lt;</span><span class="no">W</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="no">W</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">SkipWrapper</span><span class="o">&lt;</span><span class="no">W</span><span class="o">&gt;&gt;</span> <span class="n">skips</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Exception</span><span class="o">&gt;</span> <span class="n">errors</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">add</span><span class="o">(</span><span class="no">W</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">items</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChunkIterator</span> <span class="kd">implements</span> <span class="nc">Iterator</span><span class="o">&lt;</span><span class="no">W</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="o">...</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChunkOrientedTasklet</span><span class="o">&lt;</span><span class="no">I</span><span class="o">&gt;</span> <span class="kd">implements</span> <span class="nc">Tasklet</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">ChunkProvider</span><span class="o">&lt;</span><span class="no">I</span><span class="o">&gt;</span> <span class="n">chunkProvider</span><span class="o">;</span>       <span class="c1">// reader</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">ChunkProcessor</span><span class="o">&lt;</span><span class="no">I</span><span class="o">&gt;</span> <span class="n">chunkProcessor</span><span class="o">;</span>     <span class="c1">// processor, writer</span>
+    
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">RepeatStatus</span> <span class="nf">execute</span><span class="o">(</span><span class="nc">StepContribution</span> <span class="n">contribution</span><span class="o">,</span> <span class="nc">ChunkContext</span> <span class="n">chunkContext</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="o">...</span>
+
+        <span class="nc">Chunk</span><span class="o">&lt;</span><span class="no">I</span><span class="o">&gt;</span> <span class="n">inputs</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Chunk</span><span class="o">&lt;</span><span class="no">I</span><span class="o">&gt;)</span> <span class="n">chunkContext</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="no">INPUTS_KEY</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">inputs</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="n">chunkProvider</span><span class="o">.</span><span class="na">provide</span><span class="o">(</span><span class="n">contribution</span><span class="o">);</span>       <span class="c1">// (1)</span>
+            <span class="o">...</span>
+        <span class="o">}</span>
+
+        <span class="n">chunkProcessor</span><span class="o">.</span><span class="na">process</span><span class="o">(</span><span class="n">contribution</span><span class="o">,</span> <span class="n">inputs</span><span class="o">);</span>           <span class="c1">// (2)</span>
+        <span class="n">chunkProvider</span><span class="o">.</span><span class="na">postProcess</span><span class="o">(</span><span class="n">contribution</span><span class="o">,</span> <span class="n">inputs</span><span class="o">);</span>
+
+        <span class="o">...</span>
+
+        <span class="n">chunkContext</span><span class="o">.</span><span class="na">removeAttribute</span><span class="o">(</span><span class="no">INPUTS_KEY</span><span class="o">);</span>
+        <span class="n">chunkContext</span><span class="o">.</span><span class="na">setComplete</span><span class="o">();</span>
+        <span class="o">...</span>
+
+        <span class="k">return</span> <span class="nc">RepeatStatus</span><span class="o">.</span><span class="na">continueIf</span><span class="o">(!</span><span class="n">inputs</span><span class="o">.</span><span class="na">isEnd</span><span class="o">());</span>        <span class="c1">// (3)</span>
+
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>(1) Item 을 Chunk size 만큼 반복해서 읽은 다음 Chunk<i> 에 저장하고 반환<br>
+(2) ChunkProvider 로 부터 받은 Chunk<i> 의 아이템 개수만큼 데이터를 가공하고 저장<br>
+(3) 읽을 Item 이 더 존재하는지 체크해서 존재하면 Chunk 프로세스 반복하고 null 일경우 RepeatStaus.FINISHED 반환하고 Chunk 프로세스 종료</i></i></p>
+
+<ul>
+  <li>ItemReader, ItemWriter, ItemProcesseor
+    <ul>
+      <li>Step 과정에서 Item을 읽어 데이터를 처리한 다음 결과를 처리하는 객체</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">ItemReader</code>와 <code class="language-plaintext highlighter-rouge">ItemProcesseor</code>는 Chunk 내의 개별 item을 처리하지만 <code class="language-plaintext highlighter-rouge">ItemWriter</code>는 Chunk 모든 items를 일괄 처리 한다</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">ItemReader</code>와 <code class="language-plaintext highlighter-rouge">ItemWriter</code>는 필수요소 지만 <code class="language-plaintext highlighter-rouge">ItemProcesseor</code>는 선택요소이다</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="1-itemreader">1. ItemReader</h4>
+<ul>
+  <li>input 데이터를 읽어오는 인터페이스</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ItemReader</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="no">T</span> <span class="nf">read</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">,</span> <span class="nc">UnexpectedInputException</span><span class="o">,</span> <span class="nc">ParseException</span><span class="o">,</span> <span class="nc">NonTransientResourceException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>구현체
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">FlatFileItemReader</code> : txt, csv 등 파일</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JsonItemReader</code> : json 파일</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">MultiResourceItemReader</code> : 여러 개의 파일 조합</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JdbcCursorItemReader</code> : JDBC Cursor</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JpaCursorItemReader</code> : JPA Cursor</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JdbcPagingItemReader</code> : JDBC Paging</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JpaPagingItemReader</code> : JPA Paging</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">SynchronizeditemStreamReader</code> : Thread-safe ItemReader</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">CustomItemReader</code> : Custom ItemReader</li>
+    </ul>
+  </li>
+</ul>
+
+<p>* JDBC</p>
+<ul>
+  <li>Cursor Base
+    <ul>
+      <li>현재 행에 커서를 유지하며 다음 데이터를 호출하면 다음 행으로 커서를 이동하며 데이터 반환을 이루는 Streaming 방식의 I/O</li>
+      <li>DB connection이 연결되면 배치 처리가 완료될 때까지 데이터를 읽어온다 (Timeout 시간이 충분히 길 필요가 있음)</li>
+      <li>모든 결과를 메모리에 올리기 때문에 메모리 사용량이 많다</li>
+      <li>Thread-safe 하지 않다</li>
+    </ul>
+  </li>
+  <li>
+<strong>Paging Base</strong>
+    <ul>
+      <li>페이지 단위로 데이터를 조회하는 방식으로 Page Size 만큼 한번에 데이터를 가지고 온 다음 한 개씩 읽는다 (Offset, Limit 사용)</li>
+      <li>한 페이지를 읽을 때마다 Connection을 맺고 끊는다</li>
+      <li>페이징 단위의 결과만 메모리에 올려 메모리 사용량이 적다</li>
+      <li>Thread-safe 하다</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="2-itemwriter">2. ItemWriter</h4>
+<ul>
+  <li>Chunk 단위로 데이터를 받아 일괄 출력하는 인터페이스</li>
+  <li>출력이 완료되면 트랜잭션이 종료되고 새로운 Chunk 단위 프로세스로 이동한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ItemWriter</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kt">void</span> <span class="nf">write</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="no">T</span><span class="o">&gt;</span> <span class="n">items</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>구현체
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">FlatFileItemWriter</code> : txt, csv 등 파일</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JsonFileItemWriter</code> : json 파일</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JdbcBatchItemWriter</code> : JDBC
+        <ul>
+          <li>JDBC Batch 기능을 사용해 bulk update 처리</li>
+        </ul>
+      </li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JpaItemWriter</code> : JPA
+        <ul>
+          <li>Entity를 하나씩 chunk 크기만큼 update 처리</li>
+        </ul>
+      </li>
+      <li>
+<code class="language-plaintext highlighter-rouge">CustomItemWriter</code> : Custom ItemWriter</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="3-itemprocessor">3. ItemProcessor</h4>
+<ul>
+  <li>
+    <p>데이터를 출력하기 전에 데이터를 가공, 변형, 필터링 하는 역할</p>
+  </li>
+  <li>
+    <p>구현체</p>
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">CompositeItemProcessor</code> : ItemProcessor들을 체이닝 실행</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">ClassifierCompositeItemProcessor</code> : 라우팅으로 ItemProcessor들 중 하나를 호출</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ItemProcessor</span><span class="o">&lt;</span><span class="no">I</span><span class="o">,</span> <span class="no">O</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="no">O</span> <span class="nf">process</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="no">I</span> <span class="n">item</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/109575750/232303769-922b4275-7acc-4ffe-8f8e-0f17dc1c3ecd.png" alt="image"></p>
+
+<p><img src="https://github.com/europani/europani.github.io/assets/48157259/c6ccd8f0-40df-437c-9e15-3eb69880310c" alt="image"></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2022/12/20/048-logback.html" title="[Spring] Logging - logback 프레임워크">[Spring] Logging - logback 프레임워크</a><a class="next" href="/spring/2023/04/29/050-spring-batch-error-handling.html" title="[Batch] 반복 및 에러처리">[Batch] 반복 및 에러처리</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/javascript/2020/04/23/008-casting.html" title="[Batch] 반복 및 에러처리">타입 변환(캐스팅)</a></li>
+<li><a class="post-link" href="/git/2020/03/28/004-barnch-conflict-command.html" title="[Batch] 반복 및 에러처리">Git 명령어(branch&amp;conflict)</a></li>
+<li><a class="post-link" href="/javascript/2020/07/27/029-Jquery.html" title="[Batch] 반복 및 에러처리">[JQuery] 기본</a></li>
+<li><a class="post-link" href="/css/2020/07/14/009-media-query.html" title="[Batch] 반복 및 에러처리">반응형 웹(미디어 쿼리)</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2023/02/04/049-spring-batch-basic.html';
+      this.page.identifier = 'https://europani.github.io/spring/2023/02/04/049-spring-batch-basic.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

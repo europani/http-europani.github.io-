@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[스프링] Spring JDBC | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[스프링] Spring JDBC">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="JDBC : Java DataBase Connectivity, 자바에서 데이터베이스에 접속할 수 있도록 하는 자바 API">
+<meta property="og:description" content="JDBC : Java DataBase Connectivity, 자바에서 데이터베이스에 접속할 수 있도록 하는 자바 API">
+<link rel="canonical" href="https://europani.github.io/spring/2020/08/02/005-JDBC.html">
+<meta property="og:url" content="https://europani.github.io/spring/2020/08/02/005-JDBC.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-08-02T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[스프링] Spring JDBC">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-08-02T00:00:00+00:00","datePublished":"2020-08-02T00:00:00+00:00","description":"JDBC : Java DataBase Connectivity, 자바에서 데이터베이스에 접속할 수 있도록 하는 자바 API","headline":"[스프링] Spring JDBC","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2020/08/02/005-JDBC.html"},"url":"https://europani.github.io/spring/2020/08/02/005-JDBC.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[스프링] Spring JDBC</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-08-02T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-08-02
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Spring">#Spring</a><a class="post-tag" href="/tags.html#JDBC">#JDBC</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <ul>
+  <li>JDBC : Java DataBase Connectivity, 자바에서 데이터베이스에 접속할 수 있도록 하는 자바 API</li>
+</ul>
+
+<p><img src="https://blog.kakaocdn.net/dn/PygLx/btqHT0qutsP/tid8pWvGMNxH5qubKSS5Z1/img.png" alt=""></p>
+
+<h3 id="jdbc-표준-인터페이스">JDBC 표준 인터페이스</h3>
+<ul>
+  <li>자바는 3가지 기능을 표준 인터페이스로 정의해 놓았다.
+<img src="https://user-images.githubusercontent.com/48157259/171997866-af3f5c2d-0cca-4b38-a0a8-48e223d97f0b.png" alt="">
+</li>
+</ul>
+
+<ol>
+  <li>Connection : 데이터베이스와 연결 <code class="language-plaintext highlighter-rouge">java.sql.Connection</code>
+    <ul>
+      <li>주로 TCP/IP를 사용해 커넥션을 연결한다</li>
+    </ul>
+  </li>
+  <li>Statement : SQL 전달 <code class="language-plaintext highlighter-rouge">java.sql.Statement</code>
+    <ul>
+      <li>애플리케이션 서버는 DB가 이해할 수 있는 SQL을 연결된 커넥션을 통해 DB에 전달한다</li>
+    </ul>
+  </li>
+  <li>ResultSet : 결과 응답 <code class="language-plaintext highlighter-rouge">java.sql.ResultSet</code>
+    <ul>
+      <li>DB는 전달된 SQL을 수행하고 그 결과를 응답한다</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="jdbc-드라이버">JDBC 드라이버</h3>
+<p><img src="https://user-images.githubusercontent.com/48157259/171997324-cadef9d4-8e9b-44ca-8f5d-916279a82e21.png" alt=""></p>
+<ul>
+  <li>DBMS는 라이브러리를 통해 자신의 플랫폼에 맞는 구현체를 제공한다<br>
+  ex) MySQL JDBC 드라이버, H2 JDBC 드라이버 등</li>
+  <li>각 드라이버는 JDBC의 <code class="language-plaintext highlighter-rouge">Connection</code> 인터페이스를 구현한 커넥션 구현체를 제공한다<br>
+  ex) <code class="language-plaintext highlighter-rouge">org.h2.jdbc.JdbcConnection</code>
+</li>
+</ul>
+
+<h3 id="퍼시스턴스-프레임워크">퍼시스턴스 프레임워크</h3>
+<ul>
+  <li>데이터의 저장, 조회, 변경, 삭제를 다루는 클래스 및 설정 파일의 집합</li>
+  <li>이를 사용함으로써 JDBC 프로그래밍의 복잡함이나 번거로움 없이 간단하게 DB와 연동할 수 있다</li>
+</ul>
+
+<h4 id="1-sql-mapper">1. SQL Mapper</h4>
+<ul>
+  <li>MyBatis, JDBCTemplate
+<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fb9G6OP%2FbtqI1L0moRl%2F7KCbKSZvFKmGVeG9lDArE0%2Fimg.png" alt="">
+</li>
+  <li>Object와 SQL의 필드를 맵핑하여 데이터를 객체화</li>
+</ul>
+
+<h4 id="2-orm">2. ORM</h4>
+<ul>
+  <li>JPA
+<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FdrRiaF%2FbtqI255r9T0%2FSug2kOVKtO53Zggyf0RJU0%2Fimg.png" alt="">
+</li>
+  <li>Object와 관계형 DB의 테이블을 맵핑하여 데이터를 객체화</li>
+  <li>장점 : 반복적인 SQL 작성을 할 필요가 없어진다, DBMS에 종속적이지 않는다(Dialect 제공)</li>
+  <li>단점 : 직접 SQL을 실행하는 것보다 성능이 떨어질 수 있다</li>
+</ul>
+
+<h3 id="datasource">DataSource</h3>
+<ul>
+  <li>
+<strong>커넥션을 획득하는 방법</strong>을 추상화한 인터페이스 <code class="language-plaintext highlighter-rouge">javax.sql.DataSource</code>
+</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">DataSource</span> <span class="o">{</span>
+    <span class="nc">Connection</span> <span class="nf">getConnection</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">SQLException</span><span class="o">;</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="데이터소스-자동등록">데이터소스 자동등록</h4>
+<ul>
+  <li>스프링부트는 DataSource를 스프링 빈으로 자동으로 등록한다</li>
+  <li>이 때, 스프링부트는 <strong>설정파일</strong>을 통해 데이터소스를 판별하고 적절한 <code class="language-plaintext highlighter-rouge">DataSource</code>와 <code class="language-plaintext highlighter-rouge">TransactionManager</code>를 빈으로 등록한다</li>
+</ul>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">spring.datasource.url</span><span class="p">=</span><span class="s">jdbc:h2:tcp://localhost/~/test</span>
+<span class="py">spring.datasource.username</span><span class="p">=</span><span class="s">sa</span>
+<span class="py">spring.datasource.password</span><span class="p">=</span>
+</code></pre></div></div>
+
+<p><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/data.html#data.sql.datasource.production">Spring Docs About DataSource</a></p>
+
+<h4 id="커넥션-풀">커넥션 풀</h4>
+<ul>
+  <li>매 요청마다 커넥션을 생성하면 시간과 리소스를 많이 소모하기 때문에 <strong>커넥션을 미리 생성해 두고 풀에 보관하며 사용하는 방법</strong>
+</li>
+  <li>대부분의 커넥션 풀은 <code class="language-plaintext highlighter-rouge">DataSource</code>를 구현하고 있다</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/171998465-47ff4c3c-85ef-4f34-8c3e-133b324e827e.png" alt=""></p>
+
+<ul>
+  <li>사용자 요청마다 커넥션을 생성하면 커넥션은 세션을 만들고 세션은 트랜잭션을 시작한다</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/172029619-f63e8514-1714-4f1b-8c89-5085ecc1c2de.png" alt=""></p>
+
+<h3 id="jdbctemplate">JdbcTemplate</h3>
+<ul>
+  <li>Spring JDBC 접근 방법 중 하나, 템플릿을 제공해 간단하게 JDBC를 사용할 수 있다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">SQL</code>과 <code class="language-plaintext highlighter-rouge">파라미터</code>만 넣어주면 된다</li>
+  <li>순서 기반 파라미터 바인딩을 지원
+    <ul>
+      <li>cf) <code class="language-plaintext highlighter-rouge">NamedParameterJdbcTemplate</code>: 이름 기반 파라미터 바인딩(권장)</li>
+    </ul>
+  </li>
+  <li>동적쿼리를 작성하기 힘들다
+    <ul>
+      <li>SQL String에 <code class="language-plaintext highlighter-rouge">+=</code>로 계속해서 추가해 나가야 한다</li>
+      <li>MyBatis를 사용하면 더 쉽게 작성할 수 있다</li>
+    </ul>
+  </li>
+</ul>
+
+<p><br></p>
+
+<ul>
+  <li>args : 파라미터 바인딩값(? 갯수만큼)</li>
+  <li>rowMapper : ResultSet으로부터 데이터를 읽어와 객체를 생성해주는 래퍼 </li>
+</ul>
+
+<ol>
+  <li>
+<code class="language-plaintext highlighter-rouge">query(String sql, Object[] args, RowMapper rowMapper)</code>
+    <ul>
+      <li>
+<strong>select</strong> 문 수행 결과가 여러개일 경우</li>
+    </ul>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">queryForObject(String sql, Object[] args, RowMapper rowMapper)</code>
+    <ul>
+      <li>select문 수행 결과가 1개일 경우</li>
+    </ul>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">queryForList(String sql, Object[] args, Class elementType)</code>
+    <ul>
+      <li>select문 수행 결과의 속성이 1개일 경우</li>
+      <li>elementType : select한 칼럼 타입</li>
+    </ul>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">update(String sql, Object[] args)</code>
+    <ul>
+      <li>
+<strong>insert, update, delete</strong> 문 수행</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="mybatis">MyBatis</h3>
+<p><a href="https://europani.github.io/spring/2020/09/18/010-mybatis.html">Mybatis 기초</a><br>
+<a href="https://europani.github.io/spring/2020/09/20/012-mybatis-colletion.html">Mybatis ResultMap, Association, Collection</a></p>
+
+<h3 id="jpa">JPA</h3>
+<p><a href="https://europani.github.io/spring/2020/12/02/017-JPA.html">ORM과 Hibernate 구현체</a><br>
+<a href="https://europani.github.io/spring/2021/05/11/020-JPQL.html">JPQL</a><br>
+<a href="https://europani.github.io/spring/2021/07/30/023-spring-data-jpa.html">Spring Data JPA</a><br>
+<a href="https://europani.github.io/spring/2021/07/31/024-QueryDSL.html">QueryDSL</a></p>
+
+<h3 id="선택-가이드">선택 가이드</h3>
+<ol>
+  <li>복잡한 SQL을 많이 사용하는 경우에는 <code class="language-plaintext highlighter-rouge">SQL Mapper</code>을 사용한다
+    <ul>
+      <li>JdbcTemplate, MyBatis</li>
+    </ul>
+  </li>
+  <li>복잡하지 않거나 단순 반복 CRUD가 많은 경우 <code class="language-plaintext highlighter-rouge">ORM</code>을 사용할 수 있다
+    <ul>
+      <li>JPA, Spring Data JPA, QueryDSL</li>
+      <li>ORM을 주로 사용하다가 복잡한 SQL을 간간히 사용할 경우 <code class="language-plaintext highlighter-rouge">JPA + JdbcTamplate</code>이나 <code class="language-plaintext highlighter-rouge">JPA + MyBatis</code> 조합을 사용한다</li>
+    </ul>
+  </li>
+</ol>
+
+<ul>
+  <li>각 기술들은 각자의 플랫폼에서 제공하는 <code class="language-plaintext highlighter-rouge">TransactionManager</code>가 있다 <a href="https://europani.github.io/spring/2022/05/22/043-transactional.html">(링크)</a>
+    <ul>
+      <li>JDBC : DataSourceTransactionManager</li>
+      <li>JPA : JpaTransactionManager</li>
+    </ul>
+  </li>
+  <li>이 경우 <code class="language-plaintext highlighter-rouge">JpaTransactionManager</code> 하나만 사용하면 된다
+    <ul>
+      <li>JpaTransactionManager가 DataSourceTransactionManager이 제공하는 대부분의 기능을 갖고 있다</li>
+    </ul>
+  </li>
+  <li>주의점
+    <ul>
+      <li>같이 사용할 경우 JPA의 <code class="language-plaintext highlighter-rouge">flush</code> 타이밍을 주의해야 한다</li>
+      <li>하나의 트랜잭션 안에서 JPA로 데이터를 변경한 다음 <code class="language-plaintext highlighter-rouge">commit</code>을 하지 않고 JdbcTemplate로 호출하는 경우 변경이 반영되어 있지 않다</li>
+      <li>JPA의 호출이 끝난 다음 <code class="language-plaintext highlighter-rouge">flush</code>를 해 변경사항을 데이터베이스에 반영해야 한다</li>
+    </ul>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2020/08/01/004-module.html" title="Spring 모듈">Spring 모듈</a><a class="next" href="/spring/2020/08/16/006-MVC.html" title="[스프링] Spring MVC">[스프링] Spring MVC</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/spring/2020/09/18/008-AOP.html" title="[스프링] Spring MVC">[스프링] Spring AOP</a></li>
+<li><a class="post-link" href="/git/2020/03/27/001-stage.html" title="[스프링] Spring MVC">git의 영역</a></li>
+<li><a class="post-link" href="/javascript/2020/07/21/020-es5-object.html" title="[스프링] Spring MVC">ECMAScript5 (ES5) - Object 메서드</a></li>
+<li><a class="post-link" href="/react.js/2021/01/11/002-introduction.html" title="[스프링] Spring MVC">React.js의 특징</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2020/08/02/005-JDBC.html';
+      this.page.identifier = 'https://europani.github.io/spring/2020/08/02/005-JDBC.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

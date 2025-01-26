@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Vim | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="Vim">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="4가지 모드 : 일반/명령 모드, 입력 모드(a, i, o, A, I, O), 비쥬얼 모드(v, V), 명령라인 모드(:, /, ?)">
+<meta property="og:description" content="4가지 모드 : 일반/명령 모드, 입력 모드(a, i, o, A, I, O), 비쥬얼 모드(v, V), 명령라인 모드(:, /, ?)">
+<link rel="canonical" href="https://europani.github.io/os/2020/12/05/002-vim.html">
+<meta property="og:url" content="https://europani.github.io/os/2020/12/05/002-vim.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-12-05T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Vim">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-12-05T00:00:00+00:00","datePublished":"2020-12-05T00:00:00+00:00","description":"4가지 모드 : 일반/명령 모드, 입력 모드(a, i, o, A, I, O), 비쥬얼 모드(v, V), 명령라인 모드(:, /, ?)","headline":"Vim","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/os/2020/12/05/002-vim.html"},"url":"https://europani.github.io/os/2020/12/05/002-vim.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Vim</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-12-05T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-12-05
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#CS">#CS</a><a class="post-tag" href="/tags.html#Linux">#Linux</a><a class="post-tag" href="/tags.html#Vim">#Vim</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>4가지 모드 : 일반/명령 모드, 입력 모드(a, i, o, A, I, O), 비쥬얼 모드(v, V), 명령라인 모드(:, /, ?)</p>
+
+<p>▶ 모드전환 : 일반/명령 모드를 통해 입력, 비쥬얼, 명령라인 모드로 전환 (일반 모드 -&gt; 입력, 비쥬얼, 명령라인 모드)</p>
+
+<h3 id="1-일반명령-모드---커서-이동-화면-이동-텍스트-편집">1. 일반/명령 모드 - 커서 이동, 화면 이동, 텍스트 편집</h3>
+
+<h4 id="1-커서이동">(1) 커서이동</h4>
+<p>h : ←<br>
+j : ↓<br>
+k : ↑<br>
+l : →</p>
+
+<p>^, 0 : 행의 맨 앞으로  [=Home]<br>
+$ : 행의 맨 뒤로   [=End] <br>
+- : 커서 앞 행의 처음으로 <br>
++ : 커서 뒤 행의 처음으로</p>
+
+<p>H : 화면의 맨 윗행으로  {Head}<br>
+M : 화면의 가장 중간 행으로  {Middle}<br>
+L : 화면의 맨 아래행으로  {Low}</p>
+
+<p>b : 커서 앞 단어의 첫글자로<br>
+w : 커서 뒤 단어의 첫글자로<br>
+e : 커서 뒤 단어의 마지막 글자로</p>
+
+<p>gg : 문서의 맨 위로  (소문자 g 두번)<br>
+G : 문서의 맨 아래로<br>
+숫자G : 지정한 행으로</p>
+
+<h4 id="2-화면이동---ctrl">(2) 화면이동 (^ : Ctrl)</h4>
+<p>^f : <strong>한 화면 앞</strong>으로 이동  [=Page Up]  <br>
+^b : <strong>한 화면 뒤</strong>로 이동  [=Page Down]<br>
+^d : <strong>반 화면 앞</strong>으로 이동<br>
+^u : <strong>반 화면 뒤</strong>로 이동</p>
+
+<p>^e : <strong>한줄 앞</strong>으로 이동<br>
+^y : <strong>한줄 뒤</strong>로 이동</p>
+
+<h4 id="3-텍스트-편집">(3) 텍스트 편집</h4>
+<p>yy : 한줄 복사  {Yank}<br>
+숫자yy : n줄 복사<br>
+p : 커서 아래쪽에 붙여넣기  {Paste}<br>
+P : 커서 위쪽에 붙여넣기</p>
+
+<p>x : 한글자 삭제<br>
+dw : 한단어 삭제  {Delete}<br>
+dd : 한줄 삭제<br>
+숫자dd : n줄 삭제<br>
+D : 커서 위치부터 그 행의 끝까지 삭제</p>
+
+<p>r : 한글자 수정  {Replace}<br>
+cc : 한줄 수정 {Change}<br>
+C : 커서 위치부터 그 행의 끝까지 수정</p>
+
+<p>u : 이전 작업 취소  {Undo}<br>
+U : 해당 행의 모든 작업 취소</p>
+
+<h3 id="2-입력-모드---내용-편집">2. 입력 모드 - 내용 편집</h3>
+<p>- 비모드 에디터의 일반모드와 동일</p>
+
+<ul>
+  <li>
+    <p>일반 모드 → 입력 모드 : a, i, o, A, I, O 키를 누름<br>
+  i : 커서 <strong>앞</strong>에서 삽입<br>
+  a : 커서 <strong>뒤</strong>에서 삽입<br>
+  o : 커서 <strong>다음줄</strong>에서 삽입<br>
+  O : 커서 <strong>이전줄</strong>에서 삽입<br>
+  I : 커서가 있는 <strong>행의 맨 앞</strong>에서 삽입<br>
+  A : 커서가 있는 <strong>행의 맨 뒤</strong>에서 삽입</p>
+  </li>
+  <li>
+    <p>입력 모드 → 일반 모드 : esc키</p>
+  </li>
+</ul>
+
+<h3 id="3-비쥬얼-모드---텍스트-블록지정">3. 비쥬얼 모드 - 텍스트 블록지정</h3>
+
+<ul>
+  <li>
+    <p>일반 모드 → 비쥬얼 모드 : v, V, Ctrl+v 키를 누름<br>
+v : 비쥬얼 모드 <br>
+V : 비쥬얼 라인모드<br>
+Ctrl + v : 비쥬얼 블록모드</p>
+  </li>
+  <li>
+    <p>비쥬얼 모드 → 일반 모드 : esc키</p>
+  </li>
+  <li>
+    <p>블록지정 후 일반모드 명령어 사용가능 <br>
+y : 지정된 복사<br>
+d : 지정된 블록 잘라내기<br>
+p : 복사된 블록 붙여넣기<br>
+x : 지정한 블록 삭제<br>
+ </p>
+  </li>
+</ul>
+
+<h3 id="4-명령라인ex-모드--내용-저장-vim-종료-텍스트-치환">4. 명령라인(ex) 모드- 내용 저장, vim 종료, 텍스트 치환</h3>
+
+<ul>
+  <li>일반 모드 → ex 모드 : :, /, ? 키를 누름</li>
+  <li>ex 모드 → 일반 모드 : esc키, enter키(실행)</li>
+</ul>
+
+<p>:q - quit, vim 종료<br>
+:w - write(저장)<br>
+:s - 치환(하나씩)                  ex) :s/like/love [like -&gt; love 치환]<br>
+:% - 전체치환                      ex) :%/like/love [like -&gt; love 치환]</p>
+
+<p>/검색어 - 파일내용에서 검색어 내용 찾기              ex) /like<br>
+?검색어 - 파일내용에서 검색어 내용 찾기(뒤부터)</p>
+<blockquote>
+  <p>n : 다음 방향으로 계속 검색<br>
+N : 이전 방향으로 계속 검색</p>
+</blockquote>
+
+<p><img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FrbPIH%2FbtqxFTBNmFe%2FOLQD2v4Ub4AIsFOilpHLpK%2Fimg.jpg" alt=""></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2020/12/03/019-thymeleaf-layout.html" title="[Thymeleaf] 타임리프 template layout">[Thymeleaf] 타임리프 template layout</a><a class="next" href="/python/2020/12/06/002-basic.html" title="Python 기본문법">Python 기본문법</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/python/2020/12/02/001-type.html" title="Python 기본문법">자료형</a></li>
+<li><a class="post-link" href="/spring/2020/04/17/002-DI-IoC.html" title="Python 기본문법">[스프링] IoC(제어 역전), DI(의존성 주입)</a></li>
+<li><a class="post-link" href="/spring/2023/09/23/056-masking.html" title="Python 기본문법">[Spring] Log masking 처리</a></li>
+<li><a class="post-link" href="/spring/2022/05/12/041-filter-interceptor.html" title="Python 기본문법">필터(Filter)와 인터셉터(Interceptor)</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/os/2020/12/05/002-vim.html';
+      this.page.identifier = 'https://europani.github.io/os/2020/12/05/002-vim.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

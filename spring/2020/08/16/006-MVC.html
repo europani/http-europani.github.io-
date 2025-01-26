@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[스프링] Spring MVC | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[스프링] Spring MVC">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="MVC : Model, View, Controller를 의미하며 관심사(기능)를 분리하는 디자인 패턴 Model : 요청받은 파라미터로 비즈니스 로직을 수행하여 결과 데이터를 얻어낸다 View : 결과 데이터를 화면에 그린다 Controller : HTTP 요청을 받아 파라미터를 검증하고 비즈니스로직을 실행시킨다. 그리고 그 결과를 뷰로 전달한다">
+<meta property="og:description" content="MVC : Model, View, Controller를 의미하며 관심사(기능)를 분리하는 디자인 패턴 Model : 요청받은 파라미터로 비즈니스 로직을 수행하여 결과 데이터를 얻어낸다 View : 결과 데이터를 화면에 그린다 Controller : HTTP 요청을 받아 파라미터를 검증하고 비즈니스로직을 실행시킨다. 그리고 그 결과를 뷰로 전달한다">
+<link rel="canonical" href="https://europani.github.io/spring/2020/08/16/006-MVC.html">
+<meta property="og:url" content="https://europani.github.io/spring/2020/08/16/006-MVC.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-08-16T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[스프링] Spring MVC">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-08-16T00:00:00+00:00","datePublished":"2020-08-16T00:00:00+00:00","description":"MVC : Model, View, Controller를 의미하며 관심사(기능)를 분리하는 디자인 패턴 Model : 요청받은 파라미터로 비즈니스 로직을 수행하여 결과 데이터를 얻어낸다 View : 결과 데이터를 화면에 그린다 Controller : HTTP 요청을 받아 파라미터를 검증하고 비즈니스로직을 실행시킨다. 그리고 그 결과를 뷰로 전달한다","headline":"[스프링] Spring MVC","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2020/08/16/006-MVC.html"},"url":"https://europani.github.io/spring/2020/08/16/006-MVC.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[스프링] Spring MVC</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-08-16T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-08-16
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Spring">#Spring</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>MVC : Model, View, Controller를 의미하며 관심사(기능)를 분리하는 디자인 패턴</p>
+<ul>
+  <li>Model : 요청받은 파라미터로 비즈니스 로직을 수행하여 결과 데이터를 얻어낸다</li>
+  <li>View : 결과 데이터를 화면에 그린다</li>
+  <li>Controller : HTTP 요청을 받아 파라미터를 검증하고 비즈니스로직을 실행시킨다. 그리고 그 결과를 뷰로 전달한다</li>
+</ul>
+
+<h2 id="스프링-mvc-구조">스프링 MVC 구조</h2>
+<p><img src="https://blog.kakaocdn.net/dn/FeXmu/btqHP3BDUVY/hcGP7Itl0g9H1aUCpoKuzK/img.png" alt=""></p>
+
+<p>① 클라이언트로부터 요청이 들어옴, <code class="language-plaintext highlighter-rouge">DispatcherServlet</code>이 그 요청을 받음<br>
+② <code class="language-plaintext highlighter-rouge">HandlerMapping</code>은 요청에 부합한 Controller를 탐색<br>
+③ <code class="language-plaintext highlighter-rouge">HandlerAdapter</code>는 HandlerMapping에 의해 결정된 Controller에서 요청에 부합한 메서드를 찾아 실행 요청<br>
+④ 부합된 <code class="language-plaintext highlighter-rouge">Controller</code> 실행하여 비즈니스 로직 실행<br>
+⑤ 실행 결과인 Model로 부터 반환된 view이름을 <code class="language-plaintext highlighter-rouge">DispatcherServlet</code>에게 전달 (Model or ModelAndView 객체)<br>
+⑥ 받은 view이름을 이용하여 <code class="language-plaintext highlighter-rouge">ViewResolver</code>는 그에 맞는 view를 탐색<br>
+⑦, ⑧ 탐색된 <code class="language-plaintext highlighter-rouge">View</code>로 클라이언트에게 응답</p>
+
+<h3 id="1-dispatcherservlet-링크">1. DispatcherServlet <a href="https://europani.github.io/spring/2021/11/17/031-servlet.html#h-3-dispatcherservlet-orgspringframeworkwebservlet">(링크)</a>
+</h3>
+<p><code class="language-plaintext highlighter-rouge">org.springframework.web.servlet.DispatcherServlet</code></p>
+<ul>
+  <li>프론트 컨트롤러</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">DispatcherServlet</code> → <code class="language-plaintext highlighter-rouge">FrameworkServlet</code> → <code class="language-plaintext highlighter-rouge">HttpServletBean</code> → <code class="language-plaintext highlighter-rouge">HttpServlet</code> 상속</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">HttpServlet.service()</code>가 호출되어 <code class="language-plaintext highlighter-rouge">DispatcherServlet.doDispatch()</code>가 호출된다</li>
+  <li>클라이언트의 모든 요청을 받은 후 이를 처리할 핸들러에게 넘기고 핸들러가 처리한 결과를 받아 사용자에게 응답 결과를 보여줌</li>
+</ul>
+
+<h3 id="2-handlermapping">2. HandlerMapping</h3>
+<p><code class="language-plaintext highlighter-rouge">org.springframework.web.servlet.HandlerMapping</code></p>
+<ul>
+  <li>어떤 핸들러가 요청을 처리할지에 대한 정보를 알고 있음</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">HandlerMapping</span> <span class="o">{</span>
+	<span class="nd">@Nullable</span>
+	<span class="nc">HandlerExecutionChain</span> <span class="nf">getHandler</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="3-handleradapter">3. HandlerAdapter</h3>
+<p><code class="language-plaintext highlighter-rouge">org.springframework.web.servlet.HandlerAdapter</code></p>
+<ul>
+  <li>실제 핸들러를 실행하는 역할</li>
+  <li>선택된 핸들러를 실행하는 방법과 응답을 ModelAndView로 변화하는 방법에 대해 알고 있음</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">HandlerAdapter</span> <span class="o">{</span>
+	<span class="kt">boolean</span> <span class="nf">supports</span><span class="o">(</span><span class="nc">Object</span> <span class="n">handler</span><span class="o">);</span>
+
+	<span class="nd">@Nullable</span>
+	<span class="nc">ModelAndView</span> <span class="nf">handle</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="nc">Object</span> <span class="n">handler</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="4-modelandview">4. ModelAndView</h3>
+<p><code class="language-plaintext highlighter-rouge">org.springframework.web.servlet.ModelAndView</code></p>
+<ul>
+  <li>Controller의 처리 결과를 보여줄 view와 view에서 사용할 값(데이터)을 전달하는 클래스(데이터와 뷰의 이름을 전달)<br>
+cf) Model : 데이터만 전달해주는 객체</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ModelAndView</span> <span class="o">{</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="nc">Object</span> <span class="n">view</span><span class="o">;</span>
+
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="nc">ModelMap</span> <span class="n">model</span><span class="o">;</span>
+
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="nc">HttpStatus</span> <span class="n">status</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">ModelAndView</span><span class="o">()</span> <span class="o">{}</span>
+
+	<span class="kd">public</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="nc">String</span> <span class="n">viewName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">view</span> <span class="o">=</span> <span class="n">viewName</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="nc">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">view</span> <span class="o">=</span> <span class="n">view</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="nc">String</span> <span class="n">viewName</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="o">?&gt;</span> <span class="n">model</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">view</span> <span class="o">=</span> <span class="n">viewName</span><span class="o">;</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">model</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">getModelMap</span><span class="o">().</span><span class="na">addAllAttributes</span><span class="o">(</span><span class="n">model</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="nc">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="o">?&gt;</span> <span class="n">model</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">view</span> <span class="o">=</span> <span class="n">view</span><span class="o">;</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">model</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">getModelMap</span><span class="o">().</span><span class="na">addAllAttributes</span><span class="o">(</span><span class="n">model</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nf">ModelAndView</span><span class="o">(</span><span class="nc">String</span> <span class="n">viewName</span><span class="o">,</span> <span class="nc">HttpStatus</span> <span class="n">status</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">view</span> <span class="o">=</span> <span class="n">viewName</span><span class="o">;</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="n">status</span><span class="o">;</span>
+	<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="5-viewresolver">5. ViewResolver</h3>
+<p><code class="language-plaintext highlighter-rouge">org.springframework.web.servlet.ViewResolver</code></p>
+<ul>
+  <li>컨트롤러가 리턴한 뷰 이름을 참고해서 적절한 뷰 오브젝트를 찾아줌</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ViewResolver</span> <span class="o">{</span>
+	<span class="nc">View</span> <span class="nf">resolveViewName</span><span class="o">(</span><span class="nc">String</span> <span class="n">viewName</span><span class="o">,</span> <span class="nc">Locale</span> <span class="n">locale</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr>
+<h2 id="mvc-구현">MVC 구현</h2>
+<h3 id="1-configuration객체">1. Configuration객체</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@Configuration</code> 어노테이션 사용 : spring 설정클래스 명시</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@EnableWebMvc</code> : mvc관련 어노테이션을 사용하기 위해 사용  <br>
+  = <context:annotaion-config></context:annotaion-config>, <mvc:annotation-driven></mvc:annotation-driven>
+</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ComponentScan</code> : 명시한 패키지에서 <code class="language-plaintext highlighter-rouge">@Controller</code>, <code class="language-plaintext highlighter-rouge">@Service</code>, <code class="language-plaintext highlighter-rouge">@Repository</code>, <code class="language-plaintext highlighter-rouge">@Component</code>, <code class="language-plaintext highlighter-rouge">@Configuration</code>가 붙은 클래스를 자동으로 스프링 컨테이너에 등록<br>
+  = &lt;context:component-scan base-package=”package.mvc.controller”&gt;</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span> 
+<span class="nd">@EnableWebMvc</span>
+<span class="nd">@ComponentScan</span><span class="o">(</span><span class="s">"package.mvc.controller"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebConfiguration</span> <span class="kd">extends</span> <span class="nc">WebMvcConfigurerAdapter</span> <span class="o">{</span>
+
+    <span class="c1">// @Service를 사용하지 않고 Bean을 직접등록함</span>
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">MemberService</span> <span class="nf">memberService</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MemberService</span><span class="o">(</span><span class="n">memberRepository</span><span class="o">());</span>
+    <span class="o">}</span>
+
+     <span class="c1">// @Repository를 사용하지 않고 Bean을 직접등록함</span>
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">MemberRepository</span> <span class="nf">memberRepository</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">MemberService</span><span class="o">();</span>
+    <span class="o">}</span>
+    
+    
+    <span class="c1">// addResourceHandler처럼 들어오는 URL은 addResourceLocations에서 찾도록 설정</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">addResourceHandlers</span><span class="o">(</span><span class="nc">ResourceHandlerRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">registry</span><span class="o">.</span><span class="na">addResourceHandler</span><span class="o">(</span><span class="s">"/css/**"</span><span class="o">).</span><span class="na">addResourceLocations</span><span class="o">(</span><span class="s">"/css/"</span><span class="o">).</span><span class="na">setCachePeriod</span><span class="o">(</span><span class="mi">31556926</span><span class="o">);</span>
+        <span class="n">registry</span><span class="o">.</span><span class="na">addResourceHandler</span><span class="o">(</span><span class="s">"/img/**"</span><span class="o">).</span><span class="na">addResourceLocations</span><span class="o">(</span><span class="s">"/img/"</span><span class="o">).</span><span class="na">setCachePeriod</span><span class="o">(</span><span class="mi">31556926</span><span class="o">);</span>
+        <span class="n">registry</span><span class="o">.</span><span class="na">addResourceHandler</span><span class="o">(</span><span class="s">"/js/**"</span><span class="o">).</span><span class="na">addResourceLocations</span><span class="o">(</span><span class="s">"/js/"</span><span class="o">).</span><span class="na">setCachePeriod</span><span class="o">(</span><span class="mi">31556926</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+    <span class="c1">// ViewResolver 빈등록, 아래 적어놓은 View설정을 config를 통해 설정하는 방법</span>
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">InternalResourceViewResolver</span> <span class="nf">getInternalResourceViewResolver</span><span class="o">()</span> <span class="o">{</span>		
+        <span class="nc">InternalResourceViewResolver</span> <span class="n">resolver</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">InternalResourceViewResolver</span><span class="o">();</span>
+        <span class="n">resolver</span><span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">"/WEB-INF/views/"</span><span class="o">);</span>		<span class="c1">// 뷰이름 앞에 붙일 값</span>
+        <span class="n">resolver</span><span class="o">.</span><span class="na">setSuffix</span><span class="o">(</span><span class="s">".jsp"</span><span class="o">);</span> 				<span class="c1">// 뷰이름 뒤에 붙일 값</span>
+        <span class="k">return</span> <span class="n">resolver</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>-&gt; WebMvcConfigurerAdapter : @EnableWebMvc 를 이용하면 기본적인 설정이 모두 자동으로 되지만, 기본 설정 이외의 설정이 필요할 경우 해당 클래스를 상속 받은 후, 메소드를 오버라이딩 하여 구현</p>
+
+<p>※ 스프링 5.0, 스프링부트 2.0 부터는 WebMvcConfigurer를 사용함</p>
+
+<h3 id="2-controller객체handler">2. Controller객체(=Handler)</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@Controller</code> 어노테이션 사용 : Configuration 클래스에 <code class="language-plaintext highlighter-rouge">@EnableWebMvc</code> 어노테이션 추가</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@RequestMapping</code> : Controller내의 메서드에 요청을 맵핑할 패턴을 명시</li>
+  <li>Model 객체를 파라미터로 사용하거나 ModelAndView객체를 리턴타입으로 사용</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Controller</span>
+<span class="nc">Class</span> <span class="kd">public</span> <span class="nc">MemberController</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">MemberService</span> <span class="n">memberService</span><span class="o">;</span>
+    
+
+    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="s">"/memJoin"</span> <span class="n">method</span><span class="o">=</span><span class="s">"RequestMethod.POST"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">memJoin</span><span class="o">(</span><span class="nc">Model</span> <span class="n">model</span><span class="o">,</span> 
+            <span class="nd">@RequestParam</span><span class="o">(</span><span class="s">"memId"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">memId</span><span class="o">,</span> <span class="nd">@RequestParam</span> <span class="nc">String</span> <span class="n">memPwd</span><span class="o">,</span> 
+            <span class="nd">@ModelAttribute</span> <span class="nc">Member</span> <span class="n">member</span><span class="o">)</span> <span class="o">{</span>
+    
+<span class="c1">//      String memId = request.getParameter("memId");</span>
+<span class="c1">//      String memPwd = request.getParameter("memPwd");</span>
+        
+        <span class="n">memberService</span><span class="o">.</span><span class="na">memRegister</span><span class="o">(</span><span class="n">memId</span><span class="o">,</span> <span class="n">memPwd</span><span class="o">);</span>
+        
+        <span class="n">model</span><span class="o">.</span><span class="na">addAttribute</span><span class="o">(</span><span class="s">"memId"</span><span class="o">,</span> <span class="n">memId</span><span class="o">);</span>
+        <span class="n">model</span><span class="o">.</span><span class="na">addAttribute</span><span class="o">(</span><span class="s">"memPwd"</span><span class="o">,</span> <span class="n">memPwd</span><span class="o">);</span>
+        
+        <span class="k">return</span> <span class="s">"memJoinOk"</span><span class="o">;</span>
+    <span class="o">}</span>
+    
+    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/memLogin"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">ModelAndView</span> <span class="nf">memLogin</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">ModelAndView</span> <span class="n">mav</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ModelAndView</span><span class="o">();</span>
+        <span class="nc">Member</span> <span class="n">member</span> <span class="o">=</span> <span class="n">memberService</span><span class="o">.</span><span class="na">memSearch</span><span class="o">();</span>
+        
+        <span class="n">mav</span><span class="o">.</span><span class="na">setViewName</span><span class="o">(</span><span class="s">"memLoginOk"</span><span class="o">);</span>
+        <span class="n">mav</span><span class="o">.</span><span class="na">addObject</span><span class="o">(</span><span class="s">"member"</span><span class="o">,</span> <span class="n">member</span><span class="o">);</span>
+        
+        <span class="k">return</span> <span class="n">mav</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="-파라미터로-사용되는-어노테이션">★ 파라미터로 사용되는 어노테이션</h3>
+<h4 id="1-requestparam">1) @RequestParam</h4>
+<ul>
+  <li>HTTP 요청 파라미터를 변수로 받음 (HttpServletRequest request의 getParameter 대신 사용 가능)<br>
+  ex) <code class="language-plaintext highlighter-rouge">@RequestParam("memId") String memId</code><br>
+  ex) <code class="language-plaintext highlighter-rouge">@RequestParam(value="memId", defaultValue = "user", required = false) String memId</code>
+</li>
+  <li>파라미터와 파라미터를 받는 변수명이 같으면 파라미터 생략 가능 (<code class="language-plaintext highlighter-rouge">@RequestParam String memPwd</code>)</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ModelAttribute</code> 처럼 아예 생략 가능 (<code class="language-plaintext highlighter-rouge">String memPwd</code>)</li>
+</ul>
+
+<h4 id="2-pathvariable">2) @PathVariable</h4>
+<ul>
+  <li>@RequestMapping 패턴에 있는 중괄호에 명시된 값을 변수로 받음<br>
+  ex) <code class="language-plaintext highlighter-rouge">@RequestMapping("/user/{id}"}</code> 사용시 <code class="language-plaintext highlighter-rouge">@PathVariable("id") String id</code>
+</li>
+</ul>
+
+<h4 id="3-modelattribute">3) @ModelAttribute</h4>
+<ul>
+  <li>HTTP 요청 파라미터를 객체로 받음 (DTO/VO), 생략 가능</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ModelAttribute("member2") Member member</code> 는 <code class="language-plaintext highlighter-rouge">model.addAttribute("member2", member)</code>를 의미한다.</li>
+  <li>다만 생략한다면 <code class="language-plaintext highlighter-rouge">@ModelAttribute Member member</code> = <code class="language-plaintext highlighter-rouge">Member member</code> 이 되는데 이 경우에는 클래스명의 카멜표기법이 key값이 되어 <code class="language-plaintext highlighter-rouge">model.addAttribute("member", member)</code>가 된다</li>
+</ul>
+
+<h4 id="4-requestheader">4) @RequestHeader</h4>
+<ul>
+  <li>HTTP 요청헤더 정보를 가져옴<br>
+  ex) <code class="language-plaintext highlighter-rouge">@RequestHeader("host") String host</code>
+</li>
+</ul>
+
+<h4 id="5-requestbody">5) @RequestBody</h4>
+<ul>
+  <li>HTTP 요청바디 정보를 가져옴, JSON방식의 정보를 가져올때 사용<br>
+  ex) <code class="language-plaintext highlighter-rouge">@RequestBody String host</code>
+</li>
+</ul>
+
+<h4 id="6-cookievalue">6) @CookieValue</h4>
+<ul>
+  <li>HTTP 요청 쿠키정보를 가져옴<br>
+  ex) <code class="language-plaintext highlighter-rouge">@CookieValue String cookie</code>
+</li>
+</ul>
+
+<h3 id="3-service객체">3. Service객체</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@Service</code> 어노테이션 사용</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Service</span>
+<span class="nc">Class</span> <span class="kd">public</span> <span class="nc">MemberService</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">MemberDao</span> <span class="n">memberDao</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">memRegister</span><span class="o">(</span><span class="nc">String</span> <span class="n">memId</span><span class="o">,</span> <span class="nc">String</span> <span class="n">memPwd</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">memberDao</span><span class="o">.</span><span class="na">memInsert</span><span class="o">(</span><span class="n">memId</span><span class="o">,</span> <span class="n">memPwd</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="4-repository객체dao">4. Repository객체(=DAO)</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@Repository</code> 어노테이션 사용</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Repository</span>
+<span class="nc">Class</span> <span class="kd">public</span> <span class="nc">MemberDao</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">memInsert</span><span class="o">(</span><span class="nc">String</span> <span class="n">memId</span><span class="o">,</span> <span class="nc">String</span> <span class="n">memPwd</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">.....</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="5-view객체">5. View객체</h3>
+<ul>
+  <li>스프링 설정파일에 ViewResolver를 빈으로 등록</li>
+</ul>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;beans:bean</span> <span class="na">class=</span><span class="s">"org.springframework.web.servlet.view.InternalResourceViewResolver"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;beans:property</span> <span class="na">name=</span><span class="s">"prefix"</span> <span class="na">value=</span><span class="s">"/WEB-INF/views/"</span> <span class="nt">/&gt;</span>	<span class="c">&lt;!-- 뷰이름 앞에 붙일 값 --&gt;</span>
+    <span class="nt">&lt;beans:property</span> <span class="na">name=</span><span class="s">"suffix"</span> <span class="na">value=</span><span class="s">".jsp"</span> <span class="nt">/&gt;</span>                	<span class="c">&lt;!-- 뷰이름 뒤에 붙일 값 --&gt;</span>
+<span class="nt">&lt;/beans:bean&gt;</span>
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2020/08/02/005-JDBC.html" title="[스프링] Spring JDBC">[스프링] Spring JDBC</a><a class="next" href="/spring/2020/09/18/008-AOP.html" title="[스프링] Spring AOP">[스프링] Spring AOP</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/os/2021/04/14/007-synchronization.html" title="[스프링] Spring AOP">프로세스 동기화(Synchronization), 상호배제(Mutual Exclusion)</a></li>
+<li><a class="post-link" href="/javascript/2020/07/18/016-OOP.html" title="[스프링] Spring AOP">JavaScript 객체 지향 언어(프로토타입, 상속, 생성자, 클래스)</a></li>
+<li><a class="post-link" href="/spring/2023/08/20/055-gradle-error.html" title="[스프링] Spring AOP">Github actions gradle error 출력</a></li>
+<li><a class="post-link" href="/git/2022/05/10/014-commit-message.html" title="[스프링] Spring AOP">Git Commit Message 쓰는 법</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2020/08/16/006-MVC.html';
+      this.page.identifier = 'https://europani.github.io/spring/2020/08/16/006-MVC.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

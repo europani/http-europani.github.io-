@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>도커 설정(Django-Nginx-uWSGI-MySQL) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="도커 설정(Django-Nginx-uWSGI-MySQL)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="0. 도커 설치">
+<meta property="og:description" content="0. 도커 설치">
+<link rel="canonical" href="https://europani.github.io/docker/2021/07/08/006-docker-django-nginx-mysql.html">
+<meta property="og:url" content="https://europani.github.io/docker/2021/07/08/006-docker-django-nginx-mysql.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-07-08T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="도커 설정(Django-Nginx-uWSGI-MySQL)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-07-08T00:00:00+00:00","datePublished":"2021-07-08T00:00:00+00:00","description":"0. 도커 설치","headline":"도커 설정(Django-Nginx-uWSGI-MySQL)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/docker/2021/07/08/006-docker-django-nginx-mysql.html"},"url":"https://europani.github.io/docker/2021/07/08/006-docker-django-nginx-mysql.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">도커 설정(Django-Nginx-uWSGI-MySQL)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-07-08T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-07-08
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 6 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Docker">#Docker</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h3 id="0-도커-설치">0. 도커 설치</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># CentOS</span>
+<span class="c"># 1. Docker 설치</span>
+<span class="nv">$ </span>yum <span class="nb">install </span>docker-ce docker-ce-cli containerd.io
+<span class="nv">$ </span>systemctl start docker
+<span class="nv">$ </span>systemctl <span class="nb">enable </span>docker
+
+<span class="c"># 2. docker-compose 설치</span>
+<span class="nv">$ </span><span class="nb">sudo </span>curl <span class="nt">-L</span> <span class="s2">"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-</span><span class="si">$(</span><span class="nb">uname</span> <span class="nt">-s</span><span class="si">)</span><span class="s2">-</span><span class="si">$(</span><span class="nb">uname</span> <span class="nt">-m</span><span class="si">)</span><span class="s2">"</span> <span class="nt">-o</span> /usr/local/bin/docker-compose
+<span class="nv">$ </span><span class="nb">chmod</span> +x /usr/local/bin/docker-compose
+<span class="nv">$ </span><span class="nb">ln</span> <span class="nt">-s</span> /usr/local/bin/docker-compose /usr/bin/docker-compose
+</code></pre></div></div>
+
+<h3 id="1-mysql-컨테이너">1. Mysql 컨테이너</h3>
+<ul>
+  <li>Mysql은 Dockerfile을 작성하지 않고 도커허브에 올라와 있는 공식 image를 사용할 것이다.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>의 mysql 컨테이너 부분은 다음과 같다.</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">database</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mysql:5.7</span>        <span class="c1"># mysql 5.7 공식 이미지</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">mysql</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">3306:3306"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}</span>
+      <span class="pi">-</span> <span class="s">MYSQL_DATABASE=${DB_DATABASE}</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./database/mysql_data:/var/lib/mysql</span>    <span class="c1"># 컨테이너의 데이터를 호스트OS에 저장되도록 설정 </span>
+    <span class="na">command</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">--character-set-server=utf8mb4</span>          <span class="c1"># 인코딩</span>
+      <span class="pi">-</span> <span class="s">--collation-server=utf8mb4_unicode_ci</span>   <span class="c1"># 인코딩</span>
+</code></pre></div></div>
+<p>→ <code class="language-plaintext highlighter-rouge">MYSQL_ROOT_PASSWORD</code> 환경변수는 필수값이다</p>
+
+<ul>
+  <li>비밀번호가 유출되면 안되기 때문에 따로 작성해 놓을 수 있다.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">docker-compose.yml</code>과 같은 경로에 <code class="language-plaintext highlighter-rouge">.env</code> 파일을 생성한다.</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DB_ROOT_PASSWORD=rootpassword
+DB_DATABASE=mypro
+</code></pre></div></div>
+
+<h3 id="2-backend-컨테이너-python-django-uwsgi">2. Backend 컨테이너 (Python, Django, uWSGI)</h3>
+
+<ul>
+  <li>Backend 도커파일</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> python:3.8</span>
+
+<span class="k">ENV</span><span class="s"> PYTHONUNBUFFERED 1            #</span>
+
+<span class="k">RUN </span>apt-get <span class="nt">-y</span> update
+<span class="k">RUN </span>apt-get <span class="nt">-y</span> <span class="nb">install </span>build-essential python3-dev    <span class="c"># 파이썬 패키지 설치에 필요한 패키지 설치</span>
+
+<span class="k">RUN </span><span class="nb">mkdir</span> /usr/local/mypro
+
+<span class="k">WORKDIR</span><span class="s"> /usr/local/mypro</span>
+
+<span class="k">COPY</span><span class="s"> requirements.txt .                               # 의존성 파일 먼저 복사하여 패키지 설치</span>
+
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--upgrade</span> pip
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+
+<span class="k">COPY</span><span class="s"> . .</span>
+</code></pre></div></div>
+<p>→ <code class="language-plaintext highlighter-rouge">COPY requirements.txt .</code>를 먼저 실행 해야 의존성 파일을 매번 다운받지 않아도 된다.<br>
+→ 그 후, <code class="language-plaintext highlighter-rouge">COPY . .</code>를 실행하여 backend폴더 전체를 컨테이너로 복사시킨다.</p>
+
+<ul>
+  <li>uwsgi.ini (uWSGI 설정파일)</li>
+</ul>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[uwsgi]</span>
+<span class="c"># Django-related settings
+</span><span class="py">chdir</span>           <span class="p">=</span> <span class="s">/usr/local/mypro/</span>
+<span class="py">module</span>          <span class="p">=</span> <span class="s">mypro.wsgi:application</span>
+
+<span class="c"># process-related settings
+</span><span class="py">master</span>          <span class="p">=</span> <span class="s">true</span>
+<span class="py">processes</span>       <span class="p">=</span> <span class="s">10</span>
+<span class="py">socket</span>          <span class="p">=</span> <span class="s">/usr/local/mypro/uwsgi.sock     # 유닉스소켓</span>
+<span class="py">chmod-socket</span>    <span class="p">=</span> <span class="s">666</span>
+<span class="py">vacuum</span>          <span class="p">=</span> <span class="s">true</span>
+
+<span class="c"># respawn processes after serving 1000 requests
+</span><span class="py">max-requests</span> <span class="p">=</span> <span class="s">1000</span>
+<span class="py">buffer-size</span> <span class="p">=</span> <span class="s">65535</span>
+
+<span class="c"># respawn processes taking more than 60 seconds
+</span><span class="py">harakiri</span> <span class="p">=</span> <span class="s">60</span>
+
+<span class="c"># 배포시 0으로
+</span><span class="py">py-autoreload</span> <span class="p">=</span> <span class="s">0</span>
+
+<span class="py">logger</span> <span class="p">=</span> <span class="s">file:/var/log/uwsgi/uwsgi.log</span>
+</code></pre></div></div>
+
+<h3 id="3-nginx-컨테이너">3. Nginx 컨테이너</h3>
+
+<ul>
+  <li>Nginx 도커파일</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> nginx:latest</span>
+
+<span class="k">COPY</span><span class="s"> nginx.conf /etc/nginx/nginx.conf               # nginx 설정파일 복사</span>
+<span class="k">COPY</span><span class="s"> mypro.conf /etc/nginx/conf.d/mypro.conf          # nginx 기본 설정파일 복사</span>
+
+<span class="k">CMD</span><span class="s"> ["nginx", "-g", "daemon off;"]</span>
+</code></pre></div></div>
+<p>→ Nginx는 CMD를 <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>에 작성하지 않고 도커파일에 직접 작성한다</p>
+
+<ul>
+  <li>mypro.conf (Nginx 설정파일)</li>
+</ul>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">upstream</span> <span class="n">django</span> {
+     <span class="n">server</span> <span class="n">unix</span>:///<span class="n">usr</span>/<span class="n">local</span>/<span class="n">mypro</span>/<span class="n">uwsgi</span>.<span class="n">sock</span>; 
+}
+
+<span class="n">server</span> {
+        <span class="n">listen</span> <span class="m">80</span>;
+        <span class="n">server_name</span> <span class="m">127</span>.<span class="m">0</span>.<span class="m">0</span>.<span class="m">1</span>;
+
+	<span class="n">charset</span> <span class="n">utf</span>-<span class="m">8</span>;
+
+	<span class="n">location</span> = /<span class="n">favicon</span>.<span class="n">ico</span> { <span class="n">access_log</span> <span class="n">off</span>; <span class="n">log_not_found</span> <span class="n">off</span>; }
+
+	<span class="n">location</span> / {
+            <span class="n">include</span>         /<span class="n">etc</span>/<span class="n">nginx</span>/<span class="n">uwsgi_params</span>;
+            <span class="n">uwsgi_pass</span>      <span class="n">django</span>;
+        }
+}
+</code></pre></div></div>
+<p>→ uWSGI 컨테이너가 생성한 <code class="language-plaintext highlighter-rouge">uwsgi.sock</code>을 사용한다.</p>
+
+<h3 id="4-docker-composeyml-작성">4. docker-compose.yml 작성</h3>
+<ul>
+  <li>이제 mysql + backend + nginx 컨테이너를 결합하기 위해 <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>을 작성한다.</li>
+  <li>docker-compose는 각 서비스의 <code class="language-plaintext highlighter-rouge">Dockerfile</code>을 빌드한 후 run하여 컨테이너를 실행시키고 각 컨테이너들을 서로 연결하는 역할을 합니다.</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">database</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mysql:5.7</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">mysql</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">3306:3306"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}</span>
+      <span class="pi">-</span> <span class="s">MYSQL_DATABASE=${DB_DATABASE}</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./database/mysql_data:/var/lib/mysql</span>
+    <span class="na">command</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">--character-set-server=utf8mb4</span>
+      <span class="pi">-</span> <span class="s">--collation-server=utf8mb4_unicode_ci</span>
+  <span class="na">backend</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">europani/mypro_backend</span>         <span class="c1"># image 이름&amp;태그 설정 (태그 : latest)</span>
+    <span class="na">build</span><span class="pi">:</span>                                <span class="c1"># 해당 context의 dockerfile을 사용하여 build 진행</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">./backend</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile-dev</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">backend</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./backend:/usr/local/mypro</span>
+      <span class="pi">-</span> <span class="s">./log/backend:/var/log/uwsgi</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">uwsgi --ini uwsgi.ini</span>
+  <span class="na">nginx</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">europani/mypro_nginx</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">./nginx</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile-dev</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">nginx</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">80:80"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./backend:/usr/local/mypro</span>
+      <span class="pi">-</span> <span class="s">./log/nginx:/var/log/nginx</span>
+</code></pre></div></div>
+
+<ul>
+  <li>디렉토리 구조<br>
+프로젝트명 : mypro</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/usr/local/mypro
+ │
+ ├── backend         
+ │   ├── Dockerfile
+ │   ├── .dockerignore
+ │   ├── .gitignore     # backend용
+ │   ├── manage.py
+ │   ├── README.md
+ │   ├── requirements.txt
+ │   ├── config
+ │   │   └── comfig.yml
+ │   ├── mypro
+ │   │   ├── __init__.py 
+ │   │   ├── asgi.py 
+ │   │   ├── settings.py 
+ │   │   ├── urls.py 
+ │   │   └── wsgi.py 
+ │   ├── uwsgi.sock      # 유닉스소켓
+ │   └── uwsgi.ini       # uWSGI 설정파일
+ │
+ ├── frontend           
+ │   ├── Dockerfile
+ │   ├── .gitignore
+ │   ├── 
+ │   
+ ├── database           
+ │   ├── .gitignore
+ │   └── mysql_data       # DB 데이터
+ │   
+ ├── nginx           
+ │   ├── Dockerfile
+ │   ├── .gitignore
+ │   ├── nginx.conf
+ │   └── mypro.conf        # nginx 설정파일 
+ │
+ ├── .gitignore            # backend 제외한 나머지 폴더  
+ ├── docker-compose.yml
+ └── log/
+</code></pre></div></div>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">backend/.dockerignore</code>
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">uwsgi.sock</code> 파일은 도커 컨테이너로 복사되지 않도록 제외한다.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-dockerignore">*.sock
+</code></pre>
+
+<h3 id="5-도커-허브에-업로드">5. 도커 허브에 업로드</h3>
+<ul>
+  <li>빌드 되어 설정된 이미지의 이름&amp;태그 그대로 도커허브에 업로드된다. (europani 계정)</li>
+  <li>도커 허브에 업로드 하기 위해 <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>에서 <code class="language-plaintext highlighter-rouge">image</code> 이름을 계정이름을 포함하여 <code class="language-plaintext highlighter-rouge">europani/mypro_backend</code>로 설정한 것이다.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker push europani/mypro_backend
+<span class="nv">$ </span>docker push europani/mypro_nginx
+</code></pre></div></div>
+
+<h3 id="정리">정리</h3>
+<ul>
+  <li>Host OS : CentOS7</li>
+  <li>호스트OS에 도커를 설치 한 후 호스트OS위에 올려 독립적인 <code class="language-plaintext highlighter-rouge">database</code>, <code class="language-plaintext highlighter-rouge">backend</code>, <code class="language-plaintext highlighter-rouge">nginx</code> 도커 컨테이너를 올려 실행한다.</li>
+  <li>각 도커 컨테이너는 각 <code class="language-plaintext highlighter-rouge">Dockerfile</code>를 빌드하여 만들어진다.</li>
+  <li>각 각의 독립적인 컨테이너을 연결할 때는 <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>를 이용한다.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">backend</code> 코드가 변경시 <code class="language-plaintext highlighter-rouge">docker-compose down / up</code> 명령어를 사용하여 컨테이너를 갱신시켜 주고 <code class="language-plaintext highlighter-rouge">Dockerfile</code>이 변경시 빌드를 다시 한 다음 컨테이너를 갱신해야 한다.</li>
+</ul>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/django/2021/07/06/023-django-web-server.html" title="장고 웹서버, WAS 셋팅(Nginx, uWSGI)">장고 웹서버, WAS 셋팅(Nginx, uWSGI)</a><a class="next" href="/algorithm/2021/07/11/004-python-grammar.html" title="알고리즘을 위한 파이썬">알고리즘을 위한 파이썬</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/react.js/2021/01/13/004-destructuring.html" title="알고리즘을 위한 파이썬">React &amp; ES6 Object Destructuring Assignment(구조분해할당)</a></li>
+<li><a class="post-link" href="/design%20pattern/2022/11/06/011-composite.html" title="알고리즘을 위한 파이썬">구조 (4) - 컴포지트(Composite) 패턴</a></li>
+<li><a class="post-link" href="/os/2021/02/09/004-directory.html" title="알고리즘을 위한 파이썬">디렉토리</a></li>
+<li><a class="post-link" href="/spring/2021/11/18/032-jpa-relation.html" title="알고리즘을 위한 파이썬">[JPA] 엔티티 연관관계</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/docker/2021/07/08/006-docker-django-nginx-mysql.html';
+      this.page.identifier = 'https://europani.github.io/docker/2021/07/08/006-docker-django-nginx-mysql.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

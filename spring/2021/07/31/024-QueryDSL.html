@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[JPA] QueryDSL | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[JPA] QueryDSL">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="QueryDSL JPQL을 생성하는 빌더 API QueryDSL은 보통 동적 쿼리를 위해 사용한다">
+<meta property="og:description" content="QueryDSL JPQL을 생성하는 빌더 API QueryDSL은 보통 동적 쿼리를 위해 사용한다">
+<link rel="canonical" href="https://europani.github.io/spring/2021/07/31/024-QueryDSL.html">
+<meta property="og:url" content="https://europani.github.io/spring/2021/07/31/024-QueryDSL.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-07-31T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[JPA] QueryDSL">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-07-31T00:00:00+00:00","datePublished":"2021-07-31T00:00:00+00:00","description":"QueryDSL JPQL을 생성하는 빌더 API QueryDSL은 보통 동적 쿼리를 위해 사용한다","headline":"[JPA] QueryDSL","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2021/07/31/024-QueryDSL.html"},"url":"https://europani.github.io/spring/2021/07/31/024-QueryDSL.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[JPA] QueryDSL</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-07-31T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-07-31
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 22 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Spring">#Spring</a><a class="post-tag" href="/tags.html#JPA">#JPA</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="querydsl">QueryDSL</h2>
+<ul>
+  <li>JPQL을 생성하는 빌더 API</li>
+  <li>
+    <p>QueryDSL은 보통 동적 쿼리를 위해 사용한다</p>
+  </li>
+  <li>특징
+    <ul>
+      <li>쿼리를 자바 코드로 작성해서 에러를 컴파일 시점에 잡을 수 있다</li>
+      <li>문법이 SQL과 비슷해 가독성이 좋다</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">BooleanExpression</code>, <code class="language-plaintext highlighter-rouge">BooleanBuilder</code>를 통해 동적쿼리를 편하게 작성할 수 있다</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">PreparedStatement</code>가 동작하여 자동으로 파라미터를 바인딩 해준다</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="spring-프로젝트-설정">Spring 프로젝트 설정</h3>
+<div class="language-gradle highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plugins</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="n">id</span> <span class="s2">"com.ewerk.gradle.plugins.querydsl"</span> <span class="n">version</span> <span class="s2">"1.0.10"</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+
+<span class="o">...</span>
+
+<span class="k">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s1">'com.querydsl:querydsl-jpa'</span>
+<span class="o">}</span>
+
+<span class="o">...</span>
+
+<span class="err">#</span> <span class="n">gradle</span> <span class="err">맨</span> <span class="err">밑부분에</span> <span class="n">QueryDSL</span> <span class="n">task</span> <span class="err">설정부분도</span> <span class="err">추가</span>
+<span class="kt">def</span> <span class="n">querydslDir</span> <span class="o">=</span> <span class="s2">"$buildDir/generated/querydsl"</span>
+
+<span class="n">querydsl</span> <span class="o">{</span>
+    <span class="n">jpa</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="n">querydslSourcesDir</span> <span class="o">=</span> <span class="n">querydslDir</span>
+<span class="o">}</span>
+
+<span class="k">sourceSets</span> <span class="o">{</span>
+    <span class="n">main</span><span class="o">.</span><span class="na">java</span><span class="o">.</span><span class="na">srcDir</span> <span class="n">querydslDir</span>
+<span class="o">}</span>
+
+<span class="n">configurations</span> <span class="o">{</span>
+    <span class="n">querydsl</span><span class="o">.</span><span class="na">extendsFrom</span> <span class="n">compileClasspath</span>
+<span class="o">}</span>
+
+<span class="n">compileQuerydsl</span> <span class="o">{</span>
+    <span class="n">options</span><span class="o">.</span><span class="na">annotationProcessorPath</span> <span class="o">=</span> <span class="n">configurations</span><span class="o">.</span><span class="na">querydsl</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">QuerydslConfiguration</span> <span class="o">{</span>
+
+    <span class="nd">@PersistenceContext</span>
+    <span class="kd">private</span> <span class="nc">EntityManager</span> <span class="n">entityManager</span><span class="o">;</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">JPAQueryFactory</span> <span class="nf">jpaQueryFactory</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">JPAQueryFactory</span><span class="o">(</span><span class="n">entityManager</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">EntityManager</code>와 <code class="language-plaintext highlighter-rouge">JPAQueryFactory</code>를 설정하여 프로젝트 어디서든 사용 가능</li>
+</ul>
+
+<h3 id="쿼리타입q--q도메인">쿼리타입(Q) = Q도메인</h3>
+<ul>
+  <li>QueryDSL을 사용 하려면 쿼리 타입이라는 쿼리용 클래스가 있어야 한다.</li>
+  <li>
+    <p>쿼리 타입은 기본 인스턴스를 보관하고 있다. 하지만, 같은 엔티티를 서브쿼리에 사용하면 같은 별칭이 사용되므로 별칭을 직접 지정해야 한다.</p>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">gradle -&gt; Tasks -&gt; build -&gt; clean</code> : 빌드 초기화</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">gradle -&gt; Tasks -&gt; other -&gt; compileQuerydsl</code> : Q도메인 빌드</li>
+  <li>빌드를 하면 <code class="language-plaintext highlighter-rouge">build/generated/querydsl</code> 아래에 Q도메인 객체가 추가된다.</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Entity</span>
+<span class="nd">@Table</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"member"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemberEntity</span> <span class="o">{</span>
+
+    <span class="nd">@Id</span>
+    <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="nc">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">id</span><span class="o">;</span>
+    
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">nullable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+<p>→ QueryDSL은 MemberEntity 동일한 패키지에 <code class="language-plaintext highlighter-rouge">QMemberEntity</code>라는 이름을 가진 쿼리 타입을 생성한다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 기본 인스턴스를 사용하여 쿼리 타입에 접근</span>
+<span class="nc">QMemberEntity</span> <span class="n">qMember</span> <span class="o">=</span> <span class="nc">QMemberEntity</span><span class="o">.</span><span class="na">memberEntity</span><span class="o">;</span>
+
+<span class="c1">// 별칭을 직접 지정하여 쿼리 타입에 접근</span>
+<span class="nc">QMemberEntity</span> <span class="n">qMember</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">QMemberEntity</span><span class="o">(</span><span class="s">"m"</span><span class="o">);</span>      <span class="c1">// 생성되는 JPQL의 별칭 = m</span>
+</code></pre></div></div>
+
+<h3 id="문법">문법</h3>
+<h4 id="select문">SELECT문</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kt">void</span> <span class="nf">queryDSL</span><span class="o">()</span> <span class="o">{</span>
+    <span class="c1">// 1. 직접 생성</span>
+    <span class="c1">// EntityManager em = emf.createEntityManager();</span>
+    <span class="c1">// JPAQuery query = new JPAQuery(em);</span>
+
+    <span class="c1">// 2. Bean 사용하기</span>
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">JPAQueryFactory</span> <span class="n">queryFactory</span><span class="o">;</span>
+
+    <span class="nc">QMemberEntity</span> <span class="n">qMember</span> <span class="o">=</span> <span class="nc">QMemberEntity</span><span class="o">.</span><span class="na">memberEntity</span><span class="o">;</span>     <span class="c1">// 기본 인스턴스 사용</span>
+
+    <span class="c1">// SELECT qMember FROM QMemberEntity qMember WHERE qMember.name=?1</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">queryFactory</span>
+                <span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="s">"europani"</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+    
+    <span class="k">return</span> <span class="n">list</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="결과반환">결과반환</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">메서드</th>
+      <th style="text-align: center">설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">List&lt;.T&gt; fetch()</td>
+      <td style="text-align: center">조회 결과 리스트 반환</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">T fetchFirst()</td>
+      <td style="text-align: center">조회 결과 첫번째 것만 반환</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><del>T fetchOne()</del></td>
+      <td style="text-align: center"><del>조회 결과 1건 반환 (여러건일 경우 에러)</del></td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><del>Long fetchCount()</del></td>
+      <td style="text-align: center"><del>조회 갯수 반환</del></td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><del>QueryResult&lt;.T&gt; fetchResults()</del></td>
+      <td style="text-align: center"><del>조회 리스트와 전체 갯수를 포함한 QueryResult 객체 반환<br> (조회쿼리, count쿼리 총 2번실행)</del></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>→ QueryDSL 5.0부터 <code class="language-plaintext highlighter-rouge">fetchCount()</code>, <code class="language-plaintext highlighter-rouge">fetchResults()</code> deprecated 되어짐</p>
+
+<h4 id="where-조건">where 조건</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">검색조건</th>
+      <th style="text-align: center">설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">member.username.eq(“a”)</td>
+      <td style="text-align: center">username = ‘a’</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.username.ne(“a”)</td>
+      <td style="text-align: center">username != ‘a’</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.username.isNotNull()</td>
+      <td style="text-align: center">username is not null</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.age.in(10, 20)</td>
+      <td style="text-align: center">age in (10, 20)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.age.notIn(10, 20)</td>
+      <td style="text-align: center">age not in (10, 20)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.age.between(10, 20)</td>
+      <td style="text-align: center">age between 10 and 20)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.age.goe(15)</td>
+      <td style="text-align: center">age &gt;= 15</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.age.gt(15)</td>
+      <td style="text-align: center">age &gt; 15</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.age.loe(15)</td>
+      <td style="text-align: center">age &lt;= 15</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.age.lt(15)</td>
+      <td style="text-align: center">age &lt; 15</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.username.like(“member%”)</td>
+      <td style="text-align: center">username like ‘member%’</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.username.contains(“member”)</td>
+      <td style="text-align: center">username like ‘%member%’</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">member.username.startWith(“member”)</td>
+      <td style="text-align: center">username like ‘member%’</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="and-or">and, or</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// and</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">findMember</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">username</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="s">"europani"</span><span class="o">),</span> <span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="mi">20</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+
+<span class="c1">// or</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">findMember</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">username</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="s">"europani"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">or</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">username</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="s">"acaka"</span><span class="o">)))</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h4 id="정렬">정렬</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="mi">100</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">orderBy</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">desc</span><span class="o">(),</span> <span class="n">qMember</span><span class="o">.</span><span class="na">username</span><span class="o">.</span><span class="na">asc</span><span class="o">().</span><span class="na">nullsLast</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>→ <code class="language-plaintext highlighter-rouge">nullsFirst()</code>, <code class="language-plaintext highlighter-rouge">nullsLast()</code> : null 데이터 순서부여</p>
+
+<h4 id="페이징">페이징</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="mi">100</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">orderBy</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">desc</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">offset</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>      <span class="c1">// index 1번부터</span>
+            <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>       <span class="c1">// 2개</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h4 id="집합">집합</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Tuple</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span>
+                    <span class="n">qMember</span><span class="o">.</span><span class="na">count</span><span class="o">(),</span>     <span class="c1">//회원수</span>
+                    <span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">sum</span><span class="o">(),</span>   <span class="c1">//나이 합</span>
+                    <span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">avg</span><span class="o">(),</span>   <span class="c1">//나이 평균</span>
+                    <span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">max</span><span class="o">(),</span>   <span class="c1">//최대 나이</span>
+                    <span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">min</span><span class="o">()</span>    <span class="c1">//최소 나이</span>
+            <span class="o">)</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h3 id="조인">조인</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">조인</th>
+      <th style="text-align: center">설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">join(), innerJoin()</td>
+      <td style="text-align: center">내부 조인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">leftJoin()</td>
+      <td style="text-align: center">Left 외부 조인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">rightJoin()</td>
+      <td style="text-align: center">Right 외부 조인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">
+<code class="language-plaintext highlighter-rouge">조인</code>.fetchJoin()</td>
+      <td style="text-align: center">해당 조인에 패치조인 적용</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Tuple</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">usename</span><span class="o">,</span> <span class="n">qTeam</span><span class="o">.</span><span class="na">name</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">team</span><span class="o">,</span> <span class="n">qTeam</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h4 id="fetch-조인">fetch 조인</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">User</span><span class="o">&gt;</span> <span class="nf">findAllByQuerydsl</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">QMemberEntity</span> <span class="n">qMember</span> <span class="o">=</span> <span class="nc">QMemberEntity</span><span class="o">.</span><span class="na">memberEntity</span><span class="o">;</span>
+    <span class="nc">QTeam</span> <span class="n">qTeam</span> <span class="o">=</span> <span class="nc">QTeamEntity</span><span class="o">.</span><span class="na">teamEntity</span><span class="o">;</span>	
+    <span class="nc">QArticle</span> <span class="n">qArticle</span> <span class="o">=</span> <span class="nc">QArticleEntity</span><span class="o">.</span><span class="na">articleEntity</span><span class="o">;</span>
+
+    <span class="k">return</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">team</span><span class="o">,</span> <span class="n">qTeam</span><span class="o">).</span><span class="na">fetchJoin</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">article</span><span class="o">,</span> <span class="n">qArticle</span><span class="o">).</span><span class="na">fetchJoin</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">distinct</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>→ 패치조인 과정에서 중복 데이터가 발생할 수 있기 때문에 <code class="language-plaintext highlighter-rouge">distinct</code>를 추가했다</p>
+
+<h4 id="연관관계-없는-조인">연관관계 없는 조인</h4>
+<p><code class="language-plaintext highlighter-rouge">join(테이블).on(조건)</code></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Setter</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RateStatsDTO</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">eqAreaId</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">fieldId</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Double</span> <span class="n">average</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">RateStatsDTO</span><span class="o">&gt;</span> <span class="nf">getStats</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">select</span><span class="o">(</span>
+                <span class="nc">Projections</span><span class="o">.</span><span class="na">bean</span><span class="o">(</span><span class="nc">RateStatsDTO</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                        <span class="n">equipment</span><span class="o">.</span><span class="na">equipArea</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">as</span><span class="o">(</span><span class="s">"eqAreaId"</span><span class="o">),</span>
+                        <span class="n">equipment</span><span class="o">.</span><span class="na">field</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">as</span><span class="o">(</span><span class="s">"fieldId"</span><span class="o">),</span>
+                        <span class="n">rate</span><span class="o">.</span><span class="na">workRate</span><span class="o">.</span><span class="na">avg</span><span class="o">().</span><span class="na">as</span><span class="o">(</span><span class="s">"average"</span><span class="o">))</span>
+            <span class="o">)</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">rate</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">equipment</span><span class="o">).</span><span class="na">on</span><span class="o">(</span><span class="n">equipment</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">rate</span><span class="o">.</span><span class="na">equipmentId</span><span class="o">)).</span><span class="na">fetchJoin</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">groupBy</span><span class="o">(</span><span class="n">equipment</span><span class="o">.</span><span class="na">equipArea</span><span class="o">.</span><span class="na">id</span><span class="o">,</span> <span class="n">equipment</span><span class="o">.</span><span class="na">field</span><span class="o">.</span><span class="na">id</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>→ setter를 통해 맵핑하기 때문에 <code class="language-plaintext highlighter-rouge">setter</code>가 반드시 필요하다</p>
+
+<h4 id="group-by-having">Group By, Having</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 팀의 이름과 각 팀의 25세 이상 멤버의 평균 연령을 구해라</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Tuple</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">qTeam</span><span class="o">.</span><span class="na">name</span><span class="o">,</span> <span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">avg</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">qMember</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">team</span><span class="o">,</span> <span class="n">qTeam</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">groupBy</span><span class="o">(</span><span class="n">qTeam</span><span class="o">.</span><span class="na">name</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">having</span><span class="o">(</span><span class="n">qMember</span><span class="o">.</span><span class="na">age</span><span class="o">.</span><span class="na">gt</span><span class="o">(</span><span class="mi">25</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h4 id="case문">Case문</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">age</span> 
+                <span class="o">.</span><span class="na">when</span><span class="o">(</span><span class="mi">10</span><span class="o">).</span><span class="na">then</span><span class="o">(</span><span class="s">"열살"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">when</span><span class="o">(</span><span class="mi">20</span><span class="o">).</span><span class="na">then</span><span class="o">(</span><span class="s">"스무살"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">otherwise</span><span class="o">(</span><span class="s">"기타"</span><span class="o">))</span> 
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h3 id="결과-dto-반환">결과 DTO 반환</h3>
+<ul>
+  <li>쿼리 결과를 바로 DTO에 담아서 반환할 수 있다</li>
+</ul>
+
+<h4 id="1-dto-반환">1. DTO 반환</h4>
+<ul>
+  <li>setter, field, constructor 방식 등</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// setter</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberDto</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="nc">Projections</span><span class="o">.</span><span class="na">bean</span><span class="o">(</span><span class="nc">MemberDto</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">username</span><span class="o">,</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">age</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+
+<span class="c1">// field</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberDto</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="nc">Projections</span><span class="o">.</span><span class="na">fields</span><span class="o">(</span><span class="nc">MemberDto</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">username</span><span class="o">,</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">age</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+
+<span class="c1">// constructor</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberDto</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="nc">Projections</span><span class="o">.</span><span class="na">Projections</span><span class="o">.</span><span class="na">constructor</span><span class="o">(</span><span class="nc">MemberDto</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">username</span><span class="o">,</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">age</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<ul>
+  <li>필드 명이 다를 땐 맵핑이 바로 안되기 때문에 alias를 사용해야 한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberDto</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="nc">Projections</span><span class="o">.</span><span class="na">fields</span><span class="o">(</span><span class="nc">UserDto</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">username</span><span class="o">.</span><span class="na">as</span><span class="o">(</span><span class="s">"name"</span><span class="o">),</span>
+                    <span class="n">member</span><span class="o">.</span><span class="na">age</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h4 id="2-queryprojection">2. @QueryProjection</h4>
+<ul>
+  <li>DTO의 생성자에 사용하면 해당 DTO의 Q도메인을 생성해 맵핑</li>
+  <li>맵핑시 생기는 오류를 컴파일 시점에 찾을 수 있다
+    <ul>
+      <li>생성자 방식 : 런타임 시점에 오류발생</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Data</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemberDto</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">username</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">MemberDto</span><span class="o">()</span> <span class="o">{}</span>
+
+    <span class="nd">@QueryProjection</span>
+    <span class="kd">public</span> <span class="nf">MemberDto</span><span class="o">(</span><span class="nc">String</span> <span class="n">username</span><span class="o">,</span> <span class="kt">int</span> <span class="n">age</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">username</span> <span class="o">=</span> <span class="n">username</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberDto</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="k">new</span> <span class="nc">QMemberDto</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">username</span><span class="o">,</span> <span class="n">member</span><span class="o">.</span><span class="na">age</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h3 id="동적쿼리">동적쿼리</h3>
+<h4 id="1-booleanbuilder">1. BooleanBuilder</h4>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">where문에 들어가는 조건들을 넣어주는 컨테이너</code></li>
+  <li>where 조건문을 한눈에 파악하기 어려움</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Academy</span><span class="o">&gt;</span> <span class="nf">findDynamicQuery</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">String</span> <span class="n">address</span><span class="o">,</span> <span class="nc">String</span> <span class="n">phoneNumber</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="nc">BooleanBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BooleanBuilder</span><span class="o">();</span>      <span class="c1">// BooleanBuilder 생성</span>
+
+    <span class="k">if</span> <span class="o">(!</span><span class="nc">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">name</span><span class="o">))</span> <span class="o">{</span>           <span class="c1">// name 조건</span>
+        <span class="n">builder</span><span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">academy</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="nc">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">address</span><span class="o">))</span> <span class="o">{</span>        <span class="c1">// address 조건</span>
+        <span class="n">builder</span><span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">academy</span><span class="o">.</span><span class="na">address</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">address</span><span class="o">));</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="nc">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">phoneNumber</span><span class="o">))</span> <span class="o">{</span>    <span class="c1">// phoneNumber 조건</span>
+        <span class="n">builder</span><span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">academy</span><span class="o">.</span><span class="na">phoneNumber</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">phoneNumber</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">academy</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">builder</span><span class="o">)</span>     <span class="c1">// 조건들을 넣은 builder 주입</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="2-booleanexpression">2. BooleanExpression</h4>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">where문의 조건을 표현하는 표현식</code></li>
+  <li>where 조건문을 표현식으로 리팩토링하여 사용하기 때문에 가독성이 좋다</li>
+  <li>또한, 파라미터가 null인 조건은 생략되게 만들수 있다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Academy</span><span class="o">&gt;</span> <span class="nf">findDynamicQuery</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">String</span> <span class="n">address</span><span class="o">,</span> <span class="nc">String</span> <span class="n">phoneNumber</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">queryFactory</span>
+            <span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">academy</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">eqName</span><span class="o">(</span><span class="n">name</span><span class="o">),</span>                <span class="c1">// expression들 주입</span>
+                    <span class="n">eqAddress</span><span class="o">(</span><span class="n">address</span><span class="o">),</span>
+                    <span class="n">eqPhoneNumber</span><span class="o">(</span><span class="n">phoneNumber</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="nc">BooleanExpression</span> <span class="nf">eqName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>             <span class="c1">// name 조건 </span>
+    <span class="k">if</span> <span class="o">(</span><span class="nc">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">name</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">academy</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="nc">BooleanExpression</span> <span class="nf">eqAddress</span><span class="o">(</span><span class="nc">String</span> <span class="n">address</span><span class="o">)</span> <span class="o">{</span>       <span class="c1">// address 조건</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nc">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">address</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">academy</span><span class="o">.</span><span class="na">address</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">address</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="nc">BooleanExpression</span> <span class="nf">eqPhoneNumber</span><span class="o">(</span><span class="nc">String</span> <span class="n">phoneNumber</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// phoneNumber 조건</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nc">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">phoneNumber</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">academy</span><span class="o">.</span><span class="na">phoneNumber</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">phoneNumber</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="spring-data-jpa와-querydsl-함께-사용하기">Spring Data JPA와 QueryDSL 함께 사용하기</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">QuerydslRepository</code>를 사용하여 QueryDSL의 역할을 정의</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Repository</code>에 <code class="language-plaintext highlighter-rouge">JpaRepository</code>와 <code class="language-plaintext highlighter-rouge">QuerydslRepository</code>를 같이 상속시키면 JPA와 QueryDSL을 모두 사용 할 수 있다</li>
+</ul>
+
+<h4 id="1-querydslrepositorysupport-사용">(1) QueryDslRepositorySupport 사용</h4>
+<p>1. Repository 인터페이스</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MemberRepository</span> <span class="kd">extends</span> <span class="nc">JpaRepository</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;,</span> <span class="nc">MemberQuerydslRepository</span> <span class="o">{</span>
+    
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>2. Querydsl Repository 인터페이스</p>
+<ul>
+  <li>QueryDSL로 만들어 쓸 메서드의 인터페이스</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MemberQuerydslRepository</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>3. Querydsl Repository 구현체</p>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">QuerydslRepositorySupport</code> 상속</li>
+  <li>QuerydslRepository 인터페이스 구현</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Repository</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemberQuerydslRepositoryImpl</span> <span class="kd">extends</span> <span class="nc">QuerydslRepositorySupport</span> <span class="kd">implements</span> <span class="nc">MemberQuerydslRepository</span> <span class="o">{</span>
+
+    <span class="nc">QMemberEntity</span> <span class="n">member</span> <span class="o">=</span> <span class="nc">QMemberEntity</span><span class="o">.</span><span class="na">memberEntity</span><span class="o">;</span>
+    
+    <span class="kd">public</span> <span class="nf">MemberQuerydslRepositoryImpl</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="nc">MemberEntity</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">QMemberDto</span> <span class="n">projection</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">QMemberDto</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">username</span><span class="o">,</span> <span class="n">member</span><span class="o">.</span><span class="na">age</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="nf">getQuerydsl</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">createQuery</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">projection</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="2-jpaqueryfactory-사용">(2) JPAQueryFactory 사용</h4>
+<p>QueryDSL은 <code class="language-plaintext highlighter-rouge">JPAQueryFactory</code> 를 통해 동작한다<br>
+<code class="language-plaintext highlighter-rouge">JPAQueryFactory</code>를 사용하면 <code class="language-plaintext highlighter-rouge">EntityManager</code>를 통해 질의가 처리되고 JPQL을 사용한다</p>
+
+<p>1. Repository 인터페이스</p>
+<ul>
+  <li>인터페이스에서 JPA뿐만 아니라 QueryDSL을 위해 만든 QuerydslRepository 인터페이스까지 상속 받는다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MemberRepository</span> <span class="kd">extends</span> <span class="nc">JpaRepository</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;,</span> <span class="nc">MemberQuerydslRepository</span> <span class="o">{</span>
+    
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>2. Querydsl Repository 인터페이스</p>
+<ul>
+  <li>QueryDSL로 만들어 쓸 메서드의 인터페이스</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MemberQuerydslRepository</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>3. Querydsl Repository 구현체</p>
+<ul>
+  <li>Querydsl Repository 인터페이스를 구현</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RequiredArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemberQuerydslRepositoryImpl</span> <span class="kd">implements</span> <span class="nc">MemberQuerydslRepository</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">JPAQueryFactory</span> <span class="n">queryFactory</span><span class="o">;</span>
+    <span class="nc">QMemberEntity</span> <span class="n">member</span> <span class="o">=</span> <span class="nc">QMemberEntity</span><span class="o">.</span><span class="na">memberEntity</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">))</span>
+                    <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="페이징-1">페이징</h3>
+<ul>
+  <li>Spring Data JPA의 <code class="language-plaintext highlighter-rouge">Page</code>, <code class="language-plaintext highlighter-rouge">Pageable</code> 객체를 활용 할수 있다</li>
+  <li>
+<del><code class="language-plaintext highlighter-rouge">fetchResults()</code>를 통해 조회쿼리, count쿼리 총 2번의 쿼리실행</del>(deprecated)</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Page</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">Pageable</span> <span class="n">pageable</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">QueryResults</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">offset</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getOffset</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getPageSize</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">fetchResults</span><span class="o">();</span>
+
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">content</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="na">getResults</span><span class="o">();</span>
+    <span class="kt">long</span> <span class="n">total</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="na">getTotal</span><span class="o">();</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="nc">PageImpl</span><span class="o">&lt;&gt;(</span><span class="n">content</span><span class="o">,</span> <span class="n">pageable</span><span class="o">,</span> <span class="n">total</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>→ <code class="language-plaintext highlighter-rouge">PageImpl</code> : <code class="language-plaintext highlighter-rouge">Page</code> 구현체</p>
+
+<ul>
+  <li>최적화를 위한 count쿼리 분리</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Page</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">Pageable</span> <span class="n">pageable</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">content</span> <span class="o">=</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">offset</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getOffset</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getPageSize</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+
+    <span class="nc">Long</span> <span class="n">total</span> <span class="o">=</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">count</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">fetchFirst</span><span class="o">();</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="nc">PageImpl</span><span class="o">&lt;&gt;(</span><span class="n">content</span><span class="o">,</span> <span class="n">pageable</span><span class="o">,</span> <span class="n">total</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">PageableExecutionUtils.getPage(content, pageable, function)</code>
+    <ul>
+      <li>count쿼리 생략을 통해 최적화 가능</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">content</code>와 <code class="language-plaintext highlighter-rouge">pageable</code> 사이즈를 확인 후 생략 가능한 경우 function을 실행하지 않음<br>
+1) 처음 페이지만 존재하는 경우 (데이터 갯수 &lt; 페이지 사이즈이면 total = 데이터갯수)<br>
+2) 마지막 페이지일 경우 (total = offset + 현재 페이지 데이터갯수)</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Page</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">Pageable</span> <span class="n">pageable</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">content</span> <span class="o">=</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">selectFrom</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">offset</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getOffset</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getPageSize</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+
+    <span class="nc">JPAQuery</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">countQuery</span> <span class="o">=</span> <span class="n">queryFactory</span><span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">count</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">));</span>
+
+    <span class="k">return</span> <span class="nc">PageableExecutionUtils</span><span class="o">.</span><span class="na">getPage</span><span class="o">(</span><span class="n">content</span><span class="o">,</span> <span class="n">pageable</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">countQuery</span><span class="o">.</span><span class="na">fetchFirst</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">QuerydslRepositorySupport</code>을 사용하면 <code class="language-plaintext highlighter-rouge">applyPagination()</code>로 적용 가능</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nc">JPQLQuery</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="nf">applyPagination</span><span class="o">(</span><span class="nc">Pageable</span> <span class="n">pageable</span><span class="o">,</span> <span class="nc">JPQLQuery</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">query</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="n">query</span><span class="o">.</span><span class="na">offset</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getOffset</span><span class="o">());</span>
+    <span class="n">query</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getPageSize</span><span class="o">());</span>
+
+    <span class="k">return</span> <span class="nf">applySorting</span><span class="o">(</span><span class="n">pageable</span><span class="o">.</span><span class="na">getSort</span><span class="o">(),</span> <span class="n">query</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Page</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="nf">findByName</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="nc">Pageable</span> <span class="n">pageable</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">JPAQuery</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">getQuerydsl</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">createQuery</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+    
+    <span class="nc">JPAQuery</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">pageQuery</span> <span class="o">=</span> <span class="n">getQuerydsl</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">applyPagination</span><span class="o">(</span><span class="n">pageable</span><span class="o">,</span> <span class="n">query</span><span class="o">);</span>
+
+    <span class="nc">JPAQuery</span><span class="o">&lt;</span><span class="nc">MemberEntity</span><span class="o">&gt;</span> <span class="n">countQuery</span> <span class="o">=</span> <span class="n">getQuerydsl</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">createQuery</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">select</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">count</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">member</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="n">member</span><span class="o">.</span><span class="na">name</span><span class="o">.</span><span class="na">eq</span><span class="o">(</span><span class="n">name</span><span class="o">));</span>
+
+    <span class="k">return</span> <span class="nc">PageableExecutionUtils</span><span class="o">.</span><span class="na">getPage</span><span class="o">(</span><span class="n">pageQuery</span><span class="o">.</span><span class="na">fetch</span><span class="o">(),</span> <span class="n">pageable</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">countQuery</span><span class="o">.</span><span class="na">fetchFirst</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><a href="https://querydsl.com/static/querydsl/4.0.1/reference/ko-KR/html_single/">QuertySQL 레퍼런스(링크)</a></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2021/07/30/023-spring-data-jpa.html" title="[JPA] Spring Data JPA">[JPA] Spring Data JPA</a><a class="next" href="/spring/2021/08/02/025-spring-web-server.html" title="스프링부트 Nginx 웹서버 셋팅">스프링부트 Nginx 웹서버 셋팅</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/spring/2022/12/20/048-logback.html" title="스프링부트 Nginx 웹서버 셋팅">[Spring] Logging - logback 프레임워크</a></li>
+<li><a class="post-link" href="/algorithm/2022/05/25/010-java-grammar.html" title="스프링부트 Nginx 웹서버 셋팅">알고리즘을 위한 자바</a></li>
+<li><a class="post-link" href="/spring/2023/06/26/052-spring-batch-version5.html" title="스프링부트 Nginx 웹서버 셋팅">[Batch] Spring Batch 5 적용</a></li>
+<li><a class="post-link" href="/django/2020/12/07/001-virtualenv-pip.html" title="스프링부트 Nginx 웹서버 셋팅">virtualenv, pip</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2021/07/31/024-QueryDSL.html';
+      this.page.identifier = 'https://europani.github.io/spring/2021/07/31/024-QueryDSL.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

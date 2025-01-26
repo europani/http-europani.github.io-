@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[k8s] 쿠버네티스 Object | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[k8s] 쿠버네티스 Object">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="1. Pod (파드) 최소 단위, 1개 이상의 컨테이너로 구성 Pod가 단독으로 쓰이는 경우는 없다. Pod가 컨테이너를 관리하듯 다른 컨트롤러가 Pod를 관리한다 파드의 IP는 생성 될 때 마다 동적으로 변경된다">
+<meta property="og:description" content="1. Pod (파드) 최소 단위, 1개 이상의 컨테이너로 구성 Pod가 단독으로 쓰이는 경우는 없다. Pod가 컨테이너를 관리하듯 다른 컨트롤러가 Pod를 관리한다 파드의 IP는 생성 될 때 마다 동적으로 변경된다">
+<link rel="canonical" href="https://europani.github.io/kubernetes/2023/06/03/001-object.html">
+<meta property="og:url" content="https://europani.github.io/kubernetes/2023/06/03/001-object.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-06-03T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[k8s] 쿠버네티스 Object">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2023-06-03T00:00:00+00:00","datePublished":"2023-06-03T00:00:00+00:00","description":"1. Pod (파드) 최소 단위, 1개 이상의 컨테이너로 구성 Pod가 단독으로 쓰이는 경우는 없다. Pod가 컨테이너를 관리하듯 다른 컨트롤러가 Pod를 관리한다 파드의 IP는 생성 될 때 마다 동적으로 변경된다","headline":"[k8s] 쿠버네티스 Object","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/kubernetes/2023/06/03/001-object.html"},"url":"https://europani.github.io/kubernetes/2023/06/03/001-object.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[k8s] 쿠버네티스 Object</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-06-03T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-06-03
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Kubernetes">#Kubernetes</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="1-pod-파드">1. Pod (파드)</h2>
+<ul>
+  <li>최소 단위, 1개 이상의 컨테이너로 구성</li>
+  <li>Pod가 단독으로 쓰이는 경우는 없다. Pod가 컨테이너를 관리하듯 다른 컨트롤러가 Pod를 관리한다</li>
+  <li>
+    <p>파드의 IP는 생성 될 때 마다 동적으로 변경된다</p>
+  </li>
+  <li>Label : 파드의 용도를 구분하는 태그</li>
+  <li>NodeSelector : 해당 레이블이 달려 있는 노드에 할당, 없을 경우 노드 할당 불가능</li>
+</ul>
+
+<p><img src="https://github.com/europani/europani.github.io/assets/48157259/9ab5961e-4d09-42da-a7be-367b1e3f7ead" alt="image"></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">pod1</span>    
+  <span class="c1"># namespace: ns1                     </span>
+  <span class="na">labels</span><span class="pi">:</span>                               
+    <span class="na">type</span><span class="pi">:</span> <span class="s">web</span>                         
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">nodeSelector</span><span class="pi">:</span>                     
+    <span class="na">kubernetes.io/hostname</span><span class="pi">:</span> <span class="s">node1</span>     <span class="c1"># 할당시킬 노드가 갖고 있는 레이블 입력</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">container1</span>                
+    <span class="na">image</span><span class="pi">:</span> <span class="s">europani/init</span>                
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">container2</span>                
+    <span class="na">image</span><span class="pi">:</span> <span class="s">europani/init2</span>                
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8080</span>  
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">requests</span><span class="pi">:</span>     <span class="c1"># 스케줄링 시 요구되는 최소 리소스</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s">100m</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s">256Mi</span>
+      <span class="na">limits</span><span class="pi">:</span>       <span class="c1"># Pod가 사용할 수 있는 최대 리소스</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s">200m</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s">512Mi</span>
+</code></pre></div></div>
+
+<h3 id="nodeschedule">NodeSchedule</h3>
+<ul>
+  <li>
+    <p>파드를 할당시킬 노드를 선택하는 전략</p>
+  </li>
+  <li>NodeSelector : 해당 레이블이 달려 있는 노드에 할당, 없을 경우 노드 할당 불가능</li>
+  <li>NodeAffinity : 해당 레이블이 달려 있는 노드에 할당, 옵션을 설정하면 resource가 넉넉한 노드에도 할당 가능</li>
+  <li>Pod Affinity : 연관된 파드가 있는 노드에 같이 할당되도록 설정 (i.g WebApp-Server)</li>
+  <li>Pod Anti-Affinity : 설정한 조건에 맞는 파드가 있는 노드에 같이 할당되지 않도록 설정 (i.g Master-Slave)</li>
+  <li>Taint / Toleration : 특정 파드만 올라올 수 있도록 노드의 조건 설정
+    <ul>
+      <li>Taint : 해당 노드에 할당 될 수 있는 파드의 조건을 노드에 설정</li>
+      <li>Toleration : 파드에 설정하는 옵션으로 노드의 Taint와 일치하면 해당 노드에 할당 됨</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="헬스체크">헬스체크</h3>
+<h4 id="1-startup">1. startup</h4>
+<ul>
+  <li>컨테이너 실행 전의 사전 조사 체크나 사전
+    <ul>
+      <li><strong>App 초기화가 끝났는지 체크</strong></li>
+      <li>컨테이너 내의 어플리케이션 시작 여부(<strong>App 초기화</strong>), 웜업 등</li>
+      <li>Spring App 초기화시 : Jar 실행, Spring 초기화, DB 연결 등이 수행</li>
+    </ul>
+  </li>
+  <li>App 초기화가 되면 startup이 성공</li>
+  <li>startup 체크가 끝나야 readliness/liveness 체크 단계로 넘어 갈 수 있음</li>
+  <li>실패시 해당 컨테이너를 죽이고 재시작</li>
+</ul>
+
+<h4 id="2-readiness">2. readiness</h4>
+<ul>
+  <li>컨테이너가 준비되었는 지 체크하고 정상적이지 않다면 파드로 들어오는 요청을 제외
+    <ul>
+      <li><strong>외부 트래픽을 받을 수 있는 상황인지 체크</strong></li>
+      <li>
+<strong>User 초기화</strong> : 초기 데이터 셋팅, 연동 시스템 체크, DB 데이터 validation 등</li>
+    </ul>
+  </li>
+  <li>readiness 체크가 성공하면 Service는 해당 Pod와 연결하여 트래픽이 가도록 한다</li>
+  <li>실패시 해당 Pod를 Service 연결 대상에서 제외</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">container1</span>                
+    <span class="na">image</span><span class="pi">:</span> <span class="s">europani/init</span>                
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">readnessProbe</span><span class="pi">:</span>
+      <span class="na">httpGet</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+        <span class="na">port</span><span class="pi">:</span> <span class="m">8080</span>
+      <span class="na">initialDelaySeconds</span><span class="pi">:</span> <span class="m">5</span>   <span class="c1"># 최초 probe 시작 전 딜레이 (default:0)</span>
+      <span class="na">periodSeconds</span><span class="pi">:</span> <span class="m">5</span>         <span class="c1"># probe 체크 주기 (default:10)</span>
+      <span class="na">timeoutSeconds</span><span class="pi">:</span> <span class="m">2</span>        <span class="c1"># probe timeout (default:1)</span>
+      <span class="na">successThreshold</span><span class="pi">:</span> <span class="m">1</span>      <span class="c1"># 성공처리를 위한 성공횟수 (default:1)</span>
+      <span class="na">failureThreshold</span><span class="pi">:</span> <span class="m">1</span>      <span class="c1"># 실패처리를 위한 실패횟수 (default:3)</span>
+</code></pre></div></div>
+
+<h4 id="3-liveness">3. liveness</h4>
+<ul>
+  <li><strong>컨테이너가 정상적으로 살아있는 지 체크</strong></li>
+  <li>실패시 컨테이너를 재시작하여 문제를 해결 시도</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">container1</span>                
+    <span class="na">image</span><span class="pi">:</span> <span class="s">europani/init</span>                
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">livenessProbe</span><span class="pi">:</span>
+      <span class="na">httpGet</span><span class="pi">:</span>
+        <span class="na">path</span><span class="pi">:</span> <span class="s">/health</span>
+        <span class="na">port</span><span class="pi">:</span> <span class="m">8080</span>
+      <span class="na">initialDelaySeconds</span><span class="pi">:</span> <span class="m">5</span>   <span class="c1"># 최초 probe 시작 전 딜레이 (default:0)</span>
+      <span class="na">periodSeconds</span><span class="pi">:</span> <span class="m">5</span>         <span class="c1"># probe 체크 주기 (default:10)</span>
+      <span class="na">timeoutSeconds</span><span class="pi">:</span> <span class="m">2</span>        <span class="c1"># probe timeout (default:1)</span>
+      <span class="na">successThreshold</span><span class="pi">:</span> <span class="m">1</span>      <span class="c1"># 성공처리를 위한 성공횟수 (default:1)</span>
+      <span class="na">failureThreshold</span><span class="pi">:</span> <span class="m">1</span>      <span class="c1"># 실패처리를 위한 실패횟수 (default:3)</span>
+</code></pre></div></div>
+
+<h2 id="2-service-서비스">2. Service (서비스)</h2>
+<ul>
+  <li>네트워크와 관련된 Object이며, 파드를 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 내부 로드 밸런서를 생성할 때 사용</li>
+  <li>IP가 계속 변하는 파드와 직접 통신하지 않고 별도의 고정된 IP를 갖는 서비스를 통해 Pod에 접근하는 방식</li>
+</ul>
+
+<p><img src="https://github.com/europani/europani.github.io/assets/48157259/8c0d2fe6-c2e0-4771-977b-4e103c76b004" alt="image"></p>
+
+<ol>
+  <li>ClusterIP : 클러스터 내에서만 접근 가능한 IP를 지정
+    <ul>
+      <li>클러스터 내부에서 여러 개의 pod를 바라보는 로드밸런서 기능 제공</li>
+      <li>default 타입</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">svc1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>   <span class="c1"># default : ClusterIP</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">web</span>       <span class="c1"># Pod의 Label과 매칭</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>           <span class="c1"># Service의 포트 </span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">8080</span>   <span class="c1"># 포워딩 할 Pod의 컨테이너 포트 </span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+</code></pre></div></div>
+
+<ol>
+  <li>NodePort : 클러스터 외부(노드)에서 접근 가능하도록 Port 지정
+    <ul>
+      <li>ClusterIP 포함</li>
+      <li>범위 : 30000 ~ 32768</li>
+    </ul>
+  </li>
+</ol>
+
+<p><img src="https://github.com/europani/europani.github.io/assets/48157259/25ee8082-eba9-49dd-b6de-b4dac5b11755" alt="image"></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">svc1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>     
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">web</span>       
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="m">8080</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+      <span class="na">nodePort</span><span class="pi">:</span> <span class="m">31000</span>   <span class="c1"># 노드에 오픈할 포트 (미지정시 범위에서 랜덤지정)</span>
+</code></pre></div></div>
+<p>-&gt; 클러스터 외부에서 <code class="language-plaintext highlighter-rouge">http://192.168.56.30:31000/test</code>로 요청을 보내면 파드 안의 컨테이너(:8080)로 요청이 간다</p>
+
+<ol>
+  <li>Load Balancer
+    <ul>
+      <li>Node에 로드밸런서를 연결해 자동으로 살아 있는 노드로 연결</li>
+      <li>ClusterIP + NodePort 포함</li>
+    </ul>
+  </li>
+</ol>
+
+<p><img src="https://github.com/europani/europani.github.io/assets/48157259/7a6ecad6-e384-4106-87af-3e198e5c125f" alt="image"></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">svc1</span>
+  <span class="c1"># namespace: ns1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">LoadBalancer</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">web</span>       
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="s">80</span>            
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">8080</span>    
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+</code></pre></div></div>
+
+<h3 id="특별한-서비스-종류">특별한 서비스 종류</h3>
+<ul>
+  <li>Headless : ClusterIP를 지정하지 않은 서비스
+    <ul>
+      <li>Pod -&gt; Service 혹은 Pod -&gt; Pod 연결 시 유용하다</li>
+      <li>서비스에 ClusterIP를 지정하지 않으면 해당 서비스에 연결된 파드로 IP를 통해 직접 접근이 가능하다</li>
+      <li>서비스명을 알면 DNS Server를 통해 서비스의 IP를 알 수 있고 이를 통해 해당 서비스에 접근이 가능하다</li>
+      <li>여기서 Headless를 사용하면 DNS Server에 서비스의 IP가 아닌 파드들의 IP가 등록된다</li>
+    </ul>
+  </li>
+  <li>
+    <p>Endpoint</p>
+  </li>
+  <li>ExternalName : 외부 서비스와 연결해 주는 서비스</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">externalname1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ExternalName</span>
+  <span class="na">externalName</span><span class="pi">:</span> <span class="s">github.github.io</span> 
+</code></pre></div></div>
+
+<h2 id="3-node-노드">3. Node (노드)</h2>
+<ul>
+  <li>서버</li>
+  <li>파드는 노드 위에서 동작한다</li>
+</ul>
+
+<h3 id="ingress">Ingress</h3>
+<ul>
+  <li>1개의 클러스터에서 여러 개의 서비스를 운영한다면 들어온 요청을 보고 어느 서비스로 연결할지 판단해야 한다</li>
+</ul>
+
+<p><img src="https://github.com/europani/europani.github.io/assets/48157259/6d4ec6b8-50d5-4ba8-b641-8b1f637b9c68" alt="image"></p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ingress1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">rules</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">192.124.68.4</span>
+      <span class="na">http</span><span class="pi">:</span>
+        <span class="na">paths</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>               <span class="c1"># 해당 path로 들어오면 해당 서비스로 연결</span>
+            <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+            <span class="na">backend</span><span class="pi">:</span>
+              <span class="na">service</span><span class="pi">:</span>
+                <span class="na">name</span><span class="pi">:</span> <span class="s">svc-shopping</span>
+                <span class="na">port</span><span class="pi">:</span>
+                  <span class="na">number</span><span class="pi">:</span> <span class="m">8080</span>
+          <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/customer</span>               
+            <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+            <span class="na">backend</span><span class="pi">:</span>
+              <span class="na">service</span><span class="pi">:</span>
+                <span class="na">name</span><span class="pi">:</span> <span class="s">svc-customer</span>
+                <span class="na">port</span><span class="pi">:</span>
+                  <span class="na">number</span><span class="pi">:</span> <span class="m">8080</span>
+          <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/order</span>      
+            <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+            <span class="na">backend</span><span class="pi">:</span>
+              <span class="na">service</span><span class="pi">:</span>
+                <span class="na">name</span><span class="pi">:</span> <span class="s">svc-order</span>
+                <span class="na">port</span><span class="pi">:</span>
+                  <span class="na">number</span><span class="pi">:</span> <span class="m">8080</span>
+</code></pre></div></div>
+
+<h2 id="namespace-네임스페이스">Namespace (네임스페이스)</h2>
+<ul>
+  <li>논리적 공간</li>
+  <li>네임스페이스를 통해 1개의 클러스터를 논리적으로 구분해서 사용 가능</li>
+  <li>모든 Object는 네임스페이스 안에 할당되며 네임스페이스 간의 공유가 되지 않는다</li>
+  <li>네임스페이스에 Resource와 Object 제한을 걸 수 있다
+    <ul>
+      <li>ResourceQuota, LimitRange 등</li>
+      <li>Pod 갯수 등</li>
+    </ul>
+  </li>
+  <li>네임스페이스간의 공유되는 사항
+    <ul>
+      <li>같은 클러스터에 있다면 다른 네임스페이스에 있는 Object를 IP와 포트로 접근이 가능하다</li>
+      <li>NodePort</li>
+      <li>HostPath</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Namespace</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ns1</span>
+</code></pre></div></div>
+
+<h2 id="k8s-오브젝트-관계">k8s 오브젝트 관계</h2>
+<p>클러스터 &gt; 네임스페이스 &gt; 노드 &gt; 파드 &gt; 컨테이너</p>
+
+<p><img src="https://github.com/europani/europani.github.io/assets/48157259/2dee7387-33ff-4ff3-9000-532f16ca2666" alt="image"></p>
+
+&lt;출처&gt;  
+https://subicura.com/k8s/  
+https://www.inflearn.com/course/%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%EA%B8%B0%EC%B4%88/dashboard
+출처&gt;
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2023/05/14/051-redis.html" title="Spring Redis">Spring Redis</a><a class="next" href="/kubernetes/2023/06/06/002-controller.html" title="[k8s] Controller">[k8s] Controller</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/python/2021/01/28/011-logging.html" title="[k8s] Controller">[라이브러리] logging (로깅, 로그)</a></li>
+<li><a class="post-link" href="/spring/2020/09/18/008-AOP.html" title="[k8s] Controller">[스프링] Spring AOP</a></li>
+<li><a class="post-link" href="/java/2020/05/28/009-collection.html" title="[k8s] Controller">[JAVA] 컬렉션(Collection)</a></li>
+<li><a class="post-link" href="/django/2020/12/09/008-MTV-template.html" title="[k8s] Controller">MTV 패턴 - Template</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/kubernetes/2023/06/03/001-object.html';
+      this.page.identifier = 'https://europani.github.io/kubernetes/2023/06/03/001-object.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

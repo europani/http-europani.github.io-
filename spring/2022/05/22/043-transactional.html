@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[스프링] 트랜잭션과 @Transactional 어노테이션 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[스프링] 트랜잭션과 @Transactional 어노테이션">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="트랜잭션 트랜잭션이란 논리적 작업 단위를 의미한다 스프링에서는 트랜잭션을 직접 설정할 수 있다 트랜잭션을 시작한다는 의미는 수동 커밋 모드를 설정한다는 것을 의미 할 수 있다 자동 커밋 모드는 SQL마다 커밋이 실행된다 사용자 요청마다 커넥션을 생성하면 커넥션은 세션을 만들고 세션은 트랜잭션을 시작한다">
+<meta property="og:description" content="트랜잭션 트랜잭션이란 논리적 작업 단위를 의미한다 스프링에서는 트랜잭션을 직접 설정할 수 있다 트랜잭션을 시작한다는 의미는 수동 커밋 모드를 설정한다는 것을 의미 할 수 있다 자동 커밋 모드는 SQL마다 커밋이 실행된다 사용자 요청마다 커넥션을 생성하면 커넥션은 세션을 만들고 세션은 트랜잭션을 시작한다">
+<link rel="canonical" href="https://europani.github.io/spring/2022/05/22/043-transactional.html">
+<meta property="og:url" content="https://europani.github.io/spring/2022/05/22/043-transactional.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-05-22T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[스프링] 트랜잭션과 @Transactional 어노테이션">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2022-05-22T00:00:00+00:00","datePublished":"2022-05-22T00:00:00+00:00","description":"트랜잭션 트랜잭션이란 논리적 작업 단위를 의미한다 스프링에서는 트랜잭션을 직접 설정할 수 있다 트랜잭션을 시작한다는 의미는 수동 커밋 모드를 설정한다는 것을 의미 할 수 있다 자동 커밋 모드는 SQL마다 커밋이 실행된다 사용자 요청마다 커넥션을 생성하면 커넥션은 세션을 만들고 세션은 트랜잭션을 시작한다","headline":"[스프링] 트랜잭션과 @Transactional 어노테이션","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2022/05/22/043-transactional.html"},"url":"https://europani.github.io/spring/2022/05/22/043-transactional.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[스프링] 트랜잭션과 @Transactional 어노테이션</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-05-22T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-05-22
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Spring">#Spring</a><a class="post-tag" href="/tags.html#JDBC">#JDBC</a><a class="post-tag" href="/tags.html#AOP">#AOP</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="트랜잭션">트랜잭션</h2>
+<ul>
+  <li>트랜잭션이란 논리적 작업 단위를 의미한다</li>
+  <li>스프링에서는 트랜잭션을 직접 설정할 수 있다</li>
+  <li>트랜잭션을 시작한다는 의미는 <strong>수동 커밋 모드</strong>를 설정한다는 것을 의미 할 수 있다
+    <ul>
+      <li>자동 커밋 모드는 SQL마다 커밋이 실행된다</li>
+    </ul>
+  </li>
+  <li>
+    <p>사용자 요청마다 커넥션을 생성하면 커넥션은 세션을 만들고 세션은 트랜잭션을 시작한다
+<img src="https://user-images.githubusercontent.com/48157259/172029619-f63e8514-1714-4f1b-8c89-5085ecc1c2de.png" alt=""></p>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">RuntimeException</code>, <code class="language-plaintext highlighter-rouge">Error</code> 발생시 rollback</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">CheckedException</code> 발생시 commit</li>
+</ul>
+
+<h3 id="트랜잭션-매니저">트랜잭션 매니저</h3>
+<ul>
+  <li>트랜잭션을 시작하고 결과에 따라 <code class="language-plaintext highlighter-rouge">commit</code> or <code class="language-plaintext highlighter-rouge">rollback</code>을 한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">PlatformTransactionManager</span> <span class="kd">extends</span> <span class="nc">TransactionManager</span> <span class="o">{</span>
+   <span class="c1">// 트랜잭션 시작</span>
+   <span class="nc">TransactionStatus</span> <span class="nf">getTransaction</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="nc">TransactionDefinition</span> <span class="n">definition</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">TransactionException</span><span class="o">;</span>
+
+   <span class="kt">void</span> <span class="nf">commit</span><span class="o">(</span><span class="nc">TransactionStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">TransactionException</span><span class="o">;</span>
+
+   <span class="kt">void</span> <span class="nf">rollback</span><span class="o">(</span><span class="nc">TransactionStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">TransactionException</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>각 플랫폼은 <code class="language-plaintext highlighter-rouge">PlatformTransactionManager</code>를 구현한 구현체를 갖고 있다</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/172029548-40068ee1-71e1-4c14-b5e8-2241d4b1fe34.png" alt=""></p>
+
+<h4 id="트랜잭션-동기화-매니저">트랜잭션 동기화 매니저</h4>
+<ul>
+  <li>트랜잭션을 유지하기 위해서는 처음부터 끝까지 같은 커넥션을 사용해야 한다</li>
+  <li>트랜잭션이 시작된 커넥션을 보관하는 역할을 한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">TransactionSynchronizationManager</span> <span class="o">{</span>
+   <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">ThreadLocal</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Object</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="n">resources</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">NamedThreadLocal</span><span class="o">&lt;&gt;(</span><span class="s">"Transactional resources"</span><span class="o">);</span>
+   <span class="o">...</span>
+   <span class="nd">@Nullable</span>
+   <span class="kd">public</span> <span class="kd">static</span> <span class="nc">Object</span> <span class="nf">getResource</span><span class="o">(</span><span class="nc">Object</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+      <span class="nc">Object</span> <span class="n">actualKey</span> <span class="o">=</span> <span class="nc">TransactionSynchronizationUtils</span><span class="o">.</span><span class="na">unwrapResourceIfNecessary</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+      <span class="k">return</span> <span class="nf">doGetResource</span><span class="o">(</span><span class="n">actualKey</span><span class="o">);</span>
+   <span class="o">}</span>
+   <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/172029867-eebbaba8-b1b9-44db-bfca-8ed0d4521c55.png" alt=""></p>
+<ol>
+  <li>트랜잭션 매니저가 데이터소스를 통해 커넥션을 만들고 트랜잭션을 시작</li>
+  <li>트랜잭션 매니저는 트랜잭션이 시작된 커넥션을 동기화 매니저에 보관</li>
+  <li>리포지토리는 보관된 커낵션을 꺼내 사용</li>
+  <li>트랜잭션이 종료되면 트랜잭션 메니저는 결과에 따라 <code class="language-plaintext highlighter-rouge">commit</code> or <code class="language-plaintext highlighter-rouge">rollback</code>을 하고 보관된 커넥션을 들고와 트랜잭션을 종료하고 커넥션을 종료</li>
+</ol>
+
+<h2 id="transactional">@Transactional</h2>
+<p><code class="language-plaintext highlighter-rouge">org.springframework.transaction.annotation</code></p>
+<ul>
+  <li>스프링에서 선언적 트랜잭션을 설정하는 어노테이션</li>
+  <li>
+<strong>클래스</strong>나 <strong>메서드</strong> 레벨에서 사용해서 트랜잭션을 설정할 수 있다</li>
+  <li>Spring AOP를 사용해 <strong>프록시 패턴</strong>으로 구현된다</li>
+  <li>프록시객체는 <code class="language-plaintext highlighter-rouge">PlatformTransactionManager</code>를 사용해 트랜잭션을 시작하고 결과에 따라 commit or rollback을 한다</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/172030736-65835e07-5623-4ab2-bd19-c2aa50ba4c52.png" alt=""></p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">public</code>에만 트랜잭션 적용
+    <ul>
+      <li>스프링의 트랜잭션 AOP는 <code class="language-plaintext highlighter-rouge">public</code>에만 적용되도록 기본으로 설정되어 있다.</li>
+      <li>왜냐하면 트랜잭션은 주로 비즈니스 로직의 시작점에 걸게 되는데 이 부분은 대부분 외부에 열어주는 포인트이다</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">private</code>: 실제 객체를 상속받을 수 없어 프록시 생성 불가능</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="트랜잭션-프록시-동작방식">트랜잭션 프록시 동작방식</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Slf4j</span>
+<span class="nd">@Service</span>
+<span class="kd">static</span> <span class="kd">class</span> <span class="nc">BasicService</span> <span class="o">{</span>
+   <span class="nd">@Transactional</span>
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">tx</span><span class="o">()</span> <span class="o">{</span>
+      <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"call tx"</span><span class="o">);</span>
+      <span class="kt">boolean</span> <span class="n">txActive</span> <span class="o">=</span> <span class="nc">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">isActualTransactionActive</span><span class="o">();</span>
+      <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"tx active={}"</span><span class="o">,</span> <span class="n">txActive</span><span class="o">);</span>    <span class="c1">// true</span>
+   <span class="o">}</span>
+
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">nonTx</span><span class="o">()</span> <span class="o">{</span>
+      <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"call nonTx"</span><span class="o">);</span>
+      <span class="kt">boolean</span> <span class="n">txActive</span> <span class="o">=</span> <span class="nc">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">isActualTransactionActive</span><span class="o">();</span>
+      <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"tx active={}"</span><span class="o">,</span> <span class="n">txActive</span><span class="o">);</span>    <span class="c1">// false</span>
+   <span class="o">}</span> 
+<span class="o">}</span>
+
+<span class="nd">@Slf4j</span>
+<span class="nd">@SpringBootTest</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TxBasicTest</span> <span class="o">{</span>
+   <span class="nd">@Autowired</span>
+   <span class="nc">BasicService</span> <span class="n">basicService</span><span class="o">;</span>
+
+   <span class="nd">@Test</span>
+   <span class="kt">void</span> <span class="nf">proxyCheck</span><span class="o">()</span> <span class="o">{</span>
+      <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"aop class={}"</span><span class="o">,</span> <span class="n">basicService</span><span class="o">.</span><span class="na">getClass</span><span class="o">());</span>    <span class="c1">// BasicService$$EnhancerBySpringCGLIB..</span>
+      <span class="n">assertThat</span><span class="o">(</span><span class="nc">AopUtils</span><span class="o">.</span><span class="na">isAopProxy</span><span class="o">(</span><span class="n">basicService</span><span class="o">)).</span><span class="na">isTrue</span><span class="o">();</span>
+   <span class="o">}</span>
+
+   <span class="nd">@Test</span>
+   <span class="kt">void</span> <span class="nf">txTest</span><span class="o">()</span> <span class="o">{</span>
+      <span class="n">basicService</span><span class="o">.</span><span class="na">tx</span><span class="o">();</span>
+      <span class="n">basicService</span><span class="o">.</span><span class="na">nonTx</span><span class="o">();</span>
+   <span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/172994439-f65ae872-ea42-43cc-aa18-ae2569f44f18.png" alt=""></p>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@Transcational</code>을 하나라도 포함하고 있는 클래스는 프록시를 생성해 스프링 컨테이너에 등록한다</li>
+  <li>클라이언트가 <code class="language-plaintext highlighter-rouge">@Transcational</code> 메서드를 호출했을 경우
+    <ul>
+      <li>해당 메서드는 트랜잭션 대상이기 때문에 프록시는 트랜잭션을 시작하고[=공통 로직] 실제 객체의 메서드를 실행한다</li>
+      <li>메서드 실행이 종료되면 다시 프록시로 돌아와 결과에 따라 <code class="language-plaintext highlighter-rouge">commit</code> 이나 <code class="language-plaintext highlighter-rouge">rollback</code>이 수행된다</li>
+    </ul>
+  </li>
+  <li>클라이언트가 <code class="language-plaintext highlighter-rouge">@Transcational</code>이 아닌 메서드 호출했을 경우
+    <ul>
+      <li>프록시는 트랜잭션을 시작하지 않고 바로 실제 객체의 메서드를 실행한다</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="readonly-속성">readOnly 속성</h3>
+<ul>
+  <li>트랜잭션을 읽기전용으로 설정하여 데이터가 의도치않게 변경되는 것을 방지한다</li>
+  <li>readOnly 트랜잭션이 시작된 이후 INSERT, UPDATE, DELETE가 실행되면 <strong>예외 발생</strong>
+</li>
+  <li>플랫폼별 성능 최적화 결과
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">Hibernate</code> : <code class="language-plaintext highlighter-rouge">FlushMode.MANUAL</code>로 설정하여 <strong>스냅샷을 기록하지 않아</strong> 더티체킹을 생략해 성능상의 이점이 있다</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JdbcTemplate</code> : 변경 기능 실행시 예외발생</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">JDBC Driver</code> : 변경 쿼리 발생시 예외발생 (DB와 드라이버 버전에 따라 다름)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="isolation-속성">isolation 속성</h3>
+<ul>
+  <li>동시에 여러 트랜잭션에 의해 변경 사항이 어떻게 적용되는 지를 설정</li>
+  <li>격리 수준 레벨이 올라갈 수록 성능 저하의 우려가 생긴다</li>
+</ul>
+
+<h4 id="부작용">부작용</h4>
+<ol>
+  <li>
+<code class="language-plaintext highlighter-rouge">Dirty Read</code> : 변경사항이 commit되지 않은 값을 다른 트랜잭션이 읽는 경우<br>
+ex) 트랜잭션A가 어떤 값을 1 -&gt; 2로 변경하고 아직 커밋하지 않았을 때 트랜잭션B가 같은 값을 읽는 경우 2를 조회한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Non-Repeatable Read</code> : 한 트랜잭션 내에서 값을 조회할 때, 동시성 문제로 인하여 같은 쿼리를 실행했을 때 다른 결과를 반환하는 경우<br>
+ex) 트랜잭션A가 어떤 값 1을 조회했다. 이 때, 트랜잭션B가 그 값을 1 -&gt; 2로 변경하고 커밋한 후 트랜잭션A가 다시 조회할 경우 2를 조회하게 된다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Phantom Read</code> : 다른 트랜잭션에서 수행하는 삽입/삭제로 인해 한 트랜잭션 내에서 같은 쿼리를 실행했을 때 결과 레코드가 다른경우</li>
+</ol>
+
+<h4 id="1-default">1. DEFAULT</h4>
+<ul>
+  <li>기본 값(DBMS의 isolation 레벨을 따름)</li>
+</ul>
+
+<h4 id="2-read_uncommitted-l0">2. READ_UNCOMMITTED (L0)</h4>
+<ul>
+  <li>커밋되지 않은(트랜잭션이 진행중인) 데이터에 대한 읽기를 허용</li>
+  <li>모든 부작용 발생</li>
+</ul>
+
+<h4 id="3-read_committed-l1">3. READ_COMMITTED (L1)</h4>
+<ul>
+  <li>커밋된 데이터만 읽기 허용</li>
+  <li>즉, 어떤 데이터가 변경되는 중일때 해당 데이터에 다른 트랜잭션이 접근 할 수 없다</li>
+  <li>일반적으로 많이 사용하는 레벨</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Dirty Read</code> 방지</li>
+</ul>
+
+<h4 id="4-repeatable_read-l2">4. REPEATABLE_READ (L2)</h4>
+<ul>
+  <li>트랜잭션이 완료될 때까지 SELECT문이 사용하는 모든 데이터에 <code class="language-plaintext highlighter-rouge">shared lock</code>이 걸려 그 데이터의 수정이 불가하다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Dirty Read</code>, <code class="language-plaintext highlighter-rouge">Non-Repeatable Read</code> 방지</li>
+</ul>
+
+<h4 id="5-serializable-l3">5. SERIALIZABLE (L3)</h4>
+<ul>
+  <li>MVCC(동시 접근)을 막는다
+    <ul>
+      <li>MVCC : Multi-Version Coucurrency Control (다중버전 동시성 제어)</li>
+    </ul>
+  </li>
+  <li>순차적으로 실행하는 것과 동일한 결과를 갖는다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Dirty Read</code>, <code class="language-plaintext highlighter-rouge">Non-Repeatable Read</code>, <code class="language-plaintext highlighter-rouge">Phantom Read</code> 방지</li>
+</ul>
+
+<h3 id="propagation-속성">propagation 속성</h3>
+<ul>
+  <li>둘 이상의 트랜잭션을 사용할 때 트랜잭션의 범위를 설정</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/173064328-7f9a62cf-a832-4b35-8ab0-2c4e6e4c7bf8.png" alt=""></p>
+<ul>
+  <li>논리 트랜잭션 : 트랜잭션 매니저를 통해 트랜잭션을 사용하는 단위</li>
+  <li>물리 트랜잭션 : 실제 DB에 적용되는 트랜잭션</li>
+  <li>물리 트랜잭션 안에 논리 트랜잭션을 포함시킨다</li>
+  <li>원칙
+    <ul>
+      <li>모든 논리 트랜잭션이 <code class="language-plaintext highlighter-rouge">commit</code>되어야 물리 트랜잭션이 커밋된다 <code class="language-plaintext highlighter-rouge">AND조건</code>
+</li>
+      <li>하나의 논리 트랜잭션이라도 <code class="language-plaintext highlighter-rouge">rollback</code>되면 물리 트랜잭션도 롤백된다 <code class="language-plaintext highlighter-rouge">OR조건</code>
+</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="1-required-기본값">1. REQUIRED (기본값)</h4>
+<ul>
+  <li>기존 트랜잭션이 있다면 그 트랜잭션에 참여해 하나의 트랜잭션처럼 만들어 준다
+    <ul>
+      <li>참여한다는 것은 추가된 내부 트랜잭션이 외부 트랜잭션을 그대로 이어 받아 따른다는 것이다</li>
+      <li>1개의 물리 트랜잭션에 2개의 논리 트랜잭션이 존재(하나의 물리 트랜잭션으로 묶임)</li>
+    </ul>
+  </li>
+  <li>기존 트랜잭션이 없다면 새로운 트랜잭션을 생성한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Test</span>
+<span class="kt">void</span> <span class="nf">inner_commit</span><span class="o">()</span> <span class="o">{</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"외부 트랜잭션 시작"</span><span class="o">);</span>
+   <span class="nc">TransactionStatus</span> <span class="n">outer</span> <span class="o">=</span> <span class="n">txManager</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">(</span><span class="k">new</span> <span class="nc">DefaultTransactionAttribute</span><span class="o">());</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"outer.isNewTransaction()={}"</span><span class="o">,</span> <span class="n">outer</span><span class="o">.</span><span class="na">isNewTransaction</span><span class="o">());</span>  <span class="c1">// true</span>
+
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"내부 트랜잭션 시작"</span><span class="o">);</span>
+   <span class="nc">TransactionStatus</span> <span class="n">inner</span> <span class="o">=</span> <span class="n">txManager</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">(</span><span class="k">new</span> <span class="nc">DefaultTransactionAttribute</span><span class="o">());</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"inner.isNewTransaction()={}"</span><span class="o">,</span> <span class="n">inner</span><span class="o">.</span><span class="na">isNewTransaction</span><span class="o">());</span>  <span class="c1">// false</span>
+   
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"내부 트랜잭션 커밋"</span><span class="o">);</span>
+   <span class="n">txManager</span><span class="o">.</span><span class="na">commit</span><span class="o">(</span><span class="n">inner</span><span class="o">);</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"외부 트랜잭션 커밋"</span><span class="o">);</span>
+   <span class="n">txManager</span><span class="o">.</span><span class="na">commit</span><span class="o">(</span><span class="n">outer</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/173066154-acec9185-1384-476f-bb74-f4d673e31a76.png" alt="">
+<img src="https://user-images.githubusercontent.com/48157259/173067136-61164117-42ed-4b1c-88dd-ad7dc58687f9.png" alt=""></p>
+<ol>
+  <li>
+<code class="language-plaintext highlighter-rouge">getTransaction()</code>으로 <strong>외부 트랜잭션 시작</strong>
+</li>
+  <li>트랜잭센 매니저는 데이터소스를 통해 커넥션 생성</li>
+  <li>수동 커밋모드로 설정하고 <strong>물리 트랜잭션 시작</strong>
+</li>
+  <li>트랜잭션 메니저는 커넥션을 트랜잭션 동기화 매니저에 보관</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">TransactionStatus</code>에 트랜잭션 생성결과를 담아서 반환</li>
+  <li>비즈니스 로직 실행</li>
+  <li>비즈니스 로직 내부에서 <code class="language-plaintext highlighter-rouge">getTransaction()</code>으로 <strong>내부 트랜잭션 시작</strong>
+</li>
+  <li>트랜잭션 매니저는 트랜잭션 동기화 매니저를 통해 기존 트랜잭션 존재여부 확인</li>
+  <li>이미 존재한다면 기존 트랜잭션을 사용</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">TransactionStatus</code>에 트랜잭션 생성결과를 담아서 반환</li>
+  <li>
+    <p>나머지 비즈니스 로직 수행</p>
+  </li>
+  <li>내부 트랜잭션 내의 로직 종료 후 커밋</li>
+  <li>내부 트랜잭션은 신규 트랜잭션이 아니기 때문에 commit을 호출하지 않고 <strong>내부 트랜잭션 종료</strong>
+</li>
+  <li>외부 트랜잭션 로직 종료 후 커밋</li>
+  <li>외부 트랜잭션은 신규 트랜잭션이기에 <code class="language-plaintext highlighter-rouge">commit</code> 실행 후 <strong>외부 트랜잭션 종료</strong>
+</li>
+  <li><strong>물리 트랜잭션 종료</strong></li>
+</ol>
+
+<ul>
+  <li>내부 트랜잭션 롤백시
+    <ul>
+      <li>내부 트랜잭션은 신규 트랜잭션이 아니기 때문에 물리 트랜잭션을 건드릴 수 없다</li>
+      <li>트랜잭션 동기화 매니저에 <code class="language-plaintext highlighter-rouge">rollbackOnly=true</code>로 표시해 외부 트랜잭션에서 확인 할수 있도록 한다</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/173069266-a53cd42f-06d9-4dff-9fb1-e2e0ec6dd8b6.png" alt=""></p>
+
+<h4 id="2-requires_new">2. REQUIRES_NEW</h4>
+<ul>
+  <li>항상 새로운 트랜잭션을 생성한다
+    <ul>
+      <li>항상 다른 트랜잭션을 쓰기 때문에 다른 커넥션을 사용한다</li>
+    </ul>
+  </li>
+  <li>기존 트랜잭션이 있다면 잠시 보류시킨다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Test</span>
+<span class="kt">void</span> <span class="nf">inner_rollback_requires_new</span><span class="o">()</span> <span class="o">{</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"외부 트랜잭션 시작"</span><span class="o">);</span>
+   <span class="nc">TransactionStatus</span> <span class="n">outer</span> <span class="o">=</span> <span class="n">txManager</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">(</span><span class="k">new</span> <span class="nc">DefaultTransactionAttribute</span><span class="o">());</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"outer.isNewTransaction()={}"</span><span class="o">,</span> <span class="n">outer</span><span class="o">.</span><span class="na">isNewTransaction</span><span class="o">());</span>  <span class="c1">// true</span>
+
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"내부 트랜잭션 시작"</span><span class="o">);</span>
+   <span class="nc">DefaultTransactionAttribute</span> <span class="n">definition</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">DefaultTransactionAttribute</span><span class="o">();</span>
+   <span class="n">definition</span><span class="o">.</span><span class="na">setPropagationBehavior</span><span class="o">(</span><span class="nc">TransactionDefinition</span><span class="o">.</span><span class="na">PROPAGATION_REQUIRES_NEW</span><span class="o">);</span>
+   <span class="nc">TransactionStatus</span> <span class="n">inner</span> <span class="o">=</span> <span class="n">txManager</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">(</span><span class="n">definition</span><span class="o">);</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"inner.isNewTransaction()={}"</span><span class="o">,</span> <span class="n">inner</span><span class="o">.</span><span class="na">isNewTransaction</span><span class="o">());</span>  <span class="c1">// true</span>
+   
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"내부 트랜잭션 롤백"</span><span class="o">);</span>
+   <span class="n">txManager</span><span class="o">.</span><span class="na">rollback</span><span class="o">(</span><span class="n">inner</span><span class="o">);</span>
+   <span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"외부 트랜잭션 커밋"</span><span class="o">);</span>
+   <span class="n">txManager</span><span class="o">.</span><span class="na">commit</span><span class="o">(</span><span class="n">outer</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/173177332-e9617557-bd53-452f-b87c-3c2f3ab01bf8.png" alt=""></p>
+<ul>
+  <li>내부 트랜잭션에서도 새로운 트랜잭션을 생성하기 때문에 새로운 커넥션을 열어 트랜잭션 동기화 매니저에 보관한다</li>
+  <li>여기서 <code class="language-plaintext highlighter-rouge">con2</code>가 새로 생성되면 기존에 실행되던 <code class="language-plaintext highlighter-rouge">con1</code>은 연결이 확립된 상태로 보류상태가 된다</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/173177535-1b6275c2-cc52-48a9-b629-af7520611b76.png" alt=""></p>
+<ul>
+  <li>내부 트랜잭션 역시 새로운 트랜잭션이기 때문에 내부 트랜잭션은 물리 롤백이 실행되고 종료된다</li>
+  <li>그 후 보류되었던 외부 트랜잭션이 이어서 실행된다</li>
+</ul>
+
+<h4 id="3-support">3. SUPPORT</h4>
+<ul>
+  <li>기존 트랜잭션이 없다면 트랜잭션 없이 로직을 수행한다</li>
+  <li>기존 트랜잭션이 있다면 기존 트랜잭션에 참여한다</li>
+</ul>
+
+<h4 id="4-not_support">4. NOT_SUPPORT</h4>
+<ul>
+  <li>트랜잭션을 사용하지 않는다</li>
+  <li>기존 트랜잭션이 있다면 잠시 보류시킨다</li>
+</ul>
+
+<h4 id="5-mandatory">5. MANDATORY</h4>
+<ul>
+  <li>트랜잭션이 반드시 존재해야 한다</li>
+  <li>기존 트랜잭션이 없다면 예외 발생 <code class="language-plaintext highlighter-rouge">IllegalTransactionStateException</code>
+</li>
+  <li>기존 트랜잭션이 있다면 기존 트랜잭션에 참여한다</li>
+</ul>
+
+<h4 id="6-never">6. NEVER</h4>
+<ul>
+  <li>트랜잭션을 사용하지 않는다</li>
+  <li>기존 트랜잭션이 있다면 예외 발생 <code class="language-plaintext highlighter-rouge">IllegalTransactionStateException</code>
+</li>
+</ul>
+
+<h4 id="7-nested">7. NESTED</h4>
+<ul>
+  <li>기존 트랜잭션이 없다면 새로운 트랜잭션을 생성한다</li>
+  <li>기존 트랜잭션이 있다면 그 트랜잭션에 중첩해서 트랜잭션을 생성한다</li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2022/05/20/042-http-message-converter.html" title="[스프링] HttpMessageConverter">[스프링] HttpMessageConverter</a><a class="next" href="/algorithm/2022/05/25/010-java-grammar.html" title="알고리즘을 위한 자바">알고리즘을 위한 자바</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/docker/2021/01/30/001-introduction.html" title="알고리즘을 위한 자바">도커</a></li>
+<li><a class="post-link" href="/javascript/2020/03/18/002-eventListener.html" title="알고리즘을 위한 자바">이벤트 리스너(EventHandler(Listener))</a></li>
+<li><a class="post-link" href="/spring/2021/09/07/026-spring-security.html" title="알고리즘을 위한 자바">[스프링부트] Spring Security</a></li>
+<li><a class="post-link" href="/design%20pattern/2022/05/15/007-template-method.html" title="알고리즘을 위한 자바">행동 (2) - 템플릿 메소드(Template Method) 패턴</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2022/05/22/043-transactional.html';
+      this.page.identifier = 'https://europani.github.io/spring/2022/05/22/043-transactional.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

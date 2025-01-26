@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>스프링 API 에러처리 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="스프링 API 에러처리">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="API에서 에러가 발생하면 HTML 페이지가 아닌 JSON 형태의 에러 데이터를 클라이언트에게 보내야 한다. 스프링 부트는 HTML뿐만 아니라 API 예외처리도 기본적으로 제공한다.">
+<meta property="og:description" content="API에서 에러가 발생하면 HTML 페이지가 아닌 JSON 형태의 에러 데이터를 클라이언트에게 보내야 한다. 스프링 부트는 HTML뿐만 아니라 API 예외처리도 기본적으로 제공한다.">
+<link rel="canonical" href="https://europani.github.io/spring/2022/02/16/040-api-error.html">
+<meta property="og:url" content="https://europani.github.io/spring/2022/02/16/040-api-error.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-02-16T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="스프링 API 에러처리">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2022-02-16T00:00:00+00:00","datePublished":"2022-02-16T00:00:00+00:00","description":"API에서 에러가 발생하면 HTML 페이지가 아닌 JSON 형태의 에러 데이터를 클라이언트에게 보내야 한다. 스프링 부트는 HTML뿐만 아니라 API 예외처리도 기본적으로 제공한다.","headline":"스프링 API 에러처리","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2022/02/16/040-api-error.html"},"url":"https://europani.github.io/spring/2022/02/16/040-api-error.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">스프링 API 에러처리</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-02-16T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-02-16
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Spring">#Spring</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>API에서 에러가 발생하면 HTML 페이지가 아닌 <code class="language-plaintext highlighter-rouge">JSON</code> 형태의 에러 데이터를 클라이언트에게 보내야 한다.<br>
+스프링 부트는 HTML뿐만 아니라 API 예외처리도 기본적으로 제공한다.</p>
+
+<h2 id="스프링부트-기본-오류처리">스프링부트 기본 오류처리</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">BaseErrorController</code></li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">produces</span> <span class="o">=</span> <span class="nc">MediaType</span><span class="o">.</span><span class="na">TEXT_HTML_VALUE</span><span class="o">)</span>    <span class="c1">// text/html</span>
+<span class="kd">public</span> <span class="nc">ModelAndView</span> <span class="nf">errorHtml</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">)</span> <span class="o">{}</span>
+
+<span class="nd">@RequestMapping</span>            <span class="c1">// 그 외(applcation/json 등)</span>
+<span class="kd">public</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;&gt;</span> <span class="nf">error</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">)</span> <span class="o">{}</span>
+</code></pre></div></div>
+
+<h2 id="api-예외처리">API 예외처리</h2>
+<ul>
+  <li>예외처리는 <code class="language-plaintext highlighter-rouge">ExceptionResolver</code>가 처리한다.</li>
+</ul>
+
+<h3 id="api-예외처리-로직">API 예외처리 로직</h3>
+<p><img src="https://user-images.githubusercontent.com/48157259/169639091-1af05434-91c3-4c7d-8501-9b7bbe4d0102.png" alt="image"></p>
+
+<ol>
+  <li>컨트롤러 이하에서 로직 수행 중 예외처리가 발생하면 <code class="language-plaintext highlighter-rouge">DispatcherServlet</code>까지 예외가 던져진다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">processHandlerExcpetion()</code>이 호출되어 적절한 <code class="language-plaintext highlighter-rouge">HandlerExceptionResolver</code>를 가져온다</li>
+  <li>호출된 ExceptionResolver가 예외를 처리한다</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">HandlerExceptionResolver</span> <span class="o">{</span>
+    <span class="nd">@Nullable</span>
+    <span class="nc">ModelAndView</span> <span class="nf">resolveException</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="nc">Object</span> <span class="n">handler</span><span class="o">,</span> <span class="nc">Exception</span> <span class="n">ex</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">Object handler</code> : 핸들러 정보</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Exception ex</code> : 해당 핸들러에서 발생한 Exception 정보</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">ModelAndView</code>를 return 함으로써 클라이언트에게 정상 흐름으로 반환된다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DispatcherServlet</span> <span class="kd">extends</span> <span class="nc">FrameworkServlet</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doDispatch</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="o">....</span>
+        <span class="n">processDispatchResult</span><span class="o">(</span><span class="n">processedRequest</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">mappedHandler</span><span class="o">,</span> <span class="n">mv</span><span class="o">,</span> <span class="n">dispatchException</span><span class="o">);</span>
+        <span class="o">....</span>
+  <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">processDispatchResult</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span>
+            <span class="nd">@Nullable</span> <span class="nc">HandlerExecutionChain</span> <span class="n">mappedHandler</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="nc">ModelAndView</span> <span class="n">mv</span><span class="o">,</span>
+            <span class="nd">@Nullable</span> <span class="nc">Exception</span> <span class="n">exception</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="o">....</span>
+        <span class="c1">// Exception 발생시</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">exception</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">exception</span> <span class="k">instanceof</span> <span class="nc">ModelAndViewDefiningException</span><span class="o">)</span> <span class="o">{</span>
+                <span class="o">...</span>
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="nc">Object</span> <span class="n">handler</span> <span class="o">=</span> <span class="o">(</span><span class="n">mappedHandler</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">mappedHandler</span><span class="o">.</span><span class="na">getHandler</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">);</span>
+                <span class="n">mv</span> <span class="o">=</span> <span class="n">processHandlerException</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">handler</span><span class="o">,</span> <span class="n">exception</span><span class="o">);</span>
+                <span class="n">errorView</span> <span class="o">=</span> <span class="o">(</span><span class="n">mv</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+      <span class="o">....</span>
+   <span class="o">}</span>
+
+  <span class="kd">protected</span> <span class="nc">ModelAndView</span> <span class="nf">processHandlerException</span><span class="o">(</span><span class="nc">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="nc">HttpServletResponse</span> <span class="n">response</span><span class="o">,</span>
+            <span class="nd">@Nullable</span> <span class="nc">Object</span> <span class="n">handler</span><span class="o">,</span> <span class="nc">Exception</span> <span class="n">ex</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="o">...</span>
+        <span class="c1">// 등록된 HandlerExceptionResolvers 탐색</span>
+        <span class="nc">ModelAndView</span> <span class="n">exMv</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">handlerExceptionResolvers</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nc">HandlerExceptionResolver</span> <span class="n">resolver</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">handlerExceptionResolvers</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">exMv</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="na">resolveException</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">,</span> <span class="n">handler</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">exMv</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="o">....</span>
+        <span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="스프링이-제공하는-exceptionresolver">스프링이 제공하는 ExceptionResolver</h2>
+<ul>
+  <li>우선순위
+    <ol>
+      <li><code class="language-plaintext highlighter-rouge">ExceptionHandlerExceptionResolver</code></li>
+      <li><code class="language-plaintext highlighter-rouge">ResponseStatusExceptionResolver</code></li>
+      <li><code class="language-plaintext highlighter-rouge">DefaultHandlerExceptionResolver</code></li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="-1-exceptionhandlerexceptionresolver">★ 1. ExceptionHandlerExceptionResolver</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ExceptionHandler</code>로 처리한 exception</li>
+  <li>세밀한 에러처리가 가능하다</li>
+</ul>
+
+<h4 id="exceptionadvice">ExceptionAdvice</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ExceptionHandler</code> : 설정한 예외가 던져지면 해당 핸들러가 실행되어 처리한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ControllerAdvice</code>
+    <ul>
+      <li>여러 컨트롤러에서 발생한 예외를 한 곳에서 관리하고 처리할 수 있게 도와주는 어노테이션</li>
+      <li>대상으로 지정한 여러 Controller에 <code class="language-plaintext highlighter-rouge">@ExceptionHandler</code>, <code class="language-plaintext highlighter-rouge">@InitBinder</code> 기능을 부여한다</li>
+      <li>대상을 지정하지 않으면 모든 Controller에 적용된다</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Log4j2</span>
+<span class="nd">@RestControllerAdvice</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExceptionAdvice</span> <span class="o">{</span>
+
+    <span class="cm">/*
+    * Custom Exception
+    */</span>
+    <span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="nc">ApiException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+    <span class="kd">protected</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">ErrorResponse</span><span class="o">&gt;</span> <span class="nf">apiExceptionHandler</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ApiException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"ApiException : ["</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="na">getErrorCode</span><span class="o">().</span><span class="na">getCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">"] "</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="na">getErrorCode</span><span class="o">().</span><span class="na">getMessage</span><span class="o">());</span>
+        <span class="kd">final</span> <span class="nc">ErrorCode</span> <span class="n">errorCode</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="na">getErrorCode</span><span class="o">();</span>
+        <span class="kd">final</span> <span class="nc">ErrorResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="nc">ErrorResponse</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">errorCode</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">status</span><span class="o">(</span><span class="n">errorCode</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()).</span><span class="na">body</span><span class="o">(</span><span class="n">response</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/*
+    * @Validated Binding Exception
+    */</span>
+    <span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="nc">MethodArgumentNotValidException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+    <span class="kd">protected</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">ErrorResponse</span><span class="o">&gt;</span> <span class="nf">methodArgumentNotValidExceptionHandler</span><span class="o">(</span><span class="nc">MethodArgumentNotValidException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"handleMethodArgumentNotValidException"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+        <span class="kd">final</span> <span class="nc">ErrorResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="nc">ErrorResponse</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ErrorCode</span><span class="o">.</span><span class="na">INVALID_INPUT_VALUE</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getBindingResult</span><span class="o">());</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">status</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">BAD_REQUEST</span><span class="o">).</span><span class="na">body</span><span class="o">(</span><span class="n">response</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/*
+     * @ModelAttribute Binding Exception
+     */</span>
+    <span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="nc">BindException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+    <span class="kd">protected</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">ErrorResponse</span><span class="o">&gt;</span> <span class="nf">bindExceptionHandler</span><span class="o">(</span><span class="nc">BindException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"handleBindException"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+        <span class="kd">final</span> <span class="nc">ErrorResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="nc">ErrorResponse</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ErrorCode</span><span class="o">.</span><span class="na">INVALID_INPUT_VALUE</span><span class="o">,</span> <span class="n">e</span><span class="o">.</span><span class="na">getBindingResult</span><span class="o">());</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">status</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">BAD_REQUEST</span><span class="o">).</span><span class="na">body</span><span class="o">(</span><span class="n">response</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/*
+    * HTTP method not allowed
+    */</span>
+    <span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="nc">HttpRequestMethodNotSupportedException</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+    <span class="kd">protected</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">ErrorResponse</span><span class="o">&gt;</span> <span class="nf">httpRequestMethodNotSupportedExceptionHandler</span><span class="o">(</span><span class="nc">HttpRequestMethodNotSupportedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"handleHttpRequestMethodNotSupportedException"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+        <span class="kd">final</span> <span class="nc">ErrorResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="nc">ErrorResponse</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ErrorCode</span><span class="o">.</span><span class="na">METHOD_NOT_ALLOWED</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">status</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">METHOD_NOT_ALLOWED</span><span class="o">).</span><span class="na">body</span><span class="o">(</span><span class="n">response</span><span class="o">);</span>
+    <span class="o">}</span>
+
+
+    <span class="nd">@ExceptionHandler</span><span class="o">(</span><span class="nc">Exception</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+    <span class="kd">protected</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">ErrorResponse</span><span class="o">&gt;</span> <span class="nf">exceptionHandler</span><span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">log</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"handleEntityNotFoundException"</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+        <span class="kd">final</span> <span class="nc">ErrorResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="nc">ErrorResponse</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="nc">ErrorCode</span><span class="o">.</span><span class="na">INTERNAL_SERVER_ERROR</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">status</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">INTERNAL_SERVER_ERROR</span><span class="o">).</span><span class="na">body</span><span class="o">(</span><span class="n">response</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="apiexception">ApiException</h4>
+<ul>
+  <li>커스텀 Exception</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Getter</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ApiException</span> <span class="kd">extends</span> <span class="nc">RuntimeException</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nc">ErrorCode</span> <span class="n">errorCode</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">ApiException</span><span class="o">(</span><span class="nc">ErrorCode</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">errorCode</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nf">ApiException</span><span class="o">(</span><span class="nc">ErrorCode</span> <span class="n">e</span><span class="o">,</span> <span class="nc">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">errorCode</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="errorresponse-dto">ErrorResponse (DTO)</h4>
+<ul>
+  <li>HttpStatus code, error code, error message를 전달할 객체</li>
+  <li>errors를 List로 바인딩 할 수 있게 작성</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Getter</span>
+<span class="nd">@NoArgsConstructor</span><span class="o">(</span><span class="n">access</span> <span class="o">=</span> <span class="nc">AccessLevel</span><span class="o">.</span><span class="na">PROTECTED</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ErrorResponse</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">status</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">code</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">message</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CustomFieldError</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nf">ErrorResponse</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErrorCode</span> <span class="n">code</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="na">getStatus</span><span class="o">().</span><span class="na">value</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="na">getCode</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="na">getMessage</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">errors</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="nf">ErrorResponse</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErrorCode</span> <span class="n">code</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CustomFieldError</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="na">getStatus</span><span class="o">().</span><span class="na">value</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="na">getCode</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="na">getMessage</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">errors</span> <span class="o">=</span> <span class="n">errors</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">ErrorResponse</span> <span class="nf">of</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErrorCode</span> <span class="n">code</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ErrorResponse</span><span class="o">(</span><span class="n">code</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">ErrorResponse</span> <span class="nf">of</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErrorCode</span> <span class="n">code</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CustomFieldError</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ErrorResponse</span><span class="o">(</span><span class="n">code</span><span class="o">,</span> <span class="n">errors</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="nc">ErrorResponse</span> <span class="nf">of</span><span class="o">(</span><span class="kd">final</span> <span class="nc">ErrorCode</span> <span class="n">code</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">BindingResult</span> <span class="n">bindingResult</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">ErrorResponse</span><span class="o">(</span><span class="n">code</span><span class="o">,</span> <span class="nc">CustomFieldError</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">bindingResult</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Getter</span>
+    <span class="nd">@NoArgsConstructor</span><span class="o">(</span><span class="n">access</span> <span class="o">=</span> <span class="nc">AccessLevel</span><span class="o">.</span><span class="na">PROTECTED</span><span class="o">)</span>
+    <span class="nd">@AllArgsConstructor</span><span class="o">(</span><span class="n">access</span> <span class="o">=</span> <span class="nc">AccessLevel</span><span class="o">.</span><span class="na">PRIVATE</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">CustomFieldError</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">field</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">value</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">String</span> <span class="n">message</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="kd">static</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CustomFieldError</span><span class="o">&gt;</span> <span class="nf">of</span><span class="o">(</span><span class="kd">final</span> <span class="nc">String</span> <span class="n">field</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">value</span><span class="o">,</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CustomFieldError</span><span class="o">&gt;</span> <span class="n">fieldErrors</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+            <span class="n">fieldErrors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">CustomFieldError</span><span class="o">(</span><span class="n">field</span><span class="o">,</span> <span class="n">value</span><span class="o">,</span> <span class="n">message</span><span class="o">));</span>
+            <span class="k">return</span> <span class="n">fieldErrors</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">private</span> <span class="kd">static</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">CustomFieldError</span><span class="o">&gt;</span> <span class="nf">of</span><span class="o">(</span><span class="kd">final</span> <span class="nc">BindingResult</span> <span class="n">bindingResult</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">final</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">FieldError</span><span class="o">&gt;</span> <span class="n">fieldErrors</span> <span class="o">=</span> <span class="n">bindingResult</span><span class="o">.</span><span class="na">getFieldErrors</span><span class="o">();</span>
+            <span class="k">return</span> <span class="n">fieldErrors</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">map</span><span class="o">(</span><span class="n">error</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">CustomFieldError</span><span class="o">(</span>
+                    <span class="n">error</span><span class="o">.</span><span class="na">getField</span><span class="o">(),</span>
+                    <span class="n">error</span><span class="o">.</span><span class="na">getRejectedValue</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="s">""</span> <span class="o">:</span> <span class="n">error</span><span class="o">.</span><span class="na">getRejectedValue</span><span class="o">().</span><span class="na">toString</span><span class="o">(),</span>
+                    <span class="n">error</span><span class="o">.</span><span class="na">getDefaultMessage</span><span class="o">()))</span>
+                <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="errorcode-enum">ErrorCode (enum)</h4>
+<ul>
+  <li>커스텀 에러코드를 enum으로 관리한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Getter</span>
+<span class="nd">@ToString</span>
+<span class="kd">public</span> <span class="kd">enum</span> <span class="nc">ErrorCode</span> <span class="o">{</span>
+    <span class="c1">// COMMON</span>
+    <span class="no">INVALID_INPUT_VALUE</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">BAD_REQUEST</span><span class="o">,</span> <span class="s">"CO01"</span><span class="o">,</span> <span class="s">"잘못된 입력값 입니다."</span><span class="o">),</span>
+    <span class="no">NO_AUTHENTICATION</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">UNAUTHORIZED</span><span class="o">,</span> <span class="s">"CO02"</span><span class="o">,</span> <span class="s">"권한이 없습니다."</span><span class="o">),</span>
+    <span class="no">NO_AUTHORIZATION</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">FORBIDDEN</span><span class="o">,</span> <span class="s">"CO03"</span><span class="o">,</span> <span class="s">"권한이 없습니다."</span><span class="o">),</span>
+    <span class="no">NOT_FOUND</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">NOT_FOUND</span><span class="o">,</span> <span class="s">"CO04"</span><span class="o">,</span> <span class="s">"잘못된 요청입니다."</span><span class="o">),</span>
+    <span class="no">METHOD_NOT_ALLOWED</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">METHOD_NOT_ALLOWED</span><span class="o">,</span> <span class="s">"CO05"</span><span class="o">,</span> <span class="s">"잘못된 요청입니다."</span><span class="o">),</span>
+    <span class="no">INTERNAL_SERVER_ERROR</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">INTERNAL_SERVER_ERROR</span><span class="o">,</span> <span class="s">"CO06"</span><span class="o">,</span> <span class="s">"서버 에러입니다."</span><span class="o">),</span>
+
+    <span class="c1">// USER</span>
+    <span class="no">USER_NOT_FOUND</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">NOT_FOUND</span><span class="o">,</span> <span class="s">"US01"</span><span class="o">,</span> <span class="s">"존재하지 않는 회원입니다."</span><span class="o">),</span>
+    <span class="no">FOUND_NAME</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">CONFLICT</span><span class="o">,</span> <span class="s">"US02"</span><span class="o">,</span> <span class="s">"이미 존재하는 닉네임입니다."</span><span class="o">),</span>
+
+    <span class="c1">// SUPPORT</span>
+    <span class="no">UNOPENED_CONTENT</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">FORBIDDEN</span><span class="o">,</span> <span class="s">"SU01"</span><span class="o">,</span> <span class="s">"비공개 게시글입니다."</span><span class="o">),</span>
+    <span class="no">NOT_FOUND_CONTENT</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">NOT_FOUND</span><span class="o">,</span> <span class="s">"SU02"</span><span class="o">,</span> <span class="s">"존재하지 않는 게시글입니다."</span><span class="o">);</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">HttpStatus</span> <span class="n">status</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">String</span> <span class="n">code</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">message</span><span class="o">;</span>
+
+    <span class="nc">ErrorCode</span><span class="o">(</span><span class="nc">HttpStatus</span> <span class="n">status</span><span class="o">,</span> <span class="nc">String</span> <span class="n">code</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="n">status</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nc">ErrorCode</span><span class="o">(</span><span class="nc">HttpStatus</span> <span class="n">status</span><span class="o">,</span> <span class="nc">String</span> <span class="n">code</span><span class="o">,</span> <span class="nc">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">status</span> <span class="o">=</span> <span class="n">status</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">code</span> <span class="o">=</span> <span class="n">code</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="2-responsestatusexceptionresolver">2. ResponseStatusExceptionResolver</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ResponseStatus</code>로 처리한 exception</li>
+  <li>해당 커스텀 Exception이 발생했을 때 설정한 Response Status가 반환된다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ResponseStatus</span><span class="o">(</span><span class="n">code</span> <span class="o">=</span> <span class="nc">HttpStatus</span><span class="o">.</span><span class="na">BAD_REQUEST</span><span class="o">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="s">"잘못된 오청 오류"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BadRequestException</span> <span class="kd">extends</span> <span class="nc">RuntimeException</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">BadRequestException</span><span class="o">(</span><span class="nc">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">message</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>만약에 message가 null로 비어서 표출된다면 다음 설정을 추가한다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
+  <span class="na">error</span><span class="pi">:</span>
+    <span class="na">include-message</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">include-binding-errors</span><span class="pi">:</span> <span class="s">always</span>
+</code></pre></div></div>
+
+<h3 id="3-defaulthandlerexceptionresolver">3. DefaultHandlerExceptionResolver</h3>
+<ul>
+  <li>스프링 내부 기본 예외를 처리하는 exception</li>
+  <li>다양한 Exception 경우를 스프링에서 기본으로 구현해 놓았다</li>
+</ul>
+
+<p><a href="https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-exceptionhandler">Spring Web Mvc Exception 공식문헌</a></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2022/02/16/039-error.html" title="[스프링부트] 에러 페이지 처리">[스프링부트] 에러 페이지 처리</a><a class="next" href="/aws/2022/03/03/004-spring-s3.html" title="[S3] Spring에서 S3로 파일업로드 및 테스트">[S3] Spring에서 S3로 파일업로드 및 테스트...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/spring/2021/11/18/032-jpa-relation.html" title="[S3] Spring에서 S3로 파일업로드 및 테스트">[JPA] 엔티티 연관관계</a></li>
+<li><a class="post-link" href="/react.js/2021/07/13/005-react-install.html" title="[S3] Spring에서 S3로 파일업로드 및 테스트">리액트 설치</a></li>
+<li><a class="post-link" href="/react.js/2021/01/11/001-lifecycle-copy.html" title="[S3] Spring에서 S3로 파일업로드 및 테스트">React Life Cycle</a></li>
+<li><a class="post-link" href="/java/2020/05/15/004-overriding-overloading.html" title="[S3] Spring에서 S3로 파일업로드 및 테스트">오버로딩 vs 오버라이딩</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2022/02/16/040-api-error.html';
+      this.page.identifier = 'https://europani.github.io/spring/2022/02/16/040-api-error.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

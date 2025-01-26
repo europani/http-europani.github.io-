@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>알고리즘을 위한 파이썬 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="알고리즘을 위한 파이썬">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="0. 시간복잡도 파이썬은 초당 20,000,000번 연산이 가능하다">
+<meta property="og:description" content="0. 시간복잡도 파이썬은 초당 20,000,000번 연산이 가능하다">
+<link rel="canonical" href="https://europani.github.io/algorithm/2021/07/11/004-python-grammar.html">
+<meta property="og:url" content="https://europani.github.io/algorithm/2021/07/11/004-python-grammar.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-07-11T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="알고리즘을 위한 파이썬">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-07-11T00:00:00+00:00","datePublished":"2021-07-11T00:00:00+00:00","description":"0. 시간복잡도 파이썬은 초당 20,000,000번 연산이 가능하다","headline":"알고리즘을 위한 파이썬","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/algorithm/2021/07/11/004-python-grammar.html"},"url":"https://europani.github.io/algorithm/2021/07/11/004-python-grammar.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">알고리즘을 위한 파이썬</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-07-11T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-07-11
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 24 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Algorithm">#Algorithm</a><a class="post-tag" href="/tags.html#CS">#CS</a><a class="post-tag" href="/tags.html#Python">#Python</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h3 id="0-시간복잡도">0. 시간복잡도</h3>
+<ul>
+  <li>파이썬은 초당 <code class="language-plaintext highlighter-rouge">20,000,000</code>번 연산이 가능하다</li>
+</ul>
+
+<p>★시간 제한이 1초인 경우</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">N의 범위</th>
+      <th style="text-align: center">시간복잡도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">10</td>
+      <td style="text-align: center">O(n!)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">20</td>
+      <td style="text-align: center">O(2<sup>n</sup>)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">500</td>
+      <td style="text-align: center">O(N<sup>3</sup>)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2000</td>
+      <td style="text-align: center">O(N<sup>2</sup>)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">100,000</td>
+      <td style="text-align: center">O(NlogN)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10,000,000</td>
+      <td style="text-align: center">O(N)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="1-list">(1) List</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">함수</th>
+      <th style="text-align: center">시간복잡도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">l[i] [인덱싱]</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">l[a:b] [슬라이싱]</td>
+      <td style="text-align: center">O(b-a)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">append(5), pop(), len(l)</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">in, insert(), remove(), pop(5), reverse(), copy(), count(), min(), max(), index()</td>
+      <td style="text-align: center">O(N)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">sort()</td>
+      <td style="text-align: center">O(NlogN)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="2-set">(2) Set</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">함수</th>
+      <th style="text-align: center">시간복잡도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">add(), update(), remove()</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">copy()</td>
+      <td style="text-align: center">O(N)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="3-dict">(3) Dict</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">함수</th>
+      <th style="text-align: center">시간복잡도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">in, d[k]=v, del d[k], get(k), pop(k), keys()</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="1-리스트list">1. 리스트(List)</h3>
+<ul>
+  <li>크기가 n이고, 모든 값이 0인 1차원 리스트 초기화</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>크기가 n*m이고, 모든 값이 0인 2차원 리스트 초기화</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">array</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">m</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>리스트 Comprehension</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 0~19 중 홀수만 포함하는 리스트
+</span><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>리스트 Method<br>
+(1) append(v) : 리스트에 v를 삽입 [O(1)]<br>
+(2) insert(i, v) : i 위치에 v를 삽입 [O(N)]<br>
+(3) remove(v) : 리스트에서 v를 삭제, 여러개일 경우 하나만 삭제 [O(N)]<br>
+(4) pop(i) : 리스트에서 i위치의 원소를 꺼냄 (default : 마지막원소) [O(N)]
+    <ul>
+      <li>pop()는 [O(1)]</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="n">array</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">array</span><span class="p">.</span><span class="nf">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">array</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">array</span><span class="p">.</span><span class="nf">pop</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>    <span class="c1"># 1
+</span><span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>리스트 값 찾기</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="mi">1</span> <span class="ow">in</span> <span class="n">array</span><span class="p">)</span>   <span class="c1"># True
+</span><span class="nf">print</span><span class="p">(</span><span class="mi">5</span> <span class="ow">in</span> <span class="n">array</span><span class="p">)</span>   <span class="c1"># False
+</span></code></pre></div></div>
+<ul>
+  <li>리스트 + 리스트</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">array</span> <span class="o">=</span> <span class="n">array</span> <span class="o">+</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>  <span class="c1"># [1, 4, 3, 5]
+</span></code></pre></div></div>
+
+<ul>
+  <li>리스트를 공백으로 붙여서 출력</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">a</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">b</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">c</span><span class="sh">'</span><span class="p">]</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">""</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
+<span class="n">abc</span>
+
+<span class="n">array2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">""</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="nf">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">array2</span><span class="p">)))</span>
+<span class="mi">1234</span>
+</code></pre></div></div>
+
+<ul>
+  <li>리스트 값 출력 : <code class="language-plaintext highlighter-rouge">*</code>사용</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span><span class="p">:</span>
+  <span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># 위와 같은 출력을 보임
+</span><span class="nf">print</span><span class="p">(</span><span class="o">*</span><span class="n">array</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>리스트 얕은복사 : <code class="language-plaintext highlighter-rouge">슬라이싱[:]</code> 사용</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">b</span><span class="o">=</span><span class="n">a</span>
+<span class="n">c</span><span class="o">=</span><span class="n">a</span><span class="p">[:]</span>
+
+<span class="nf">id</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nf">id</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nf">id</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="mi">8274944</span> <span class="mi">8274944</span> <span class="mi">8274304</span>
+</code></pre></div></div>
+
+<ul>
+  <li>리스트 깊은복사 : <code class="language-plaintext highlighter-rouge">copy.deepcopy()</code> 사용
+    <ul>
+      <li>이중 리스트일 경우 죽, mutable 객체 안에 mutable 객체일 경우 복사를 하면 외부 리스트는 다른 객체지만 내부 리스트는 같은 주소를 바라보기 때문에 변경시 두 리스트에서 같이 변경이 이루어진다</li>
+      <li>깊은 복사를 사용해 내부 리스트까지 모두 copy 되도록 만들어야 한다</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:]</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">id</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>      <span class="c1"># 4652608
+</span><span class="nf">print</span><span class="p">(</span><span class="nf">id</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>      <span class="c1"># 0956480
+</span><span class="nf">print</span><span class="p">(</span><span class="nf">id</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>   <span class="c1"># 4565760
+</span><span class="nf">print</span><span class="p">(</span><span class="nf">id</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>   <span class="c1"># 4565760
+</span>
+<span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>    <span class="c1"># [[0, 2], [3, 4]]
+</span><span class="nf">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>    <span class="c1"># [[0, 2], [3, 4]]
+</span></code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">copy</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">copy</span><span class="p">.</span><span class="nf">deepcopy</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+<span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>    <span class="c1"># [[1, 2], [3, 4]]
+</span><span class="nf">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>    <span class="c1"># [[0, 2], [3, 4]]
+</span></code></pre></div></div>
+
+<ul>
+  <li>2차원 리스트에 최대값, 최소값 구하기 : <code class="language-plaintext highlighter-rouge">map</code>함수 사용</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="nf">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nf">input</span><span class="p">().</span><span class="nf">split</span><span class="p">())</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="p">[</span><span class="nf">list</span><span class="p">(</span><span class="nf">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nf">input</span><span class="p">().</span><span class="nf">split</span><span class="p">()))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+
+<span class="n">max_value</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="nf">map</span><span class="p">(</span><span class="nb">max</span><span class="p">,</span> <span class="n">graph</span><span class="p">))</span>
+<span class="n">min_value</span> <span class="o">=</span> <span class="nf">min</span><span class="p">(</span><span class="nf">map</span><span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="n">graph</span><span class="p">))</span>
+</code></pre></div></div>
+
+<ul>
+  <li>리스트 중복제거 : <code class="language-plaintext highlighter-rouge">set</code>이용</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="nf">set</span><span class="p">(</span><span class="n">array</span><span class="p">)))</span>   <span class="c1"># [1, 3, 4]
+</span></code></pre></div></div>
+
+<ul>
+  <li>2차원 리스트 중복 제거 : <code class="language-plaintext highlighter-rouge">set</code>과 <code class="language-plaintext highlighter-rouge">tuple</code>이용
+    <ul>
+      <li>2차원 리스트를 set으로 변환하려고 하면 에러가 발생한다.</li>
+      <li>내부 list를 tuple로 변환한 다음 set으로 변환시키면 된다.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">array</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]</span>
+
+<span class="c1"># TypeError: unhashable type: 'list'
+</span><span class="nf">print</span><span class="p">(</span><span class="nf">set</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">set</span><span class="p">(</span><span class="nf">map</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">array</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h3 id="2-딕셔너리dictionary-map">2. 딕셔너리(Dictionary, Map)</h3>
+<ul>
+  <li>딕셔너리 Method<br>
+(1) <code class="language-plaintext highlighter-rouge">keys()</code> : 모든 key값을 리스트로 출력<br>
+(2) <code class="language-plaintext highlighter-rouge">values()</code> : 모든 value값을 리스트로 출력<br>
+(3) <code class="language-plaintext highlighter-rouge">items()</code> : 모든 key-value쌍을 리스트로 출력<br>
+<br>
+(4) <code class="language-plaintext highlighter-rouge">get(key값, [false시 출력할 값])</code> : 해당 key의 value값 출력, 해당 key가 없을시 설정한 값 출력<br>
+(5) <code class="language-plaintext highlighter-rouge">key값 in dic</code> : 해당 dic에 key값이 존재하면 True<br>
+(6) <code class="language-plaintext highlighter-rouge">del dic[key값]</code> : 딕셔너리에서 삭제</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dic</span> <span class="o">=</span> <span class="nf">dict</span><span class="p">()</span>
+<span class="n">dic</span><span class="p">[</span><span class="sh">'</span><span class="s">name</span><span class="sh">'</span><span class="p">]</span><span class="o">=</span><span class="sh">'</span><span class="s">europani</span><span class="sh">'</span>
+<span class="n">dic</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">]</span><span class="o">=</span><span class="mi">20</span>
+
+<span class="c1"># get values
+</span><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">.</span><span class="nf">values</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1"># get keys
+</span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">.</span><span class="nf">keys</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v_dic</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1"># get keys, values
+</span><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">.</span><span class="nf">items</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">dic</span><span class="p">[</span><span class="sh">'</span><span class="s">name</span><span class="sh">'</span><span class="p">]</span>         <span class="c1"># europani
+</span><span class="n">dic</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">name</span><span class="sh">'</span><span class="p">)</span>     <span class="c1"># europani
+</span>
+<span class="n">dic</span><span class="p">[</span><span class="sh">'</span><span class="s">address</span><span class="sh">'</span><span class="p">]</span>      <span class="c1"># ERROR!!
+</span><span class="n">dic</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">'</span><span class="s">address</span><span class="sh">'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1"># 0 (default 설정안하면 None)
+</span>
+<span class="sh">'</span><span class="s">age</span><span class="sh">'</span> <span class="ow">in</span> <span class="n">dic</span>        <span class="c1"># True
+</span><span class="sh">'</span><span class="s">address</span><span class="sh">'</span> <span class="ow">in</span> <span class="n">dic</span>    <span class="c1"># False
+</span>
+<span class="k">del</span> <span class="n">dic</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">]</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">dic</span><span class="p">)</span>          <span class="c1"># dic = {'name' : 'europani'}
+</span></code></pre></div></div>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">defaultdict(디폴트 자료형)</code> : 디폴트값을 지정하여 없는 키가 호출됐을 때 디폴트 값을 넣는 딕셔너리</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="n">dic</span> <span class="o">=</span> <span class="nf">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">dic</span><span class="p">)</span>     <span class="c1"># defaultdict(&lt;class 'list'&gt;, {})
+</span>
+<span class="n">dic</span><span class="p">[</span><span class="sh">'</span><span class="s">name</span><span class="sh">'</span><span class="p">]</span><span class="o">=</span><span class="sh">'</span><span class="s">europani</span><span class="sh">'</span>
+<span class="n">dic</span><span class="p">[</span><span class="sh">'</span><span class="s">hobby</span><span class="sh">'</span><span class="p">]</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">dic</span><span class="p">)</span>    <span class="c1"># defaultdict(&lt;class 'list'&gt;, {'name': 'europani', 'hobby': []})
+</span></code></pre></div></div>
+
+<ul>
+  <li>딕셔너리 sort</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dic</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sh">'</span><span class="s">a</span><span class="sh">'</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="sh">'</span><span class="s">c</span><span class="sh">'</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="sh">'</span><span class="s">e</span><span class="sh">'</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="sh">'</span><span class="s">b</span><span class="sh">'</span> <span class="p">:</span> <span class="mi">5</span>
+<span class="p">}</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">dic</span><span class="p">)</span>          <span class="c1"># {'a': 4, 'c': 3, 'e': 1, 'b': 5}
+</span><span class="nf">print</span><span class="p">(</span><span class="n">dic</span><span class="p">.</span><span class="nf">items</span><span class="p">())</span>  <span class="c1"># dict_items([('a', 4), ('c', 3), ('e', 1), ('b', 5)])
+</span>
+<span class="c1"># key 오름차순 정렬
+</span><span class="n">dic_sort1</span> <span class="o">=</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">dic</span><span class="p">.</span><span class="nf">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">dic_sort1</span><span class="p">)</span>    <span class="c1"># [('a', 4), ('b', 5), ('c', 3), ('e', 1)]
+</span>
+<span class="c1"># value 오름차순 정렬
+</span><span class="n">dic_sort2</span> <span class="o">=</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">dic</span><span class="p">.</span><span class="nf">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">dic_sort2</span><span class="p">)</span>    <span class="c1"># [('e', 1), ('c', 3), ('a', 4), ('b', 5)]
+</span>
+<span class="c1"># value 내림차순 정렬
+</span><span class="n">dic_sort3</span> <span class="o">=</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">dic</span><span class="p">.</span><span class="nf">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">dic_sort3</span><span class="p">)</span>    <span class="c1"># [('b', 5), ('a', 4), ('c', 3), ('e', 1)]
+</span></code></pre></div></div>
+<p>→ <code class="language-plaintext highlighter-rouge">dic.items()</code>결과 : (key, value) 튜플쌍이 리스트에 담겨서 반환<br>
+→ <code class="language-plaintext highlighter-rouge">sorted()</code>결과 : 리스트에 담겨서 반환</p>
+
+<h3 id="3-문자열">3. 문자열</h3>
+<p>(1) count(word) : word 갯수 세기<br>
+(2) find(word) : word를 찾아 인덱스 반환 <strong>(없을시 -1 출력)</strong><br>
+(3) index(word) : word를 찾아 인덱스 반환 <strong>(없을시 에러발생)</strong><br>
+(4) upper(), lower(), capitalize() : 대소문자 변환<br>
+(5) lstrip(), rstrip(), strip() : 공백제거<br>
+(6) replace(a, b) : a를 b로 치환<br>
+(7) split(deli) : 문자열을 deli로 기준으로 나누어 반환</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span><span class="o">=</span><span class="sh">'</span><span class="s">hobby</span><span class="sh">'</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="sh">'</span><span class="s">b</span><span class="sh">'</span><span class="p">)</span>    <span class="c1"># 2
+</span><span class="n">a</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">'</span><span class="s">b</span><span class="sh">'</span><span class="p">)</span>     <span class="c1"># 2
+</span><span class="n">a</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="sh">'</span><span class="s">p</span><span class="sh">'</span><span class="p">)</span>     <span class="c1"># -1
+</span><span class="n">a</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="sh">'</span><span class="s">p</span><span class="sh">'</span><span class="p">)</span>    <span class="c1"># 에러발생
+</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sh">'</span><span class="s">o</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">a</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>        <span class="c1"># habby
+</span></code></pre></div></div>
+
+<ul>
+  <li>슬라이싱</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">안</th>
+      <th style="text-align: center">녕</th>
+      <th style="text-align: center">하</th>
+      <th style="text-align: center">세</th>
+      <th style="text-align: center">요</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">0</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">-5</td>
+      <td style="text-align: center">-4</td>
+      <td style="text-align: center">-3</td>
+      <td style="text-align: center">-2</td>
+      <td style="text-align: center">-1</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">S</span> <span class="o">=</span> <span class="sh">'</span><span class="s">안녕하세요</span><span class="sh">'</span>
+
+<span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">녕하</span>
+<span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">녕하</span>
+<span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">녕하세요</span>
+<span class="n">S</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">안</span>
+<span class="n">S</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">안녕</span>
+<span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="n">하세요</span>
+
+<span class="n">S</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">안하요</span>
+<span class="n">S</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">요세하녕안</span>
+<span class="n">S</span><span class="p">[:]</span> <span class="o">==</span> <span class="n">안녕하세요</span>
+</code></pre></div></div>
+
+<h3 id="4-입출력">4. 입출력</h3>
+<ul>
+  <li>각 데이터를 공백으로 구분하여 입력
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">map(함수, 데이터)</code> : 모든 데이터에 첫번째 파라미터로 들어온 함수 적용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nf">input</span><span class="p">().</span><span class="nf">split</span><span class="p">()))</span>
+<span class="n">data</span><span class="p">.</span><span class="nf">sort</span><span class="p">()</span>
+
+<span class="mi">65</span> <span class="mi">90</span> <span class="mi">75</span> <span class="mi">34</span> <span class="mi">99</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">34</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">99</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>한 줄씩 입력 : 줄바꿈 기호를 제거하기 위해 <code class="language-plaintext highlighter-rouge">rstrip()</code> 사용</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">sys</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">sys</span><span class="p">.</span><span class="n">stdin</span><span class="p">.</span><span class="nf">readline</span><span class="p">().</span><span class="nf">rstrip</span><span class="p">()</span>
+</code></pre></div></div>
+
+<ul>
+  <li>정수와 배열이 한 줄에 입력시 : <code class="language-plaintext highlighter-rouge">*</code>를 사용하여 가변인자로 받기</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">4</span> <span class="mi">10</span> <span class="mi">20</span> <span class="mi">30</span> <span class="mi">40</span>
+<span class="mi">3</span> <span class="mi">7</span> <span class="mi">5</span> <span class="mi">12</span>
+
+<span class="n">n</span><span class="p">,</span> <span class="o">*</span><span class="n">arr</span> <span class="o">=</span> <span class="nf">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nf">input</span><span class="p">().</span><span class="nf">split</span><span class="p">())</span>
+</code></pre></div></div>
+
+<ul>
+  <li>포맷팅 (f-string)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">answer</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">정답은 </span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s">입니다.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>실행 종료</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">sys</span>
+
+<span class="n">sys</span><span class="p">.</span><span class="nf">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>최대값, 최소값 설정</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">sys</span>
+<span class="nb">max</span> <span class="o">=</span> <span class="n">sys</span><span class="p">.</span><span class="n">maxsize</span>
+<span class="nb">min</span> <span class="o">=</span> <span class="o">-</span><span class="n">sys</span><span class="p">.</span><span class="n">maxsize</span>
+</code></pre></div></div>
+
+<h3 id="5-라이브러리">5. 라이브러리</h3>
+<h4 id="1-itertools--반복-순열조합">(1) itertools : 반복, 순열/조합</h4>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">itertools</span> <span class="kn">import</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">product</span><span class="p">,</span> <span class="n">combination_with_replacement</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">]</span>
+
+<span class="c1"># 1. 순열
+</span><span class="n">per</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">permutations</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">per</span><span class="p">)</span> <span class="c1"># 6개
+</span><span class="p">[(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">)]</span>
+
+<span class="c1"># 2. 조합
+</span><span class="n">com</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">combinations</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">com</span><span class="p">)</span> <span class="c1"># 3개
+</span><span class="p">[(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">)]</span>
+
+<span class="c1"># 3. 중복순열
+</span><span class="n">pro</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">product</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">pro</span><span class="p">)</span> <span class="c1"># 9개
+</span><span class="p">[(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">)]</span>
+
+<span class="c1"># 4. 중복조합
+</span><span class="n">comr</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">combination_with_replacement</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">comr</span><span class="p">)</span> <span class="c1"># 6개
+</span><span class="p">[(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">)]</span>
+</code></pre></div></div>
+
+<h4 id="2-heapq--힙우선순위큐">(2) heapq : 힙(우선순위큐)</h4>
+<ul>
+  <li>파이썬의 힙은 <strong>최소힙</strong>만 제공
+    <ul>
+      <li>최소힙 : 낮은 숫자의 우선순위가 높음</li>
+      <li>우선순위에 마이너스(-)를 붙여 최대힙으로 사용 가능</li>
+    </ul>
+  </li>
+  <li>heappush(리스트, 값)</li>
+  <li>heappop(리스트)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">heapq</span>
+<span class="n">heap</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">heapq</span><span class="p">.</span><span class="nf">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">heapq</span><span class="p">.</span><span class="nf">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="n">heapq</span><span class="p">.</span><span class="nf">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">heapq</span><span class="p">.</span><span class="nf">heappush</span><span class="p">(</span><span class="n">heap</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>     <span class="c1"># [1, 4, 7, 9]
+</span>
+<span class="n">num</span> <span class="o">=</span> <span class="n">heapq</span><span class="p">.</span><span class="nf">heappop</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>      <span class="c1"># 1
+</span><span class="nf">print</span><span class="p">(</span><span class="n">heap</span><span class="p">)</span>     <span class="c1"># [4, 7, 9]
+</span></code></pre></div></div>
+
+<h4 id="3-bisect--이진탐색직접구현추천">(3) <del>bisect : 이진탐색</del>(직접구현추천)</h4>
+<ul>
+  <li>bisect_left(a, x) : 정렬된 순서를 유지하면서 리스트 a에 데이터 x를 삽입할 가장 왼쪽 인덱스를 찾음</li>
+  <li>bisect_right(a, x) : 정렬된 순서를 유지하면서 리스트 a에 데이터 x를 삽입할 가장 오른쪽 인덱스를 찾음</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">bisect</span> <span class="kn">import</span> <span class="n">bisect_left</span><span class="p">,</span> <span class="n">bisect_right</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">bisect_left</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>  <span class="c1"># 2
+</span><span class="nf">print</span><span class="p">(</span><span class="nf">bisect_right</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>  <span class="c1"># 4
+</span></code></pre></div></div>
+
+<h4 id="4-collections--데크-카운터">(4) collections : 데크, 카운터</h4>
+<p>1. 데크</p>
+<ul>
+  <li>popleft() : 첫번째 원소 제거</li>
+  <li>pop() : 마지막 원소 제거</li>
+  <li>appendleft(x) : 첫번째 인덱스에 삽입</li>
+  <li>append(x) : 마지막 인덱스에 삽입</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="nf">deque</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">data</span><span class="p">.</span><span class="nf">appendleft</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>2. 카운터</p>
+<ul>
+  <li>most_common(n) : 가장 많은 원소를 n개까지 튜플로 출력</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="n">counter</span> <span class="o">=</span> <span class="nc">Counter</span><span class="p">([</span><span class="sh">'</span><span class="s">red</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">blue</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">red</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">green</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">blue</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">blue</span><span class="sh">'</span><span class="p">])</span>
+
+<span class="n">counter</span><span class="p">.</span><span class="nf">most_common</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">[(</span><span class="sh">'</span><span class="s">blue</span><span class="sh">'</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="sh">'</span><span class="s">red</span><span class="sh">'</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">counter</span><span class="p">([</span><span class="sh">'</span><span class="s">blue</span><span class="sh">'</span><span class="p">])</span>
+<span class="mi">3</span>
+<span class="nf">print</span><span class="p">(</span><span class="nf">dict</span><span class="p">(</span><span class="n">counter</span><span class="p">))</span>
+<span class="p">{</span><span class="sh">'</span><span class="s">red</span><span class="sh">'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="sh">'</span><span class="s">blue</span><span class="sh">'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="sh">'</span><span class="s">green</span><span class="sh">'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="5-math">(5) math</h4>
+<ul>
+  <li>factorial(a) : 펙토리얼</li>
+  <li>sqrt(a) : 제곱근</li>
+  <li>gcd(a, b) : 최대공약수</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">math</span>
+
+<span class="n">math</span><span class="p">.</span><span class="nf">factorial</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>   <span class="c1"># 120
+</span><span class="n">math</span><span class="p">.</span><span class="nf">sqrt</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>        <span class="c1"># 2.6457513110645907
+</span><span class="n">math</span><span class="p">.</span><span class="nf">gcd</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>    <span class="c1"># 7
+</span></code></pre></div></div>
+
+<h4 id="6-zip-내장함수">(6) zip (내장함수)</h4>
+<p>여러 iterable 객체를 인덱스에 따라 튜플로 생성해준다<br>
+iterable 객체의 길이가 다를경우 짧은 인자 길이를 따르며 <strong>더 긴부분은 버려진다</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">letters</span> <span class="o">=</span> <span class="p">[</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">letters</span><span class="p">):</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>컬렉션으로 묶기</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pair_list</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">zip</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">letters</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">pair_list</span><span class="p">)</span>
+<span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">)]</span>
+
+<span class="n">pair_dict</span> <span class="o">=</span> <span class="nf">dict</span><span class="p">(</span><span class="nf">zip</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">letters</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">pair_dict</span><span class="p">)</span>
+<span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>컬렉션에서 분리하기</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">numbers</span><span class="p">,</span> <span class="n">letters</span> <span class="o">=</span> <span class="nf">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pair_list</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span>
+<span class="p">(</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">B</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">C</span><span class="sh">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="6-람다식">6. 람다식</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="nf">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+
+<span class="c1"># 람다식 적용
+</span><span class="nf">print</span><span class="p">((</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">:</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)(</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+</code></pre></div></div>
+
+<ul>
+  <li>람다식을 이용한 정렬 : 리스트의 두번째 인자로 정렬하기</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="nf">input</span><span class="p">())</span>
+<span class="n">time</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+  <span class="n">time</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="nf">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nf">input</span><span class="p">().</span><span class="nf">split</span><span class="p">())))</span>
+<span class="n">time</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>     <span class="c1"># 두번째 인자, 첫번째 인자 오름차순
+</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="mi">5</span>
+<span class="mi">1</span> <span class="mi">4</span>
+<span class="mi">2</span> <span class="mi">3</span>
+<span class="mi">3</span> <span class="mi">5</span>
+<span class="mi">4</span> <span class="mi">6</span>
+<span class="mi">5</span> <span class="mi">7</span>
+
+<span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]]</span>  <span class="c1"># 두번째 인자 오름차순 우선
+</span></code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/docker/2021/07/08/006-docker-django-nginx-mysql.html" title="도커 설정(Django-Nginx-uWSGI-MySQL)">도커 설정(Django-Nginx-uWSGI-MySQL)</a><a class="next" href="/react.js/2021/07/13/005-react-install.html" title="리액트 설치">리액트 설치</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/network/2021/04/01/006-OSI4-transport.html" title="리액트 설치">전송 계층(L4)</a></li>
+<li><a class="post-link" href="/ds/2022/05/19/007-b-tree.html" title="리액트 설치">B-Tree, B+ Tree</a></li>
+<li><a class="post-link" href="/ds/2020/11/09/004-graph.html" title="리액트 설치">비선형 구조 - 그래프</a></li>
+<li><a class="post-link" href="/java/2020/04/28/001-variable.html" title="리액트 설치">변수와 자료형</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/algorithm/2021/07/11/004-python-grammar.html';
+      this.page.identifier = 'https://europani.github.io/algorithm/2021/07/11/004-python-grammar.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

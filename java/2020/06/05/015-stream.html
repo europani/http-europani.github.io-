@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>스트림(Stream) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="스트림(Stream)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="컬렉션의 데이터를 표준화 하여 쉽게 다루기 위한 도구">
+<meta property="og:description" content="컬렉션의 데이터를 표준화 하여 쉽게 다루기 위한 도구">
+<link rel="canonical" href="https://europani.github.io/java/2020/06/05/015-stream.html">
+<meta property="og:url" content="https://europani.github.io/java/2020/06/05/015-stream.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-06-05T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="스트림(Stream)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-06-05T00:00:00+00:00","datePublished":"2020-06-05T00:00:00+00:00","description":"컬렉션의 데이터를 표준화 하여 쉽게 다루기 위한 도구","headline":"스트림(Stream)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/java/2020/06/05/015-stream.html"},"url":"https://europani.github.io/java/2020/06/05/015-stream.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">스트림(Stream)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-06-05T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-06-05
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Java">#Java</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>컬렉션의 데이터를 표준화 하여 쉽게 다루기 위한 도구</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>컬렉션,배열 --&gt; 1. 스트림 오픈 --&gt; 2. 중간 연산 --&gt; 3. 최종 연산
+</code></pre></div></div>
+<ul>
+  <li>스트림은 데이터를 읽기만 할 뿐 변경시키지 않음(Read Only)</li>
+  <li>일회용 such as Iterator </li>
+  <li>내부 반복자를 통해 처리                cf) 외부 반복자 : Iterator</li>
+  <li>최종 연산 전까지 중간 연산이 실행되지 않는다(lazy)</li>
+</ul>
+
+<h3 id="1-스트림-오픈">1. 스트림 오픈</h3>
+<ul>
+  <li>ex) student.stream();</li>
+</ul>
+
+<h3 id="2-중간-연산">2. 중간 연산</h3>
+<ul>
+  <li>필터링, 매핑(변환), 정렬, 그룹핑, 루핑(순환)</li>
+  <li>리턴타입 : 스트림</li>
+</ul>
+
+<h4 id="1-필터링">(1) 필터링</h4>
+<ul>
+  <li>
+    <p>지네릭이 바뀌지 않음</p>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">distinct()</code> : 중복 제거</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">filter(Predicate predicate)</code> : 필터링</li>
+</ul>
+
+<h4 id="2-변환"><strong>(2) 변환</strong></h4>
+<ul>
+  <li>
+    <p>지네릭이 바뀜                 </p>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">map(Function function)</code> : 컬렉션의 element 맵핑
+    <ul>
+      <li>ex) <code class="language-plaintext highlighter-rouge">map(Student::getName)</code> : Student -&gt; String</li>
+    </ul>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">flatMap(Consumer consumer)</code> : 컬렉션 내 컬렉션의 element 맵핑
+    <ul>
+      <li>ex) <code class="language-plaintext highlighter-rouge">flatMap(Arrays::stream)</code> : Array&lt;String&gt; -&gt; String</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span><span class="o">[][]</span> <span class="n">arr</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="o">{</span><span class="s">"a"</span><span class="o">,</span> <span class="s">"b"</span><span class="o">,</span> <span class="s">"c"</span><span class="o">},</span> 
+  <span class="o">{</span><span class="s">"d"</span><span class="o">,</span> <span class="s">"e"</span><span class="o">,</span> <span class="s">"f"</span><span class="o">}</span>
+<span class="o">};</span>
+
+<span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">arr</span><span class="o">)</span>
+  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Arrays:</span><span class="o">:</span><span class="n">stream</span><span class="o">)</span>
+  <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+</code></pre></div></div>
+
+<h4 id="3-정렬">(3) 정렬</h4>
+<ul>
+  <li>
+    <p>Comparable을 구현 한 클래스에서만 사용 가능, Comparable이 구현되지 않은 클래스는 예외 발생</p>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">sorted()</code> : 기본 조건 정렬</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">sorted(Comparator comparator)</code> : Comparator 조건 정렬</li>
+</ul>
+
+<h4 id="4-조회">(4) 조회</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">peek()</code> : 중간 처리 결과를 출력, 중간 작업결과 확인용으로 사용</li>
+</ul>
+
+<h3 id="3-최종-연산">3. 최종 연산</h3>
+<ul>
+  <li>스트림의 element를 소모해 결과 생성</li>
+  <li>매칭, 집계(합계, 평균, 카운팅, 최대값, 최소값), 수집, 루핑</li>
+  <li>리덕션 : 대량의 데이터를 가공해서 축소하는 것    ex) 합계, 평균, 카운팅, 최대값, 최소값</li>
+  <li>메소드 : 리턴타입이 기본 타입 or Optional__<br>
+→ Optional__ : 타입이 래퍼 클래스임(언박싱이 필요함)</li>
+</ul>
+
+<h4 id="1-매칭">(1) 매칭</h4>
+<ul>
+  <li>
+    <p>요소들이 조건에 만족하는지 확인</p>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">__Match()</code> : 조건이 만족하는지 확인
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">allMatch()</code>, <code class="language-plaintext highlighter-rouge">anyMatch()</code>, <code class="language-plaintext highlighter-rouge">noneMatch()</code>
+</li>
+    </ul>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">find__()</code> : 조건일치 요소 반환
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">findFirst()</code></li>
+      <li>
+<code class="language-plaintext highlighter-rouge">findAny()</code> : 병렬 스트림에서 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kt">int</span><span class="o">[]</span> <span class="n">intArr</span> <span class="o">=</span> <span class="o">{</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">6</span><span class="o">};</span>
+		
+    <span class="kt">boolean</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">intArr</span><span class="o">).</span><span class="na">allMatch</span><span class="o">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"모두 2의 배수인가 ? "</span> <span class="o">+</span> <span class="n">result</span><span class="o">);</span>		<span class="c1">// true</span>
+		
+    <span class="n">result</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">intArr</span><span class="o">).</span><span class="na">anyMatch</span><span class="o">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">%</span><span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"하나라도 3의 배수인가 ? "</span> <span class="o">+</span> <span class="n">result</span><span class="o">);</span>	<span class="c1">// true</span>
+		
+    <span class="n">result</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">intArr</span><span class="o">).</span><span class="na">noneMatch</span><span class="o">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">%</span><span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">);</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"3의 배수는 없는가 ? "</span> <span class="o">+</span> <span class="n">result</span><span class="o">);</span>		<span class="c1">// false</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="2-집계">(2) 집계</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">sum()</code>, <code class="language-plaintext highlighter-rouge">average()</code>, <code class="language-plaintext highlighter-rouge">count()</code>, <code class="language-plaintext highlighter-rouge">max()</code>, <code class="language-plaintext highlighter-rouge">min()</code>
+</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">reduce()</code> : 커스텀 합계
+    <ul>
+      <li>요소를 하나씩 줄여나가며 계산</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="3-수집"><strong>(3) 수집</strong></h4>
+<ul>
+  <li>
+    <p>주로 요소를 그룹화하거나 분활한 결과를 <strong>컬렉션</strong>에 담아 반환할 때 사용</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">collect(Collector collector)</code></li>
+  <li>
+<code class="language-plaintext highlighter-rouge">Collectors</code> : 이미 구현되어 있는 Collector 인터페이스 구현체
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">toList()</code>, <code class="language-plaintext highlighter-rouge">toSet()</code>, <code class="language-plaintext highlighter-rouge">toMap(key, value)</code>, <code class="language-plaintext highlighter-rouge">toCollection()</code>, <code class="language-plaintext highlighter-rouge">toArray()</code> 등</li>
+    </ul>
+  </li>
+  <li>groupingBy(Function) / partitioningBy(Predicate) : 스트림 -&gt;Map
+    <ul>
+      <li>groupingBy(key, value) &amp; partitioningBy(key, value) 라고 생각</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 1. 단순분할(성별)</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Student2</span><span class="o">&gt;&gt;</span> <span class="n">stuBySex</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">stuArr</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">partitioningBy</span><span class="o">(</span><span class="nl">Student2:</span><span class="o">:</span><span class="n">isMale</span><span class="o">));</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Student2</span><span class="o">&gt;</span> <span class="n">maleStudent</span> <span class="o">=</span> <span class="n">stuBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Student2</span><span class="o">&gt;</span> <span class="n">femaleStudent</span> <span class="o">=</span> <span class="n">stuBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+
+<span class="c1">// 2. 단순분할 + 통계(성별 학생수)</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">,</span> <span class="nc">Long</span><span class="o">&gt;</span> <span class="n">stuNumBySex</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">stuArr</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">partitioningBy</span><span class="o">(</span><span class="nl">Student2:</span><span class="o">:</span><span class="n">isMale</span><span class="o">,</span> <span class="nc">Collectors</span><span class="o">.</span><span class="na">counting</span><span class="o">()));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"남학생 수 : "</span> <span class="o">+</span> <span class="n">stuNumBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">true</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"여학생 수 : "</span> <span class="o">+</span> <span class="n">stuNumBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">false</span><span class="o">));</span>
+
+<span class="c1">// 3. 단순분할 + 통계(성별 1등)</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">,</span> <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Student2</span><span class="o">&gt;&gt;</span> <span class="n">topScoreBySex</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">stuArr</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">partitioningBy</span><span class="o">(</span><span class="nl">Student2:</span><span class="o">:</span><span class="n">isMale</span><span class="o">,</span> <span class="nc">Collectors</span><span class="o">.</span><span class="na">maxBy</span><span class="o">(</span><span class="nc">Comparator</span><span class="o">.</span><span class="na">comparingInt</span><span class="o">(</span><span class="nl">Student2:</span><span class="o">:</span><span class="n">getScore</span><span class="o">))));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"남학생 수 : "</span> <span class="o">+</span> <span class="n">topScoreBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">true</span><span class="o">));</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"여학생 수 : "</span> <span class="o">+</span> <span class="n">topScoreBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">false</span><span class="o">));</span>
+
+<span class="c1">// 4. 다중분할(성별, 불합격자)</span>
+<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">,</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Boolean</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Student2</span><span class="o">&gt;&gt;&gt;</span> <span class="n">failedStuBySex</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">stuArr</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">partitioningBy</span><span class="o">(</span><span class="nl">Student2:</span><span class="o">:</span><span class="n">isMale</span><span class="o">,</span> <span class="nc">Collectors</span><span class="o">.</span><span class="na">partitioningBy</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="na">getScore</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="o">)));</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Student2</span><span class="o">&gt;</span> <span class="n">failedMaleStu</span> <span class="o">=</span> <span class="n">failedStuBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">true</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>	<span class="c1">// 1번get: 성별, 2번get: score&lt;=100</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Student2</span><span class="o">&gt;</span> <span class="n">failedFemaleStu</span> <span class="o">=</span> <span class="n">failedStuBySex</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="kc">false</span><span class="o">).</span><span class="na">get</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>○ collect(supplier, accumulator, combiner) 구현</p>
+<ul>
+  <li>supplier - Supplier<r> : 사용자정의 컨테이너 생성</r>
+</li>
+  <li>accumulator - BiConsumer&lt;R, ? super T&gt; : 스트림의 요소를 수집</li>
+  <li>combiner - BiConsumer&lt;R, R&gt; : 병렬 스트림의 경우 두 컨테이너를 병합</li>
+</ul>
+
+<h4 id="4-루핑">(4) 루핑</h4>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">forEach(Consumer consumer)</code></li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">double</span> <span class="n">avg</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>                 <span class="c1">// 오리지널 스트림 (Collections -&gt; Stream)</span>
+         <span class="o">.</span><span class="na">mapToInt</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">.</span><span class="na">getScore</span><span class="o">())</span>      <span class="c1">// 중간 처리 (Stream -&gt; IntStream)</span>
+         <span class="o">.</span><span class="na">average</span><span class="o">()</span>                        <span class="c1">// 최종 처리 (IntStream -&gt; OptionalDouble)</span>
+         <span class="o">.</span><span class="na">getAsDouble</span><span class="o">();</span>                   <span class="c1">// 언박싱(Wrapper -&gt; 기본(OptionalDouble -&gt; double))</span>
+		
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"평균 점수 : "</span> <span class="o">+</span> <span class="n">avg</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>○ 병렬 처리 : parallelStream()</p>
+<ul>
+  <li>내부적으로 쓰레드를 사용해서 병렬로 처리함</li>
+</ul>
+
+<p>● 스트림의 변환</p>
+
+<table style="border-collapse: collapse; width: 88.9362%;" border="1" data-ke-style="style4"><tbody>
+<tr style="height: 19px;">
+<td style="width: 32.5916%; height: 19px;" colspan="2">스트림<span style="color: #333333;">→</span>기본형 스트림</td>
+<td style="width: 25.7853%; height: 19px;">
+<span style="color: #333333;">Stream<span style="color: #333333;">→</span></span><u>Int</u><span style="color: #333333;">Stream</span>
+</td>
+<td style="width: 25%; height: 19px;">mapTo<u>Int</u>(Function)</td>
+</tr>
+<tr style="height: 20px;">
+<td style="width: 32.5916%; height: 20px;" colspan="2">기본형 스트림<span style="color: #333333;">→</span>스트림<br><span style="color: #333333;"></span>
+</td>
+<td style="width: 25.7853%; height: 20px;">
+<u>Int</u><span style="color: #333333;">Stream<span style="color: #333333;">→</span><span style="color: #333333;">Stream</span></span>
+</td>
+<td style="width: 25%; height: 20px;">boxed()</td>
+</tr>
+<tr style="height: 20px;">
+<td style="width: 32.5916%; height: 20px;" colspan="2">기본형 스트림<span style="color: #333333;">→</span>기본형 스트림</td>
+<td style="width: 25.7853%; height: 20px;">
+<u>Int</u><span style="color: #333333;">Stream<span style="color: #333333;">→</span><u>Double</u><span style="color: #333333;">Stream</span></span>
+</td>
+<td style="width: 25%; height: 20px;">
+<u>as</u>DoubleStream()</td>
+</tr>
+<tr style="height: 20px;">
+<td style="width: 32.5916%; height: 20px;" colspan="2">2개 스트림<span style="color: #333333;">→</span>스트림</td>
+<td style="width: 25.7853%; height: 20px;">Stream, Stream <span style="color: #333333;">→</span> Stream</td>
+<td style="width: 25%; height: 20px;">concat(Stream a, Stream b)</td>
+</tr>
+<tr style="height: 20px;">
+<td style="width: 32.5916%; height: 20px;" colspan="2">스트림의 스트림<span style="color: #333333;">→</span>스트림</td>
+<td style="width: 25.7853%; height: 20px;">Stream<stream><span style="color: #333333;">→</span>Stream</stream>
+</td>
+<td style="width: 25%; height: 20px;">flatMap<u>To_</u>_(Function)</td>
+</tr>
+<tr style="height: 20px;">
+<td style="width: 32.5916%; height: 20px;" colspan="2">스트림<span style="color: #333333;">↔병렬스트림</span>
+</td>
+<td style="width: 25.7853%; height: 20px;"> </td>
+<td style="width: 25%; height: 20px;">parallel() : 스트림<span style="color: #333333;">→</span>병렬스트림<br>sequential() : 스트림<span style="color: #333333;">←</span>병렬스트림</td>
+</tr>
+<tr style="height: 20px;">
+<td style="height: 20px; width: 32.5916%;" colspan="2">스트림<span style="color: #333333;">→</span>컬렉션(List,Set)</td>
+<td style="width: 25.7853%; height: 20px;">Stream<span style="color: #333333;">→Collection,List,Set</span>
+</td>
+<td style="width: 25%; height: 20px;">collect(Collectors.to___())</td>
+</tr>
+<tr>
+<td style="width: 32.5916%;" colspan="2">컬렉션<span style="color: #333333;">→스트림</span>
+</td>
+<td style="width: 25.7853%;"><span style="color: #333333;">Collection,List,Set<span style="color: #333333;">→<span style="color: #333333;">Stream</span></span></span></td>
+<td style="width: 25%;">stream()</td>
+</tr>
+<tr>
+<td style="width: 32.5916%;" colspan="2">스트림<span style="color: #333333;">→컬렉션(Map)</span>
+</td>
+<td style="width: 25.7853%;"><span style="color: #333333;"><span style="color: #333333;">Stream</span><span style="color: #333333;">→Map</span></span></td>
+<td style="width: 25%;"><span style="color: #333333;">collect(Collectors.to<u>Map</u>(function))</span></td>
+</tr>
+<tr>
+<td style="width: 32.5916%;" colspan="2">스트림<span style="color: #333333;">→배열</span>
+</td>
+<td style="width: 25.7853%;">Stream-&gt;Object[]</td>
+<td style="width: 25%;">toArray()</td>
+</tr>
+</tbody></table>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/java/2020/06/04/014-lambda.html" title="람다식, 메서드참조">람다식, 메서드참조</a><a class="next" href="/java/2020/06/10/016-IO.html" title="입출력(I/O)">입출력(I/O)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/spring/2020/09/23/013-mybatis-java-annotation.html" title="입출력(I/O)">[Mybatis] 자바 Annotation</a></li>
+<li><a class="post-link" href="/aws/2021/10/24/001-type.html" title="입출력(I/O)">AWS 종류</a></li>
+<li><a class="post-link" href="/spring/2022/02/16/039-error.html" title="입출력(I/O)">[스프링부트] 에러 페이지 처리</a></li>
+<li><a class="post-link" href="/django/2021/02/01/017-custom-templatetag.html" title="입출력(I/O)">커스텀 템플릿태그(templatetags)</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/java/2020/06/05/015-stream.html';
+      this.page.identifier = 'https://europani.github.io/java/2020/06/05/015-stream.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

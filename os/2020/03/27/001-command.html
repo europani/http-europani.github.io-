@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CLI 명령어 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="CLI 명령어">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Directory">
+<meta property="og:description" content="Directory">
+<link rel="canonical" href="https://europani.github.io/os/2020/03/27/001-command.html">
+<meta property="og:url" content="https://europani.github.io/os/2020/03/27/001-command.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-03-27T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="CLI 명령어">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-03-27T00:00:00+00:00","datePublished":"2020-03-27T00:00:00+00:00","description":"Directory","headline":"CLI 명령어","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/os/2020/03/27/001-command.html"},"url":"https://europani.github.io/os/2020/03/27/001-command.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CLI 명령어</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-03-27T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-03-27
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#CS">#CS</a><a class="post-tag" href="/tags.html#Linux">#Linux</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h3 id="directory">Directory</h3>
+
+<ol>
+  <li>
+    <p>pwd : print working directory</p>
+  </li>
+  <li>
+    <p>cd : change directory<br>
+    ☞ / : 최상위 directory (루트 directory)          ex) cd /<br>
+    ☞ ~ : 홈 directory (/C:/Users/계정명)<br>
+    ☞ .. : 이전 directory<br>
+    ☞  . : 현재 directory</p>
+  </li>
+  <li>
+    <p>mkdir : make directory</p>
+  </li>
+  <li>
+    <p>rmdir : remove directory</p>
+  </li>
+  <li>
+    <p>ls : 해당 directory에 있는 파일 list<br>
+    ☞ -a : 모든 파일 보기(숨김파일 포함) (all)                   ex) ls -a<br>
+    ☞ -l : 파일정보를 상세하게 보여주는 리스트(long)<br>
+    ☞ -r : 역순 정렬(reverse)<br>
+    ☞ -t : 파일 수정시간순 정렬(time)                       ex) ls -rt : 수정시간 역순정렬<br>
+    ☞ -d 폴더명 : 선택한 폴더의 정보 출력</p>
+  </li>
+  <li>
+    <p>mv : directory&amp;File 이름바꾸기    ex) mv abc abc2 [directory 이름변경],  mv abc.txt def.txt [File 이름변경]<br>
+        directory&amp;File 이동          ex) mv abc.txt abc3 [abc.txt를 abc3 폴더로 이동]<br>
+    ☞ -i : 폴더안에 해당이름의 파일이 이미 존재할 시 한번더 확인함(interactive) </p>
+  </li>
+</ol>
+
+<h3 id="file">File</h3>
+
+<ol>
+  <li>
+    <p>touch : empty 파일 만들기                                      ex) touch abc.txt<br>
+    ☞ .filename : 숨긴파일로 만들기                           ex) touch .abc.txt</p>
+  </li>
+  <li>
+    <p>cp : copy&amp;paste, 해당폴더의 directory&amp;File 복사    ex) cp abc.txt abc2.txt [abc.txt를 복사해 abc2.txt 생성]<br>
+   ☞ -r : 디렉토리 삭제시 사용(recursive)<br>
+   ☞ -i : 폴더안에 해당이름의 파일이 이미 존재할 시 한번더 확인함(interactive) </p>
+  </li>
+  <li>rm : remove file<br>
+    ☞ -r : 해당 디렉토리의 모든 디렉토리/파일까지 삭제, 디렉토리 삭제시 사용(recursive)<br>
+    ☞ -i : 폴더안에 해당이름의 파일이 이미 존재할 시 한번더 확인함(interactive)<br>
+    ☞ -f : 강제시행(force)
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">rm</span> <span class="nt">-rf</span> /tmp/test
+</code></pre></div>    </div>
+  </li>
+  <li>grep : 파일 내용 찾기
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">grep </span>linux abc.txt
+</code></pre></div>    </div>
+    <p>→ linux라는 내용을 abc.txt에서 찾아서 그 단어가 있는 행만 출력</p>
+  </li>
+</ol>
+
+<ul>
+  <li>파이프라인을 사용해 앞 명령어에서 찾고자 하는 단어만 출력시킬 수 있음
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> <span class="nt">--help</span> | <span class="nb">grep sort</span>
+</code></pre></div>    </div>
+    <p>→ ls 명령어 도움말에서 sort라는 단어가 있는 행만 출력</p>
+  </li>
+</ul>
+
+<p>5. cat : 파일 내용 출력(concatenate)                               ex) cat abc.txt<br>
+    ☞ -n : 라인수와 같이 출력</p>
+
+<p>6. tail : 파일 내용을 뒤에서부터 출력<br>
+    ☞ -f : 실시간으로 로그출력 (follow)</p>
+
+<blockquote>
+  <p><strong>&lt;파일내용 열람시 단축키&gt;</strong><br>
+↑ : 위로 한줄<br>
+↓ : 아래로 한줄<br>
+space bar : 아래로 한페이지<br>
+b : 위로 한페이지<br>
+g : 맨 처음으로<br>
+G : 맨 끝으로<br>
+q : 열람끝내기</p>
+</blockquote>
+
+<p>7. find : 파일 검색   -&gt; find [option] [path…] [word]</p>
+
+<p>(1) 현재 디렉토리에서 이름으로 파일&amp;디렉토리 찾기<br>
+ex) find . -name *.log : 현재디렉토리(.)에서 부터 확장자가 log인 모든 파일을 찾음<br>
+ex) find / -type d-name abc : 루트디렉토리(/)에서 부터 이름이 abc인 디렉토리를 찾음</p>
+
+<p>8. whereis : 실행파일, 소스, 메뉴얼 파일 위치 출력                      ex) whereis ls</p>
+
+<h3 id="사용자">사용자</h3>
+
+<ol>
+  <li>
+    <p>sudo : 슈퍼유저의 권한 사용</p>
+  </li>
+  <li>
+    <p><strong>chmod : 파일에 대한 권한 변경</strong></p>
+  </li>
+</ol>
+
+<p>(1) 권한 확인 (폴더여부(d), user, group, other 순)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-al</span>  mydirectory
+
+drwxr-xr-x  1 europani 197121       0  8월  6 13:23 ./
+drwxr-xr-x  1 europani 197121       0  8월  6 13:23 ../
+drwxr-xr-x  1 europani 197121       0  8월  6 13:23 bin/
+<span class="nt">-rwxr-xr-x</span>  1 europani 197121       0  8월  6 13:23 note.txt
+</code></pre></div></div>
+<p>→ d: 폴더<br>
+→ rwx : user 권한 (읽기, 쓰기, 실행)<br>
+→ r-x : group 권한 (읽기, 실행)<br>
+→ r-x : other 권한 (읽기, 실행)</p>
+
+<p>(2) 권한 변경<br>
+ + : 권한부여<br>
+ - : 권한해제</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">chmod </span>ug+rw o-r myfile
+</code></pre></div></div>
+<p>→ user, group에게 myfile의 읽기, 쓰기 권한부여<br>
+→ other에게 myfile의 읽기 권한해제</p>
+
+<p>(3). 8진수 권한부여<br>
+ - 4 : 읽기(r), 2 : 쓰기(w), 1 : 실행(x)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">chmod </span>753 myfile
+</code></pre></div></div>
+<p>→ user : 4 + 2 + 1 = 7 -&gt; 읽기, 쓰기, 실행 권한부여<br>
+→ group : 4 + 1 = 5 -&gt; 읽기, 실행 권한부여<br>
+→ other : 2 + 1 = 3 -&gt; 쓰기, 실행 권한부여</p>
+
+<p>2. chown : 파일 소유자 변경                      ex) chown europani myfile</p>
+
+<p>3. chgrp : 파일 그룹 변경                        ex) chgrp dev myfile</p>
+
+<h3 id="프로세스">프로세스</h3>
+
+<ol>
+  <li>
+    <p>ps : 실행중인 프로세스 출력                     ex) ps -ef | grep python             <br>
+☞ -e : 커널 프로세스를 제외한 모든 프로세스<br>
+☞ -f : 모든 정보 (full listing)</p>
+  </li>
+  <li>
+    <p>top : 실행중인 프로세스 출력(표형태)</p>
+  </li>
+  <li>
+    <p>jobs : 작업목록 출력</p>
+  </li>
+  <li>
+    <p>kill : 실행중인 프로세스 종료(PID 사용)          ex) kill -9 14604<br>
+☞ -9 : 강제종료<br>
+☞ -15 : 정상종료</p>
+  </li>
+  <li>
+    <p>pkill : 실행중인 프로세스 종료(프로세스명 사용)          ex) pkill ping</p>
+  </li>
+</ol>
+
+<h3 id="shell">Shell</h3>
+
+<ol>
+  <li>chsh : 기본 쉘 바꾸기
+    <ul>
+      <li>/etc/shells 에 올라와 있는 쉘만 변경 가능</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>vi /etc/shells        <span class="c"># 변경 가능한 쉘 리스트 보기</span>
+/bin/sh
+/bin/bash
+/usr/bin/sh
+/usr/bin/bash
+/bin/tcsh
+/bin/csh
+/bin/zsh
+
+<span class="nv">$ </span><span class="nb">echo</span> <span class="nv">$SHELL</span>           <span class="c"># 기본쉘 확인</span>
+/bin/bash
+<span class="nv">$ </span>which zsh             <span class="c"># zsh 경로확인</span>
+/bin/zsh
+
+<span class="nv">$ </span>chsh <span class="nt">-s</span> <span class="sb">`</span>which zsh<span class="sb">`</span>   <span class="c"># zsh로 기본쉘 변경</span>
+</code></pre></div></div>
+
+<h3 id="file-system">File System</h3>
+
+<ol>
+  <li>
+    <p>df : 파일시스템(디스크) 용량 체크 [Disk Free]<br>
+☞ -h: 용량 큰 단위로 출력(Byte -&gt; GB,TB)</p>
+  </li>
+  <li>
+    <p>du : 특정 파일시스템의 사용중인 용량 체크  [Disk Used]<br>
+☞ -h: 용량 큰 단위로 출력(Byte -&gt; GB,TB)</p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">du</span> <span class="nt">-h</span> /data
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="기타">기타</h3>
+
+<ol>
+  <li>history : 커맨드 내역확인                                          ex) history</li>
+  <li>!history넘버 : 히스토리의 번호를 사용하여 이전 커맨드 사용            ex) !871</li>
+  <li>man : 커맨드의 공식 메뉴얼                                   ex) man pwd</li>
+  <li>help : 도움말                                                       ex) help pwd = pwd --help</li>
+  <li>nano : text editor 열림</li>
+  <li>clear : 화면 clear</li>
+  <li>exit : 창 종료</li>
+</ol>
+
+<h3 id="shell-단축키">Shell 단축키</h3>
+
+<ul>
+  <li>Ctrl + A : 커서를 라인 맨 앞으로 이동</li>
+  <li>
+    <p>Ctrl + E : 커서를 라인 맨 뒤로 이동</p>
+  </li>
+  <li>Ctrl + W : 단어 삭제</li>
+  <li>Ctrl + U : 커서 이전 삭제</li>
+  <li>Ctrl + K : 커서 이후 삭제</li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/javascript/2020/03/26/004-target.html" title="target">target</a><a class="next" href="/git/2020/03/27/001-stage.html" title="git의 영역">git의 영역</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/django/2021/04/16/022-script.html" title="git의 영역">[패키지] 장고에서 스크립트 파일실행</a></li>
+<li><a class="post-link" href="/oracle/2020/06/23/011-object.html" title="git의 영역">오라클 객체</a></li>
+<li><a class="post-link" href="/kotlin/2023/12/09/001-variable.html" title="git의 영역">[Kotlin] 변수(variable)</a></li>
+<li><a class="post-link" href="/docker/2021/01/30/001-introduction.html" title="git의 영역">도커</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/os/2020/03/27/001-command.html';
+      this.page.identifier = 'https://europani.github.io/os/2020/03/27/001-command.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

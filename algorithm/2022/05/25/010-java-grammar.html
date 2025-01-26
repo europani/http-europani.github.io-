@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>알고리즘을 위한 자바 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="알고리즘을 위한 자바">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="0. 시간복잡도 초당 100,000,000(1억)번 연산이 가능하다">
+<meta property="og:description" content="0. 시간복잡도 초당 100,000,000(1억)번 연산이 가능하다">
+<link rel="canonical" href="https://europani.github.io/algorithm/2022/05/25/010-java-grammar.html">
+<meta property="og:url" content="https://europani.github.io/algorithm/2022/05/25/010-java-grammar.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-05-25T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="알고리즘을 위한 자바">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2022-05-25T00:00:00+00:00","datePublished":"2022-05-25T00:00:00+00:00","description":"0. 시간복잡도 초당 100,000,000(1억)번 연산이 가능하다","headline":"알고리즘을 위한 자바","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/algorithm/2022/05/25/010-java-grammar.html"},"url":"https://europani.github.io/algorithm/2022/05/25/010-java-grammar.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">알고리즘을 위한 자바</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-05-25T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-05-25
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 21 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Algorithm">#Algorithm</a><a class="post-tag" href="/tags.html#CS">#CS</a><a class="post-tag" href="/tags.html#Java">#Java</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="0-시간복잡도">0. 시간복잡도</h2>
+<ul>
+  <li>초당 <code class="language-plaintext highlighter-rouge">100,000,000</code>(1억)번 연산이 가능하다</li>
+</ul>
+
+<p>★시간 제한이 1초인 경우</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">N의 범위</th>
+      <th style="text-align: center">시간복잡도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">10</td>
+      <td style="text-align: center">O(n!)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">20</td>
+      <td style="text-align: center">O(2<sup>n</sup>)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">500</td>
+      <td style="text-align: center">O(N<sup>3</sup>)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10,000</td>
+      <td style="text-align: center">O(N<sup>2</sup>)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5,000,000</td>
+      <td style="text-align: center">O(NlogN)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">100,000,000</td>
+      <td style="text-align: center">O(N)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="1-자료구조">1. 자료구조</h2>
+<h3 id="1-list">1. List</h3>
+<h4 id="1-array">(1) Array</h4>
+<p>(1) <code class="language-plaintext highlighter-rouge">length</code> : 배열길이 출력</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">n</span><span class="o">];</span>       <span class="c1">// 1차원 배열</span>
+<span class="kt">int</span><span class="o">[][]</span> <span class="n">arr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">n</span><span class="o">][</span><span class="n">m</span><span class="o">];</span>  <span class="c1">// 2차원 배열</span>
+</code></pre></div></div>
+
+<h4 id="arrays-라이브러리">Arrays 라이브러리</h4>
+<p>(1) <code class="language-plaintext highlighter-rouge">sort(arr)</code> : 배열 정렬<br>
+(2) <code class="language-plaintext highlighter-rouge">copyOfRange(arr, s, e)</code> : 배열 자르기</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span><span class="o">[]</span> <span class="n">array</span> <span class="o">=</span> <span class="o">{</span><span class="mi">5</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">4</span><span class="o">,</span><span class="mi">1</span><span class="o">};</span>
+<span class="kt">int</span><span class="o">[]</span> <span class="n">temp</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">copyOfRange</span><span class="o">(</span><span class="n">array</span><span class="o">,</span><span class="mi">1</span><span class="o">,</span><span class="mi">3</span><span class="o">);</span>   <span class="c1">// [2, 3]</span>
+
+<span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">array</span><span class="o">);</span>     <span class="c1">// [1, 2, 3, 4, 5]</span>
+<span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">array</span><span class="o">,</span> <span class="nc">Collections</span><span class="o">.</span><span class="na">reverseOrder</span><span class="o">());</span>     <span class="c1">// [5, 4, 3, 2, 1]</span>
+</code></pre></div></div>
+
+<p>(3) <code class="language-plaintext highlighter-rouge">fill(arr, value)</code> : 해당 배열의 모든 값을 value로 채움</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="mi">10</span><span class="o">];</span>
+<span class="nc">Arrays</span><span class="o">.</span><span class="na">fill</span><span class="o">(</span><span class="n">arr</span><span class="o">,</span> <span class="mi">7</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>(4) <code class="language-plaintext highlighter-rouge">toString(arr)</code> : 배열 출력<br>
+(5) <code class="language-plaintext highlighter-rouge">deepToString(arr)</code> : 2차원 배열 출력</p>
+
+<ul>
+  <li>배열 최대값, 최소값
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Arrays.stream(arr).max().getAsInt()</code></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">arr</span><span class="o">).</span><span class="na">max</span><span class="o">().</span><span class="na">getAsInt</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h4 id="2-arraylist">(2) ArrayList</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Method</th>
+      <th style="text-align: center">Complexity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">insert</td>
+      <td style="text-align: center">O(n)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">delete</td>
+      <td style="text-align: center">O(n)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">get</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>(1) <code class="language-plaintext highlighter-rouge">add(v)</code> : 맨 뒤에 삽입<br>
+(2) <code class="language-plaintext highlighter-rouge">add(i, v)</code> : i에 삽입<br>
+(3) <code class="language-plaintext highlighter-rouge">addAll(list)</code> : 해당 리스트 뒤에 list의 값들 삽입</p>
+
+<p>(4) <code class="language-plaintext highlighter-rouge">get(i)</code> : 조회<br>
+(5) <code class="language-plaintext highlighter-rouge">set(i, v)</code> : i의 값 변경<br>
+(6) <code class="language-plaintext highlighter-rouge">indexOf(v)</code> : 값의 인덱스 출력<br>
+(7) <code class="language-plaintext highlighter-rouge">lastIndexOf(v)</code> : 값의 마지막 인덱스 출력</p>
+
+<p>(8) <code class="language-plaintext highlighter-rouge">remove(i)</code> : i의 값을 삭제  <br>
+(9) <code class="language-plaintext highlighter-rouge">remove(v)</code> : 리스트에서 값 v를 삭제  <br>
+(10) <code class="language-plaintext highlighter-rouge">removeAll(list)</code> : 해당 리스트에서 list의 값들 삭제  <br>
+(11) <code class="language-plaintext highlighter-rouge">retainAll(list)</code> : 해당 리스트에서 list의 값들을 제외하고 삭제</p>
+
+<p>(12) <code class="language-plaintext highlighter-rouge">isEmpty()</code> : 비어있는지 확인<br>
+(13) <code class="language-plaintext highlighter-rouge">size()</code> : 리스트 크기 출력<br>
+(14) <code class="language-plaintext highlighter-rouge">contains(v)</code> : 값이 있는지 확인<br>
+(15) <code class="language-plaintext highlighter-rouge">sort()</code> : 오름차순 정렬</p>
+
+<ul>
+  <li>깊은 복사
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">addAll(list)</code> 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">old</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;();</span>
+<span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="k">new</span><span class="o">=</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;();</span>
+<span class="k">new</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">old</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h4 id="캐스팅">캐스팅</h4>
+<ul>
+  <li>array -&gt; List
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">Arrays.asList(arr)</code> 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span><span class="o">[]</span> <span class="n">temp</span> <span class="o">=</span> <span class="o">{</span><span class="s">"a"</span><span class="o">,</span> <span class="s">"b"</span><span class="o">,</span> <span class="s">"c"</span><span class="o">};</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">temp</span><span class="o">);</span>    <span class="c1">// size 불변 리스트</span>
+
+<span class="c1">// size 가변 리스트</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">temp</span><span class="o">));</span>
+</code></pre></div></div>
+
+<ul>
+  <li>List -&gt; array
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">toArray()</code> 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="s">"a"</span><span class="o">,</span> <span class="s">"b"</span><span class="o">,</span> <span class="s">"c"</span><span class="o">));</span>
+<span class="nc">String</span><span class="o">[]</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="nc">String</span><span class="o">[</span><span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">()]);</span>  <span class="c1">// 배열 사이즈 설정까지</span>
+</code></pre></div></div>
+
+<ul>
+  <li>List -&gt; int[]</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="nc">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">));</span>
+<span class="kt">int</span><span class="o">[]</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">mapToInt</span><span class="o">(</span><span class="n">i</span><span class="o">-&gt;</span><span class="n">i</span><span class="o">).</span><span class="na">toArray</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h3 id="2-set">2. Set</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Method</th>
+      <th style="text-align: center">Complexity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">insert</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">delete</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">get</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>(1) <code class="language-plaintext highlighter-rouge">add(v)</code> : 삽입<br>
+(2) <code class="language-plaintext highlighter-rouge">remove(v)</code> : 삭제<br>
+(3) <code class="language-plaintext highlighter-rouge">contains(v)</code> : 값이 있는지 확인   <br>
+(4) <code class="language-plaintext highlighter-rouge">size()</code> : 해당 셋의 크기출력<br>
+(5) <code class="language-plaintext highlighter-rouge">iterator()</code> : 해당 셋의 이터레이터 호출</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;();</span>
+<span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"서울"</span><span class="o">);</span>
+<span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"대전"</span><span class="o">);</span>
+<span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"인천"</span><span class="o">);</span>
+<span class="n">set</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">"부산"</span><span class="o">);</span>
+
+<span class="n">set</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"인천"</span><span class="o">);</span>
+
+<span class="n">set</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>     <span class="c1">// 3</span>
+
+<span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">it</span><span class="o">=</span> <span class="n">set</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+<span class="k">while</span> <span class="o">(</span><span class="n">it</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">a</span><span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="캐스팅-1">캐스팅</h4>
+<ul>
+  <li>Set -&gt; List</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;();</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">menuList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">set</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="3-map">3. Map</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Method</th>
+      <th style="text-align: center">Complexity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">insert</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">delete</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">get</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>(1) <code class="language-plaintext highlighter-rouge">put(k, v)</code> : 삽입<br>
+(2) <code class="language-plaintext highlighter-rouge">get(k)</code> : value값 조회 <br>
+(3) <code class="language-plaintext highlighter-rouge">remove(k)</code> : 삭제</p>
+
+<p>(4) <code class="language-plaintext highlighter-rouge">containsKey(k)</code> : 키값 존재 확인<br>
+(5) <code class="language-plaintext highlighter-rouge">containsValue(v)</code> : 값 존재 확인<br>
+(6) <code class="language-plaintext highlighter-rouge">isEmpty()</code> : 비어있는지 확인</p>
+
+<p>(7) <code class="language-plaintext highlighter-rouge">keySet()</code> : 모든 key값을 <code class="language-plaintext highlighter-rouge">Set</code>으로 출력  <br>
+(8) <code class="language-plaintext highlighter-rouge">values()</code> : 모든 value값을 <code class="language-plaintext highlighter-rouge">Collection</code>으로 출력  <br>
+(9) <code class="language-plaintext highlighter-rouge">entrySet()</code> : 모든 key-value쌍을 <code class="language-plaintext highlighter-rouge">Set</code>으로 출력</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">getOrDefault(value, default값)</code> : 값 조회, 없을 시 디폴트값</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">genres</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++){</span>
+    <span class="n">map</span><span class="o">.</span><span class="na">getOrDefault</span><span class="o">(</span><span class="n">genres</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="mi">0</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="정렬">정렬</h4>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"apple"</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"banana"</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"cherry"</span><span class="o">,</span> <span class="mi">5</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"date"</span><span class="o">,</span> <span class="mi">3</span><span class="o">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>key로 정렬</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entryList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">());</span>
+
+<span class="n">entryList</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">o1</span><span class="o">,</span> <span class="n">o2</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">o2</span><span class="o">.</span><span class="na">getKey</span><span class="o">()</span> <span class="o">-</span> <span class="n">o1</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>   <span class="c1">// key 내림차순</span>
+</code></pre></div></div>
+
+<ul>
+  <li>value로 정렬</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entryList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">());</span>
+
+<span class="n">entryList</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">o1</span><span class="o">,</span> <span class="n">o2</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">o1</span><span class="o">.</span><span class="na">getValue</span><span class="o">()</span> <span class="o">-</span> <span class="n">o2</span><span class="o">.</span><span class="na">getValue</span><span class="o">());</span> <span class="c1">// value 오름차순</span>
+</code></pre></div></div>
+
+<ul>
+  <li>value 1순위, key 2순위로 정렬</li>
+</ul>
+
+<pre><code class="language-Java">List&lt;Map.Entry&lt;String, Integer&gt;&gt; entryList = new ArrayList&lt;&gt;(map.entrySet());
+
+// 정렬: value 기준으로 내림차순 -&gt; key 기준으로 오름차순
+entryList.sort((o1, o2) -&gt; {
+    if (o1.getValue().equals(o2.getValue())) {
+        return o1.getKey().compareTo(o2.getKey()); // key 오름차순
+    }
+    return o2.getValue() - o1.getValue();   // value 내림차순
+});
+
+
+banana: 2
+date: 3
+apple: 5
+cherry: 5
+</code></pre>
+
+<h3 id="4-stack">4. Stack</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">Stack</code> 클래스 사용</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Method</th>
+      <th style="text-align: center">Complexity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">push</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">pop</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">peek</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>(1) <code class="language-plaintext highlighter-rouge">push(v)</code> : 삽입<br>
+(2) <code class="language-plaintext highlighter-rouge">peek()</code> : 조회<br>
+(3) <code class="language-plaintext highlighter-rouge">pop()</code> : 삭제<br>
+(4) <code class="language-plaintext highlighter-rouge">empty()</code> : 비어있는지 확인<br>
+(5) <code class="language-plaintext highlighter-rouge">contains(v)</code> : v 값이 있는지 확인</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Stack</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">stack</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Stack</span><span class="o">&lt;&gt;();</span>
+
+<span class="n">stack</span><span class="o">.</span><span class="na">push</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="n">stack</span><span class="o">.</span><span class="na">peek</span><span class="o">();</span>     <span class="c1">// 1</span>
+<span class="n">stack</span><span class="o">.</span><span class="na">pop</span><span class="o">();</span>
+
+<span class="n">stack</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>    <span class="c1">// true</span>
+<span class="n">stack</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>   <span class="c1">// false</span>
+</code></pre></div></div>
+
+<h3 id="5-queue">5. Queue</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">LinkedList</code> 클래스 사용 (<code class="language-plaintext highlighter-rouge">Queue</code> 인터페이스 다형성)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Method</th>
+      <th style="text-align: center">Complexity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">offer</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">poll</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">peek</td>
+      <td style="text-align: center">O(1)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>(1) <code class="language-plaintext highlighter-rouge">offer(v)</code> : 삽입<br>
+(2) <code class="language-plaintext highlighter-rouge">peek()</code> : 조회<br>
+(3) <code class="language-plaintext highlighter-rouge">poll()</code> : 삭제<br>
+(4) <code class="language-plaintext highlighter-rouge">contains(v)</code> : v 값이 있는지 확인</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Queue</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">queue</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LinkedList</span><span class="o">&lt;&gt;();</span>
+
+<span class="n">queue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="n">queue</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+<span class="n">queue</span><span class="o">.</span><span class="na">peek</span><span class="o">();</span>   <span class="c1">// 1</span>
+<span class="n">queue</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+<span class="n">queue</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>   <span class="c1">// true</span>
+</code></pre></div></div>
+
+<h3 id="6-deque">6. Deque</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">LinkedList</code> 클래스 사용 (<code class="language-plaintext highlighter-rouge">Deque</code> 인터페이스 다형성)</li>
+</ul>
+
+<p>(1) <code class="language-plaintext highlighter-rouge">offer(v)</code> : 뒤로 삽입   (= offerLast(v))<br>
+(2) <code class="language-plaintext highlighter-rouge">offerFirst(v)</code> : 앞으로 삽입<br>
+(3) <code class="language-plaintext highlighter-rouge">peek()</code> : 첫번째 원소 조회 (= peekFirst()) <br>
+(4) <code class="language-plaintext highlighter-rouge">peekLast()</code> : 마지막 원소 조회 <br>
+(5) <code class="language-plaintext highlighter-rouge">poll()</code> : 앞으로 삭제    (= poolFisrt())<br>
+(6) <code class="language-plaintext highlighter-rouge">pollLast()</code> : 뒤로 삭제 <br>
+(7) <code class="language-plaintext highlighter-rouge">contains(v)</code> : v 값이 있는지 확인</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Deque</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">deque</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">LinkedList</span><span class="o">&lt;&gt;();</span>
+
+<span class="n">deque</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="n">deque</span><span class="o">.</span><span class="na">offerFirst</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>
+<span class="n">deque</span><span class="o">.</span><span class="na">peek</span><span class="o">();</span>   <span class="c1">// 2</span>
+<span class="n">deque</span><span class="o">.</span><span class="na">peekLast</span><span class="o">();</span>   <span class="c1">// 1</span>
+<span class="n">deque</span><span class="o">.</span><span class="na">pollLast</span><span class="o">();</span>
+<span class="n">deque</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>   <span class="c1">// true</span>
+<span class="n">deque</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+</code></pre></div></div>
+
+<h3 id="7-priorityqueue">7. PriorityQueue</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">PriorityQueue</code> 클래스 사용</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Method</th>
+      <th style="text-align: center">Complexity</th>
+      <th style="text-align: center">etc</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">offer</td>
+      <td style="text-align: center">O(logn)</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">poll</td>
+      <td style="text-align: center">O(logn)</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">peek</td>
+      <td style="text-align: center">O(1)</td>
+      <td style="text-align: center">.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">정렬</td>
+      <td style="text-align: center">O(nlogn)</td>
+      <td style="text-align: center">n개를 모두 삽입한 후 삭제하면 정렬 가능 (삽입/삭제를 n번수행)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">탐색</td>
+      <td style="text-align: center">O(n)</td>
+      <td style="text-align: center">최악의 경우 n개 노드 모두 탐색</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>(1) <code class="language-plaintext highlighter-rouge">offer(v)</code> : 삽입<br>
+(2) <code class="language-plaintext highlighter-rouge">peek()</code> : 조회<br>
+(3) <code class="language-plaintext highlighter-rouge">poll()</code> : 삭제<br>
+(4) <code class="language-plaintext highlighter-rouge">contains(v)</code> : v 값이 있는지 확인</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">PriorityQueue</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">pq</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PriorityQueue</span><span class="o">&lt;&gt;();</span>    <span class="c1">// 최소힙</span>
+<span class="nc">PriorityQueue</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">pq2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">PriorityQueue</span><span class="o">&lt;&gt;(</span><span class="nc">Collections</span><span class="o">.</span><span class="na">reverseOrder</span><span class="o">());</span>  <span class="c1">// 최대힙</span>
+
+<span class="n">pq</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+<span class="n">pq</span><span class="o">.</span><span class="na">peek</span><span class="o">();</span>   <span class="c1">// 1</span>
+<span class="n">pq</span><span class="o">.</span><span class="na">poll</span><span class="o">();</span>
+<span class="n">pq</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>   <span class="c1">// false</span>
+</code></pre></div></div>
+
+<h2 id="2-문자열">2. 문자열</h2>
+<h3 id="1-string">1. String</h3>
+<p>(1) <code class="language-plaintext highlighter-rouge">charAt(c)</code> : c의 인덱스 반환<br>
+(2) <code class="language-plaintext highlighter-rouge">indexOf(str)</code> : str의 인덱스 반환<br>
+(3) <code class="language-plaintext highlighter-rouge">lastIndexOf(str)</code> : str의 마지막 인덱스 반환</p>
+
+<p>(4) <code class="language-plaintext highlighter-rouge">substring(s, e)</code> : 인덱스로 문자열 가져오기<br>
+(5) <code class="language-plaintext highlighter-rouge">replace(a, b)</code> : a를 b로 치환<br>
+(6) <code class="language-plaintext highlighter-rouge">split(deli)</code> : 문자열을 deli로 기준으로 나누어 반환  <br>
+(7) <code class="language-plaintext highlighter-rouge">join(deli, List)</code> : 리스트 갑 사이에 deli 추가 후 String 반환</p>
+
+<p>(8) <code class="language-plaintext highlighter-rouge">toUpperCase()</code>, <code class="language-plaintext highlighter-rouge">toLowerCase()</code> : 대소문자 변환  <br>
+(9) <code class="language-plaintext highlighter-rouge">trim()</code> : 앞뒤 공백제거</p>
+
+<p>(10) <code class="language-plaintext highlighter-rouge">length()</code> : 길이 출력<br>
+(11) <code class="language-plaintext highlighter-rouge">equals(str)</code> : 해당 문자열이 str과 같은지 확인<br>
+(11) <code class="language-plaintext highlighter-rouge">contains(str)</code> : 해당 문자열에 str이 있는지 확인<br>
+(12) <code class="language-plaintext highlighter-rouge">compareTo(str)</code> : 같으면 0, str보다 앞순이면 -1, 뒷순이면 1 출력</p>
+
+<p>(13) <code class="language-plaintext highlighter-rouge">startsWith(str)</code> : str로 시작하면 true<br>
+(14) <code class="language-plaintext highlighter-rouge">endsWith(str)</code> : str로 끝나면 true</p>
+
+<h3 id="2-stringbuilder">2. StringBuilder</h3>
+<p>(1) <code class="language-plaintext highlighter-rouge">append(str)</code> : 맨 뒤에 문자열 추가<br>
+(2) <code class="language-plaintext highlighter-rouge">insert(i, v)</code> : i에 v 추가<br>
+(3) <code class="language-plaintext highlighter-rouge">setCharAt(i, c)</code> : i의 문자 변경<br>
+(4) <code class="language-plaintext highlighter-rouge">delete(s, e)</code> : s~(e-1) 문자열 삭제<br>
+(5) <code class="language-plaintext highlighter-rouge">deleteCharAt(i)</code> : i의 문자 삭제</p>
+
+<p>(6) <code class="language-plaintext highlighter-rouge">indexOf(str)</code> : str의 인덱스 반환  <br>
+(7) <code class="language-plaintext highlighter-rouge">lastIndexOf(str)</code> : str의 마지막 인덱스 반환</p>
+
+<p>(8) <code class="language-plaintext highlighter-rouge">reverse()</code> : 문자열 뒤집기<br>
+(9) <code class="language-plaintext highlighter-rouge">setLength(len)</code> : 문자열 길이 변경</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">StringBuilder</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+
+<span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">"abc"</span><span class="o">);</span>     <span class="c1">// abc</span>
+<span class="n">sb</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="s">"defgh"</span><span class="o">);</span>   <span class="c1">// abdefghc</span>
+<span class="n">sb</span><span class="o">.</span><span class="na">setCharAt</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="sc">'z'</span><span class="o">);</span>    <span class="c1">// azdefghc</span>
+<span class="n">sb</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">2</span><span class="o">);</span>      <span class="c1">// defghc</span>
+<span class="n">sb</span><span class="o">.</span><span class="na">deleteCharAt</span><span class="o">(</span><span class="mi">2</span><span class="o">);</span>   <span class="c1">// deghc</span>
+
+<span class="n">sb</span><span class="o">.</span><span class="na">setLength</span><span class="o">(</span><span class="mi">4</span><span class="o">);</span>      <span class="c1">// degh</span>
+<span class="n">sb</span><span class="o">.</span><span class="na">reverse</span><span class="o">();</span>         <span class="c1">// hged</span>
+</code></pre></div></div>
+
+<ul>
+  <li>문자열 뒤집기
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">StringBuilder(str).reverse().toString()</code> 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="s">"abc"</span><span class="o">;</span>
+<span class="nc">String</span> <span class="n">str2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">(</span><span class="n">str</span><span class="o">).</span><span class="na">reverse</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>   <span class="c1">// cba</span>
+</code></pre></div></div>
+
+<h3 id="캐스팅-2">캐스팅</h3>
+<ul>
+  <li>String -&gt; char[]
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">toCharArray()</code> 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="s">"12345"</span><span class="o">;</span>
+<span class="kt">char</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>     <span class="c1">// [1, 2, 3, 4, 5]</span>
+
+<span class="nc">String</span> <span class="n">str2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">String</span><span class="o">(</span><span class="n">arr</span><span class="o">);</span>      <span class="c1">// 12345</span>
+</code></pre></div></div>
+
+<ul>
+  <li>String -&gt; String[]
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">split()</code> 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="s">"12345"</span><span class="o">;</span>
+<span class="nc">String</span><span class="o">[]</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">""</span><span class="o">);</span>     <span class="c1">// [1, 2, 3, 4, 5]</span>
+</code></pre></div></div>
+
+<h2 id="3-입출력">3. 입출력</h2>
+<h3 id="scanner">Scanner</h3>
+<ul>
+  <li>
+    <p>스페이스, 탭(\t), 줄바꿈(\n)을 경계로 인식함</p>
+  </li>
+  <li>
+<code class="language-plaintext highlighter-rouge">nextxxx()</code> : 입력 받는 즉시 해당 타입으로 캐스팅</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">next()</code> : <code class="language-plaintext highlighter-rouge">String</code>으로 입력받음</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">nextLine()</code> : <code class="language-plaintext highlighter-rouge">\n</code>을 포함한 <code class="language-plaintext highlighter-rouge">String</code>으로 입력받고 strip()을 함</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Scanner</span> <span class="n">sc</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Scanner</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span>
+<span class="kt">double</span> <span class="n">d</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">nextDouble</span><span class="o">();</span>
+<span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+<span class="kt">boolean</span> <span class="n">b</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">nextBoolean</span><span class="o">();</span>
+
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">i</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">str</span> <span class="o">+</span> <span class="s">", "</span> <span class="o">+</span> <span class="n">b</span><span class="o">);</span>
+
+<span class="o">&gt;&gt;</span> <span class="mi">3</span> <span class="mf">5.678</span> <span class="n">안녕하세요</span> <span class="kc">false</span>
+<span class="mi">3</span><span class="o">,</span> <span class="mf">5.678</span><span class="o">,</span> <span class="n">안녕하세요</span><span class="o">,</span> <span class="kc">false</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">next()</code>와 <code class="language-plaintext highlighter-rouge">nextLine()</code> 의 차이
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">next()</code>는 String만 읽어오고 <code class="language-plaintext highlighter-rouge">\n</code>은 포함시키지 않는다.</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">nextLine()</code>은 개행문자까지 읽어오기 때문에 <code class="language-plaintext highlighter-rouge">\n</code>을 처리한다</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Scanner</span> <span class="n">sc</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Scanner</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+
+<span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span>
+<span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">nextLine</span><span class="o">();</span>
+
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"num: "</span> <span class="o">+</span> <span class="n">num</span> <span class="o">+</span> <span class="s">", str: "</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="mi">10</span>
+<span class="nc">Hello</span>
+
+<span class="nl">num:</span> <span class="mi">10</span><span class="o">,</span> <span class="nl">str:</span>
+</code></pre></div></div>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">num</code>에 10이 들어가고 <code class="language-plaintext highlighter-rouge">str</code>에는 <code class="language-plaintext highlighter-rouge">\n</code>이 들어가 strip()이 되어 결과적으로 비게된다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">next()</code>을 사용하면 된다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Scanner</span> <span class="n">sc</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Scanner</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+
+<span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">nextInt</span><span class="o">();</span>
+<span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"num: "</span> <span class="o">+</span> <span class="n">num</span> <span class="o">+</span> <span class="s">", str: "</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="mi">10</span>
+<span class="nc">Hello</span>
+
+<span class="nl">num:</span> <span class="mi">10</span><span class="o">,</span> <span class="nl">str:</span> <span class="nc">Hello</span>
+</code></pre></div></div>
+
+<h3 id="bufferedreader">BufferedReader</h3>
+<ul>
+  <li>Scanner보다 속도가 빠르다</li>
+  <li>입력 값을 모두 <code class="language-plaintext highlighter-rouge">String</code>으로 받아 파싱이 필수적이다</li>
+  <li>Exception 처리가 되어 있지 않아 try-catch를 사용해야 한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">readLine()</code> : 개행문자까지 읽어옴</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">BufferedReader</span> <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">in</span><span class="o">));</span>
+
+<span class="nc">String</span> <span class="n">input</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
+<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">input</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="stringtokenizer">StringTokenizer</h3>
+<ul>
+  <li>문자열을 자를 때 사용한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">BufferedReader</code>와 결합해 한 줄씩 입력받은 문자를 자를 때 많이 사용한다</li>
+  <li>StringTokenizer() : 기본 deli는 공백</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">BufferedReader</span> <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">in</span><span class="o">));</span>
+<span class="nc">StringTokenizer</span> <span class="n">st</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringTokenizer</span><span class="o">(</span><span class="n">br</span><span class="o">.</span><span class="na">readLine</span><span class="o">());</span>
+
+<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">st</span><span class="o">.</span><span class="na">nextToken</span><span class="o">());</span>
+<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">st</span><span class="o">.</span><span class="na">nextToken</span><span class="o">());</span>
+
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">);</span>
+
+<span class="o">&gt;&gt;</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="mi">5</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">class</span> <span class="nc">FastReader</span> <span class="o">{</span>
+    <span class="nc">BufferedReader</span> <span class="n">br</span><span class="o">;</span>
+    <span class="nc">StringTokenizer</span> <span class="n">st</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">FastReader</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">InputStreamReader</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">in</span><span class="o">));</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nf">FastReader</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">)</span> <span class="kd">throws</span> <span class="nc">FileNotFoundException</span> <span class="o">{</span>
+        <span class="n">br</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">FileReader</span><span class="o">(</span><span class="k">new</span> <span class="nc">File</span><span class="o">(</span><span class="n">s</span><span class="o">)));</span>
+    <span class="o">}</span>
+
+    <span class="nc">String</span> <span class="nf">next</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">st</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="o">!</span><span class="n">st</span><span class="o">.</span><span class="na">hasMoreElements</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">st</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringTokenizer</span><span class="o">(</span><span class="n">br</span><span class="o">.</span><span class="na">readLine</span><span class="o">());</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">st</span><span class="o">.</span><span class="na">nextToken</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kt">int</span> <span class="nf">nextInt</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">next</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="kt">long</span> <span class="nf">nextLong</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Long</span><span class="o">.</span><span class="na">parseLong</span><span class="o">(</span><span class="n">next</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="kt">double</span> <span class="nf">nextDouble</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">Double</span><span class="o">.</span><span class="na">parseDouble</span><span class="o">(</span><span class="n">next</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="nc">String</span> <span class="nf">nextLine</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">str</span> <span class="o">=</span> <span class="n">br</span><span class="o">.</span><span class="na">readLine</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">str</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="4-라이브러리">4. 라이브러리</h2>
+<h3 id="1-collections">1. Collections</h3>
+<p>(1) <code class="language-plaintext highlighter-rouge">max(list), min(list)</code> : 최대값, 최소값<br>
+(2) <code class="language-plaintext highlighter-rouge">sort(list)</code> : 오름차순 정렬<br>
+(3) <code class="language-plaintext highlighter-rouge">sort(list, Collections.reverseOrder())</code> : 내림차순 정렬<br>
+(4) <code class="language-plaintext highlighter-rouge">reverse(list)</code> : 역순 정렬<br>
+(5) <code class="language-plaintext highlighter-rouge">frequency(list, v)</code> : list에서 v의 갯수 반환</p>
+
+<h3 id="2-math">2. Math</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">pow(a, b)</code> : a^b</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">sqrt(a)</code> : 제곱근</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">abs(a)</code> : 절대값</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Math</span><span class="o">.</span><span class="na">pow</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span>        <span class="c1">// 16.0</span>
+<span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="nc">Math</span><span class="o">.</span><span class="na">sqrt</span><span class="o">(</span><span class="mi">7</span><span class="o">)</span>    <span class="c1">// 2</span>
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2022/05/22/043-transactional.html" title="[스프링] 트랜잭션과 @Transactional 어노테이션">[스프링] 트랜잭션과 @Transactional 어노테이션</a><a class="next" href="/java/2022/05/25/022-lombok.html" title="Lombok 롬복">Lombok 롬복</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/spring/2022/02/16/039-error.html" title="Lombok 롬복">[스프링부트] 에러 페이지 처리</a></li>
+<li><a class="post-link" href="/html/2020/07/13/003-link-route.html" title="Lombok 롬복">상대경로와 절대경로</a></li>
+<li><a class="post-link" href="/kotlin/2024/01/28/004-special-class.html" title="Lombok 롬복">[Kotlin] 특별 클래스(Data, Enum)</a></li>
+<li><a class="post-link" href="/design%20pattern/2021/10/01/001-introduction.html" title="Lombok 롬복">디자인 패턴 소개</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/algorithm/2022/05/25/010-java-grammar.html';
+      this.page.identifier = 'https://europani.github.io/algorithm/2022/05/25/010-java-grammar.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

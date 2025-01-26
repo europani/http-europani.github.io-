@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>네트워크 계층(L3) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="네트워크 계층(L3)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="IP주소(논리주소)를 이용하여 라우팅을 통해 원격 목적지의 컴퓨터로 데이터(패킷)를 전송 같은 네트워크에 속해 있으면 스위치로만 통신이 가능하지만 다른 네트워크에 속해 있으면 라우터의 도움이 필요하다 기능 : 경로 설정(라우팅), 트래픽 제어(by 경로 설정)">
+<meta property="og:description" content="IP주소(논리주소)를 이용하여 라우팅을 통해 원격 목적지의 컴퓨터로 데이터(패킷)를 전송 같은 네트워크에 속해 있으면 스위치로만 통신이 가능하지만 다른 네트워크에 속해 있으면 라우터의 도움이 필요하다 기능 : 경로 설정(라우팅), 트래픽 제어(by 경로 설정)">
+<link rel="canonical" href="https://europani.github.io/network/2021/04/01/005-OSI3-network.html">
+<meta property="og:url" content="https://europani.github.io/network/2021/04/01/005-OSI3-network.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-04-01T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="네트워크 계층(L3)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-04-01T00:00:00+00:00","datePublished":"2021-04-01T00:00:00+00:00","description":"IP주소(논리주소)를 이용하여 라우팅을 통해 원격 목적지의 컴퓨터로 데이터(패킷)를 전송 같은 네트워크에 속해 있으면 스위치로만 통신이 가능하지만 다른 네트워크에 속해 있으면 라우터의 도움이 필요하다 기능 : 경로 설정(라우팅), 트래픽 제어(by 경로 설정)","headline":"네트워크 계층(L3)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/network/2021/04/01/005-OSI3-network.html"},"url":"https://europani.github.io/network/2021/04/01/005-OSI3-network.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">네트워크 계층(L3)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-04-01T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-04-01
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 6 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Network">#Network</a><a class="post-tag" href="/tags.html#CS">#CS</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <ul>
+  <li><strong>IP주소(논리주소)를 이용하여 라우팅을 통해 원격 목적지의 컴퓨터로 데이터(패킷)를 전송</strong></li>
+  <li>같은 네트워크에 속해 있으면 스위치로만 통신이 가능하지만 다른 네트워크에 속해 있으면 라우터의 도움이 필요하다</li>
+  <li>기능 : 경로 설정(라우팅), 트래픽 제어(by 경로 설정)</li>
+</ul>
+
+<h2 id="라우터">라우터</h2>
+<ul>
+  <li><strong>다양한 경로정보를 수집해 최적 경로를 <code class="language-plaintext highlighter-rouge">라우팅 테이블</code>에 저장한 후 [라우팅]<br>
+데이터가 들어오면 이를 참조해 전송한다 [포워딩]</strong></li>
+  <li>브로드캐스트를 하는 스위치와는 다르게 목적지가 라우팅 테이블에 없으면 그 데이터는 버린다</li>
+  <li>그렇기 때문에 라우터는 경로정보를 수집하는 것이 매우 중요하다</li>
+  <li>라우터가 경로설정을 할 때는 출발지는 고려하지 않고 <code class="language-plaintext highlighter-rouge">목적지 주소</code>만 사용한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">네트워크주소</code>를 기반으로 라우팅을 한다</li>
+</ul>
+
+<h3 id="라우팅-테이블">라우팅 테이블</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">목적지 주소</code>, <code class="language-plaintext highlighter-rouge">넥스트홉 IP주소</code>, <code class="language-plaintext highlighter-rouge">인터페이스</code> 등이 기록된다</li>
+</ul>
+
+<h3 id="1-라우팅">(1) 라우팅</h3>
+<ul>
+  <li>라우터가 경로 정보를 얻어 최적경로를 라우팅 테이블에 저장하는 것 <br>
+(1) 다이렉트 커넥티드 : 라우터가 자신의 네트워크(LAN)에 대한 라우팅 테이블을 자동으로 만드는 것 (L2수준)<br>
+(2) 스태틱 라우팅 : 관리자가 목적지 네트워크와 넥스트홉을 라우팅 테이블에 직접 설정하는 것<br>
+(3) <strong>다이나믹 라우팅</strong> : 라우터들끼리 자신의 경로정보를 주기적으로 교환해 라우팅 테이블을 만드는 것</li>
+</ul>
+
+<h4 id="다이나믹-라우팅-프로토콜경로설정-프로토콜">다이나믹 라우팅 프로토콜(경로설정 프로토콜)</h4>
+<ul>
+  <li>
+    <p>패킷을 목적지로 최단경로로 전달하기 위해 인접한 라우터들과 경로 정보를 주고 받아 경로를 설정</p>
+  </li>
+  <li>역할에 따른 분류
+    <ol>
+      <li>거리벡터 : <strong>각 라우터가 인접한 라우터로부터</strong> 경로 정보를 습득하는 프로토콜 (RIP, BGP)
+        <ul>
+          <li>각 라우터는 자신의 연결정보를 완성한 후 인접한 라우터에게 공유해 교환한다</li>
+          <li>연결정보의 변경이 이루어지면 자신의 연결정보를 다시 인접한 라우터들에게 공유해 교환한다</li>
+          <li>벨만포드 알고리즘</li>
+        </ul>
+      </li>
+      <li>링크상태 : 네트워크 내의 <strong>모든 연결정보를 고려</strong>하는 프로토콜 (OSPF)
+        <ul>
+          <li>다익스트라 알고리즘</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+  <li>동작 원리에 따른 분류
+    <ol>
+      <li>IGP : 하나의 자율시스템(AS) 내의 라우팅 (RIP, OSPF, BGP)</li>
+      <li>EGP : AS 간의 라우팅 (BGP)</li>
+    </ol>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">.</th>
+      <th style="text-align: center">거리벡터</th>
+      <th style="text-align: center">링크상태</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">IGP</td>
+      <td style="text-align: center">RIP, <strong>BGP</strong>
+</td>
+      <td style="text-align: center"><strong>OSPF</strong></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">EGP</td>
+      <td style="text-align: center"><strong>BGP</strong></td>
+      <td style="text-align: center">.</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>링크상태 알고리즘은 네트워크 내의 서로 연결되어 있는 모든 라우터의 연결정보를 알아야 하기 때문에 <code class="language-plaintext highlighter-rouge">IGP</code>만 가능하다</li>
+</ul>
+
+<ol>
+  <li>RIP
+    <ul>
+      <li>경로 결정 방법 : 홉 카운트</li>
+      <li>거리벡터 프로토콜</li>
+      <li>최대 홉수가 15이기 때문에 소규모에서 쓰인다</li>
+      <li>30초 마다 라우팅 테이블 정보를 브로드캐스팅 / 180초 경과 후에도 라우팅 정보를 받지 못하면 해당 경로 테이블에서 제거</li>
+      <li>느린 정보교환, 홉수제한, 최적경로 선택에 링크속도를 제외시키는 등의 제약으로 잘 쓰지 않는다</li>
+    </ul>
+  </li>
+  <li>
+<strong>OSPF</strong>
+    <ul>
+      <li>경로 설정 방법 : 링크 상태</li>
+      <li>대규모</li>
+      <li>링크상태 프로토콜 (대역폭이 클수록 비용이 적음)</li>
+      <li>네트워크 변화 시에만 라우팅 정보 전송</li>
+    </ul>
+  </li>
+  <li>
+<strong>BGP (Border Gateway Protocol)</strong>
+    <ul>
+      <li>연결형, 신뢰성 (TCP 포트사용)</li>
+      <li>거리벡터 프로토콜</li>
+      <li>서로 인접한 라우터들은 네트워크 연결 시 라우팅 테이블을 교환 한 후 <strong>변화 생겼을 경우에 추가적인 교환 발생</strong>
+</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="2-스위칭포워딩">(2) 스위칭/포워딩</h3>
+<ul>
+  <li>라우팅 테이블을 참조하여 데이터를 전송하는 것<br>
+(1) 이그잭트 매치(Exact Match) : 정확하게 정보와 매치하는 곳으로 전송<br>
+(2) 롱기스트 프리픽스 매치(Longest Prefix Match) : 가장 비슷한 경로로 전송</li>
+</ul>
+
+<p>ex) 목적지 : 10.1.1.9</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">목적지</th>
+      <th style="text-align: center">인터페이스</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">10.0.0.0/8</td>
+      <td style="text-align: center">Eth1</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10.1.0.0/16</td>
+      <td style="text-align: center">Eth3</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10.1.1.0/24</td>
+      <td style="text-align: center">Eth2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10.1.1.5/32</td>
+      <td style="text-align: center">Eth1</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10.1.2.0/24</td>
+      <td style="text-align: center">Eth2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">10.1.2.9/32</td>
+      <td style="text-align: center">Eth3</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>탈락 : 10.1.2.0/24(3자리부터 불일치), 10.1.2.9/32(3자리부터 불일치), 10.1.1.5/32(4자리 불일치)<br>
+매칭정보 : 10.0.0.0/8, 10.1.0.0/16, 10.1.1.0/24<br>
+<strong>최종선택 : 10.1.1.0/24(가장 많이 일치)</strong></p>
+
+<h2 id="ip">★IP</h2>
+<ul>
+  <li>OSI 7계층 중 네트워크 계층</li>
+  <li>데이터그램(패킷) 기반의 비연결형</li>
+  <li>패킷 분할/조립, 주소 지정, 경로 설정(라우팅)</li>
+  <li>데이터를 수정하지 않고 전송만 함</li>
+  <li>IP주소 : 네트워크주소 + 호스트주소</li>
+</ul>
+
+<h3 id="ip-헤더">IP 헤더</h3>
+<p><img src="https://user-images.githubusercontent.com/48157259/164691649-c7d1981b-fc43-4d58-acc4-6742ace2aece.png" alt=""></p>
+<ul>
+  <li>버전 : IP버전(4 or 6)</li>
+  <li>송신, 수신 IP주소</li>
+  <li>TTL(Time To Live) : 패킷이 경유할 수 있는 라우터 홉수</li>
+  <li>프로토콜 : 데이터부분이 TCP / UDP 인지 기록</li>
+</ul>
+
+<h3 id="1-ipv4">(1) IPv4</h3>
+
+<ul>
+  <li>a.b.c.d : 4byte[32bit] → (4자리, 자리별 1byte[8bit]로써 0~255 10진수 범위)</li>
+  <li>기본헤더 : 20byte / 확장헤더 : 40byte</li>
+  <li>
+    <p>특징 : 비연결형, 비신뢰성, 주소 지정, 경로 설정, 최선형 서비스</p>
+  </li>
+  <li>과거 Classful Addressing</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">클래스</th>
+      <th style="text-align: center">네트워크주소</th>
+      <th style="text-align: center">주소지정</th>
+      <th style="text-align: center">용도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">A클래스</td>
+      <td style="text-align: center">(0~127).###.###.###</td>
+      <td style="text-align: center">N.H.H.H</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B클래스</td>
+      <td style="text-align: center">(128~191).###.###.###</td>
+      <td style="text-align: center">N.N.H.H</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">C클래스</td>
+      <td style="text-align: center">(192~223).###.###.###</td>
+      <td style="text-align: center">N.N.N.H</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">D클래스</td>
+      <td style="text-align: center">(224~239).###.###.###</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">멀티캐스트용</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">E클래스</td>
+      <td style="text-align: center">(240~255).###.###.###</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">예비용</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>특수주소
+    <ul>
+      <li>0.0.0.0 : 네트워크 자신</li>
+      <li>255.255.255.255 : 브로드캐스트 주소</li>
+      <li>호스트 부분이 모두 0 : 네트워크 자체주소 (ex 200.193.0.0)</li>
+      <li>호스트 부분이 모두 1 : 직접적 브로드캐스트 (ex 200.193.255.255)</li>
+      <li>127.0.0.1 (=127.0.0.0/8) : 루프백 주소</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="cidr-classless-inter-domain-routing">CIDR (Classless Inter-Domain Routing)</h3>
+<ul>
+  <li>클래스리스 네트워크</li>
+  <li>기존의 클래스 방식의 IP주소 부여는 가변적이지 못하여 자원낭비가 심하였으며 고갈되는 IP주소의 단기 대책으로 나온 방안 (중기대책 : Private IP와 NAT / 장기대책 : IPv6)</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">서브넷마스크</code>를 사용하여 네트워크주소와 호스트주소를 한자리까지 세부적으로 정할 수 있다</p>
+  </li>
+  <li>서브넷마스크 : 네트워크 주소로부터 서브넷팅을 위한 호스트 주소를 얻기 위해 사용
+    <ul>
+      <li>IP주소&amp;서브넷마스트 = 네트워크주소</li>
+    </ul>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center">200</th>
+      <th style="text-align: center">193</th>
+      <th style="text-align: center">130</th>
+      <th style="text-align: center">200</th>
+      <th>/26</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">IP주소</td>
+      <td style="text-align: center">11001000</td>
+      <td style="text-align: center">11000001</td>
+      <td style="text-align: center">10000010</td>
+      <td style="text-align: center">11001000</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">서브넷마스크</td>
+      <td style="text-align: center">11111111</td>
+      <td style="text-align: center">11111111</td>
+      <td style="text-align: center">11111111</td>
+      <td style="text-align: center">11000000</td>
+      <td>26bit까지</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">255</td>
+      <td style="text-align: center">255</td>
+      <td style="text-align: center">255</td>
+      <td style="text-align: center">192</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">네트워크주소</td>
+      <td style="text-align: center">11001000</td>
+      <td style="text-align: center">11000001</td>
+      <td style="text-align: center">10000010</td>
+      <td style="text-align: center">11000000</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">200</td>
+      <td style="text-align: center">193</td>
+      <td style="text-align: center">130</td>
+      <td style="text-align: center">192</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>네트워크 주소 : 200.193.130.192</li>
+  <li>브로드캐스트 주소 : 200.193.130.255</li>
+  <li>유호 IP 주소 : 200.193.130.193 ~ 200.193.130.254</li>
+  <li>IP 갯수 = 64-2</li>
+</ul>
+
+<h3 id="2-ipv6">(2) IPv6</h3>
+
+<ul>
+  <li>a<img class="emoji" title=":b:" alt=":b:" raw="🅱️" src="https://github.githubassets.com/images/icons/emoji/unicode/1f171.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">c:d:e:f:g:h : 7byte[128bit] → (8자리, 자리별 2byte[16bit]로써 0~FF(255) 16진수 범위)</li>
+  <li>기본헤더 : 40byte</li>
+  <li>특징 : 주소길이 확장, 보안기능 강화(IPsec 기본), 품질기능 강화, 자동설정</li>
+</ul>
+
+<h2 id="icmp">ICMP</h2>
+<ul>
+  <li>목적 : IP를 보완하기 위해 -&gt; 오류 보고, 정보 제공
+    <ul>
+      <li>IP : 비연결형으로 오류 보고/수정 기능이 없음, 호스트와 관리자를 위한 기능 부재</li>
+    </ul>
+  </li>
+  <li>메시지 유형
+    <ol>
+      <li>오류보고 메시지 : 라우터나 목적지 호스트가 패킷처리 중 생긴 문제 보고</li>
+      <li>질의 메시지 : 라우터나 호스트로부터 정보 획득 목적</li>
+    </ol>
+  </li>
+</ul>
+
+<h2 id="arp">ARP</h2>
+<ul>
+  <li>IP(논리주소) -&gt; MAC(물리주소) 으로 변환</li>
+  <li>수신지의 MAC주소를 알아내기 위해 <code class="language-plaintext highlighter-rouge">브로드캐스트</code>로 요청한다</li>
+  <li>수신지는 자신의 MAC주소를 <code class="language-plaintext highlighter-rouge">유니캐스트</code>로 응답한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">ARP 테이블</code>에 정보를 저장하여 브로드캐스트를 자주 수행하면 성능이 저하되는 것을 막는다</li>
+</ul>
+
+<h2 id="rarp">RARP</h2>
+<ul>
+  <li>ARP와 반대로 MAC(물리주소) -&gt; IP(논리주소) 으로 변환</li>
+  <li>제한된 기능 더이상 사용되지 않고 <code class="language-plaintext highlighter-rouge">BOOTP</code>, <code class="language-plaintext highlighter-rouge">DHCP</code>로 대체해 사용</li>
+</ul>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/network/2021/04/01/004-OSI2-datalink.html" title="데이터링크 계층(L2)">데이터링크 계층(L2)</a><a class="next" href="/network/2021/04/01/006-OSI4-transport.html" title="전송 계층(L4)">전송 계층(L4)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/os/2020/12/16/003-introduction.html" title="전송 계층(L4)">Linux</a></li>
+<li><a class="post-link" href="/java/2020/05/14/002-parameter.html" title="전송 계층(L4)">기본형 매개변수와 참조형 매개변수</a></li>
+<li><a class="post-link" href="/javascript/2020/04/23/006-hoisting.html" title="전송 계층(L4)">함수정의, 호이스팅</a></li>
+<li><a class="post-link" href="/git/2021/08/17/011-token.html" title="전송 계층(L4)">깃 패스워드에서 토큰으로 변경</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/network/2021/04/01/005-OSI3-network.html';
+      this.page.identifier = 'https://europani.github.io/network/2021/04/01/005-OSI3-network.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>generic view(지네릭 뷰) - Class Based View(CBV, 클래스뷰) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="generic view(지네릭 뷰) - Class Based View(CBV, 클래스뷰)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="지네릭 뷰 -&gt; 클래스기반 뷰(CBV), 장고 프레임워크에 구현되어 있는 기능 사용">
+<meta property="og:description" content="지네릭 뷰 -&gt; 클래스기반 뷰(CBV), 장고 프레임워크에 구현되어 있는 기능 사용">
+<link rel="canonical" href="https://europani.github.io/django/2020/12/09/005-generic-view.html">
+<meta property="og:url" content="https://europani.github.io/django/2020/12/09/005-generic-view.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-12-09T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="generic view(지네릭 뷰) - Class Based View(CBV, 클래스뷰)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-12-09T00:00:00+00:00","datePublished":"2020-12-09T00:00:00+00:00","description":"지네릭 뷰 -&gt; 클래스기반 뷰(CBV), 장고 프레임워크에 구현되어 있는 기능 사용","headline":"generic view(지네릭 뷰) - Class Based View(CBV, 클래스뷰)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/django/2020/12/09/005-generic-view.html"},"url":"https://europani.github.io/django/2020/12/09/005-generic-view.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">generic view(지네릭 뷰) - Class Based View(CBV, 클래스뷰)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-12-09T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-12-09
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Django">#Django</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>지네릭 뷰 -&gt; 클래스기반 뷰(CBV), 장고 프레임워크에 구현되어 있는 기능 사용</p>
+
+<h3 id="종류">종류</h3>
+
+<h3 id="1-base-view">(1) Base View</h3>
+
+<p> - View : 최상위에 있는 부모 지네릭 뷰 클래스</p>
+
+<p> - Template View : 주어진 <strong>템플릿으로 랜더링</strong>해주는 뷰</p>
+
+<p> - Redirect View : 주어진 <strong>URL로 리다이렉트</strong>해주는 뷰</p>
+
+<h3 id="2-generic-display-view">(2) Generic Display View</h3>
+
+<p> - ListView : 조건에 맞는 객체들의 <strong>목록</strong>을 보여주는 뷰</p>
+
+<p> - DetailView : 조건에 맞는 하나의 <strong>세부내용</strong>을 보여주는 뷰</p>
+
+<h3 id="3-generic-edit-view">(3) Generic Edit View</h3>
+
+<p> - FormView : 폼을 출력해주는 뷰</p>
+
+<p> - CreateView : 객체를 <strong>Create</strong> 하는 뷰</p>
+
+<p> - UpdateView : 객체를 <strong>Update</strong> 하는 뷰 </p>
+
+<p> - DeleteView :객체를 <strong>Delete</strong> 하는 뷰</p>
+
+<h3 id="4-generic-date-view">(4) Generic Date View</h3>
+
+<p> - YearArchiveView : 해당 <strong>연도</strong>에 해당하는 객체를 출력하는 뷰</p>
+
+<p> - MonthArchiveView : 해당 <strong>월</strong>에 해당하는 객체를 출력하는 뷰</p>
+
+<p> - DayArchiveView : 해당 <strong>일</strong>에 해당하는 객체를 출력하는 뷰</p>
+
+<p> - TodayArchiveView : <strong>오늘 날짜</strong>에 해당하는 객체를 출력하는 뷰</p>
+
+<p> - DateDetailView : 특정 <strong>연도, 월, 일</strong>에 해당하는 객체를 출력하는 뷰</p>
+
+<hr>
+
+<h3 id="1-urlspy">1. urls.py</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="kn">from</span> <span class="n">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">app_name</span> <span class="o">=</span> <span class="sh">''</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nf">path</span><span class="p">(</span><span class="sh">''</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">IndexView</span><span class="p">.</span><span class="nf">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">index</span><span class="sh">'</span><span class="p">),</span>
+    <span class="nf">path</span><span class="p">(</span><span class="sh">'</span><span class="s">&lt;int:pk&gt;/</span><span class="sh">'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">DetailView</span><span class="p">.</span><span class="nf">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">detail</span><span class="sh">'</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<p>→ url패턴에 따라 views.py의 IndexView와 DetailView 함수 호출 (as_view()를 뒤에 붙여서 generic view 사용)</p>
+
+<p>→ ex) poll/2 : url을 통해 넘어온 int 타입 2를 <strong>pk</strong>에 넣어서 호출하는 함수로 넘김 (generic view에서는 반드시 pk 사용)</p>
+
+<h3 id="2-viewspy">2. views.py</h3>
+
+<h4 id="2-generic-display-view-1">(2) Generic Display View</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">django.urls</span> <span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="n">django.views</span> <span class="kn">import</span> <span class="n">generic</span>
+
+<span class="k">class</span> <span class="nc">IndexView</span><span class="p">(</span><span class="n">generic</span><span class="p">.</span><span class="n">ListView</span><span class="p">):</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="sh">'</span><span class="s">polls/index.html</span><span class="sh">'</span>			<span class="c1"># default : app명/model명_list.html
+</span>    <span class="n">context_object_name</span> <span class="o">=</span> <span class="sh">'</span><span class="s">question_list</span><span class="sh">'</span>	<span class="c1"># default : object_list
+</span>    <span class="n">paginate_by</span> <span class="o">=</span> <span class="mi">10</span>					<span class="c1"># 한페이지에 보여줄 object수
+</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>						<span class="c1"># context 오버라이딩
+</span>        <span class="n">queryset</span> <span class="o">=</span> <span class="n">Question</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nf">order_by</span><span class="p">(</span><span class="sh">'</span><span class="s">-regist_date</span><span class="sh">'</span><span class="p">)</span>	<span class="c1"># 등록일을 내림차순으로 설정
+</span>        <span class="k">return</span> <span class="n">queryset</span>
+        
+    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>			<span class="c1"># context 추가
+</span>        <span class="n">context</span> <span class="o">=</span> <span class="nf">super</span><span class="p">().</span><span class="nf">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>	<span class="c1"># 기존 결과
+</span>        <span class="n">context</span><span class="p">[</span><span class="sh">'</span><span class="s">now</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">.</span><span class="nf">now</span><span class="p">()</span>				<span class="c1"># 기존 결과에 now 추가
+</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+
+<span class="k">class</span> <span class="nc">DetailView</span><span class="p">(</span><span class="n">generic</span><span class="p">.</span><span class="n">DetailView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Question</span>					<span class="c1"># queryset = Question.objects.all()
+</span>    <span class="n">template_name</span> <span class="o">=</span> <span class="sh">'</span><span class="s">polls/detail.html</span><span class="sh">'</span>			<span class="c1"># default : app명/model명_detail.html
+</span></code></pre></div></div>
+
+<p>→ IndexView : generic.ListView 상속</p>
+
+<p>→ DetailView : generic.DetailView 상속</p>
+
+<p>● 속성&amp;메서드</p>
+
+<p>1. template_name : 연결시킬 템플릿명</p>
+
+<p>2. context_object_name : 템플릿에서 사용할 모델의 변수명</p>
+
+<p>3. paginate_by : 한페이지에 보여줄 object수(페이징, ListView에서 사용)</p>
+
+<p>4. queryset : context 오버라이딩(수정)할 때 사용 (order, filter 등), get_queryset()과 같은 역할</p>
+
+<p><br>
+1. get_queryset() : context 오버라이딩(수정)할 때 사용 (order, filter 등)</p>
+
+<p>2. get_context_data(**kwargs) : context 추가</p>
+
+<h4 id="3-generic-edit-view-1">(3) Generic Edit View</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">django.urls</span> <span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="n">django.views</span> <span class="kn">import</span> <span class="n">generic</span>
+
+
+<span class="k">class</span> <span class="nc">CreateView</span><span class="p">(</span><span class="n">SuccessMessageMixin</span><span class="p">,</span> <span class="n">generic</span><span class="p">.</span><span class="n">CreateView</span><span class="p">):</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="sh">'</span><span class="s">question_form.html</span><span class="sh">'</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Question</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">QuestionForm</span>
+    <span class="n">success_url</span> <span class="o">=</span> <span class="nf">reverse_lazy</span><span class="p">(</span><span class="sh">'</span><span class="s">question:question_list</span><span class="sh">'</span><span class="p">)</span>
+    
+    <span class="n">success_message</span> <span class="o">=</span> <span class="sh">'</span><span class="s">질문이 등록되었습니다.</span><span class="sh">'</span>
+</code></pre></div></div>
+
+<p>● 속성</p>
+
+<p>1. model : 연결시킬 모델명</p>
+
+<p> ( model = Quesion 은 queryset = Question.objects.all() 과 같음)</p>
+
+<p>2. form_class : forms.py 에 구현되어 있는 폼의 class명</p>
+
+<p> - 지네릭뷰를 상속받았기 때문에 render() 필요없이 form_class 속성만 사용하면 django가 알아서 폼을 랜더링 해줌</p>
+
+<p>3. success_url : post요청 성공했을 시 호출한 url</p>
+
+<p>4. success_message (SuccessMessageMixin 상속) : post요청 성공했을 시 alert 시킬 메시지</p>
+
+<p>&lt;django official Documentation&gt;</p>
+
+<p><a href="https://docs.djangoproject.com/en/3.1/ref/class-based-views/flattened-index/">docs.djangoproject.com/en/3.1/ref/class-based-views/flattened-index/</a></p>
+
+<p>&lt;Class-Based-View Inspector&gt;</p>
+
+<p><a href="https://ccbv.co.uk/">ccbv.co.uk/</a></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/python/2020/12/09/004-class.html" title="Python 클래스">Python 클래스</a><a class="next" href="/django/2020/12/09/006-MTV-model.html" title="MTV 패턴 - Model">MTV 패턴 - Model</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/os/2021/06/03/009-link.html" title="MTV 패턴 - Model">하드 링크(Hard Link), 심볼릭 링크(Symbolic Link)</a></li>
+<li><a class="post-link" href="/java/2020/05/14/003-member.html" title="MTV 패턴 - Model">클래스멤버와 인스턴스멤버 간의 참조와 호출</a></li>
+<li><a class="post-link" href="/algorithm/2020/06/28/001-search.html" title="MTV 패턴 - Model">탐색(Search)</a></li>
+<li><a class="post-link" href="/javascript/2020/07/18/016-OOP.html" title="MTV 패턴 - Model">JavaScript 객체 지향 언어(프로토타입, 상속, 생성자, 클래스)</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/django/2020/12/09/005-generic-view.html';
+      this.page.identifier = 'https://europani.github.io/django/2020/12/09/005-generic-view.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

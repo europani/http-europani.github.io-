@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>장고 웹서버, WAS 셋팅(Nginx, uWSGI) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="장고 웹서버, WAS 셋팅(Nginx, uWSGI)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+<link rel="canonical" href="https://europani.github.io/django/2021/07/06/023-django-web-server.html">
+<meta property="og:url" content="https://europani.github.io/django/2021/07/06/023-django-web-server.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-07-06T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="장고 웹서버, WAS 셋팅(Nginx, uWSGI)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-07-06T00:00:00+00:00","datePublished":"2021-07-06T00:00:00+00:00","description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","headline":"장고 웹서버, WAS 셋팅(Nginx, uWSGI)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/django/2021/07/06/023-django-web-server.html"},"url":"https://europani.github.io/django/2021/07/06/023-django-web-server.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">장고 웹서버, WAS 셋팅(Nginx, uWSGI)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-07-06T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-07-06
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 5 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Django">#Django</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p><img width="1284" alt="server" src="https://user-images.githubusercontent.com/48157259/124683136-55ab8000-df07-11eb-8dd4-ed33319fdc9f.png"></p>
+
+<h3 id="python-및-django-설치">Python 및 Django 설치</h3>
+<h4 id="1-python-3x-설치">1. Python 3.x 설치</h4>
+<ul>
+  <li>Linux의 경우 2.x 버전이 설치되어 있으며 3.x버전을 따로 설치해야 한다.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># CentOS</span>
+<span class="nv">$ </span>yum <span class="nb">install </span>gcc openssl-devel bzip2-devel libffi-devel wget
+
+<span class="nv">$ </span>wget https://www.python.org/ftp/python/3.8.11/Python-3.8.11.tgz
+<span class="nv">$ </span><span class="nb">tar </span>xzf Python-3.8.11.tgz             <span class="c"># 압축해제</span>
+<span class="nv">$ </span><span class="nb">cd </span>Python-3.8.11
+<span class="nv">$ </span>./configure <span class="nt">--enable-optimizations</span>    <span class="c"># 컴파일</span>
+<span class="nv">$ </span>make altinstall    <span class="c"># 설치</span>
+</code></pre></div></div>
+
+<ul>
+  <li>python 명령어를 기존의 2.x 버전에서 3.x 버전으로 변경</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python <span class="nt">-V</span>
+Python 2.7.5
+<span class="nv">$ </span>python3.8 <span class="nt">-V</span>
+Python 3.8.11
+
+<span class="nv">$ </span>vi ~/.bashrc
+
+<span class="nb">alias </span><span class="nv">python</span><span class="o">=</span>python3.8 추가
+<span class="nb">alias </span><span class="nv">pip</span><span class="o">=</span>pip3.8 추가
+
+<span class="nv">$ </span><span class="nb">source</span> ~/.bashrc          <span class="c"># 설정 적용</span>
+</code></pre></div></div>
+
+<h4 id="2-가상환경-설정">2. 가상환경 설정</h4>
+<ul>
+  <li>python의 내장된 venv 이용 (virtualenv를 사용 해도 되긴 함)</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>python <span class="nt">-m</span> venv venv
+<span class="nv">$ </span><span class="nb">source </span>venv/bin/activate      <span class="c"># 가상환경 접속</span>
+</code></pre></div></div>
+
+<h4 id="3-django-및-패키지-설치">3. Django 및 패키지 설치</h4>
+<ul>
+  <li>가상환경에서 장고를 포함한 패키지 설치</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip <span class="nb">install </span>django
+<span class="nv">$ </span>pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt        <span class="c"># requirements.txt 를 이용한 패키지 설치</span>
+</code></pre></div></div>
+
+<h3 id="uwsgi-설치">uWSGI 설치</h3>
+<h4 id="1-uwsgi-설치-및-구동-테스트">1. uWSGI 설치 및 구동 테스트</h4>
+<ul>
+  <li>가상환경 내에서 설치 및 테스트</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip <span class="nb">install </span>uwsgi
+<span class="nv">$ </span>uwsgi <span class="nt">--http</span> :8000 <span class="nt">--module</span> project.wsgi          <span class="c"># project명.wsgi</span>
+</code></pre></div></div>
+
+<h4 id="2-uwsgi-설정파일-생성-및-테스트">2. uWSGI 설정파일 생성 및 테스트</h4>
+<ul>
+  <li>경로 : /etc/uwsgi/sites/uwsgi.ini</li>
+</ul>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[uwsgi]</span>
+<span class="c"># Django-related settings
+# the base directory (full path)
+</span><span class="py">chdir</span>           <span class="p">=</span> <span class="s">/usr/local/project/</span>
+<span class="c"># the virtualenv (full path)
+</span><span class="py">home</span>            <span class="p">=</span> <span class="s">/usr/local/project/venv</span>
+<span class="c"># Django's wsgi file
+</span><span class="py">module</span>          <span class="p">=</span> <span class="s">project.wsgi</span>
+
+
+<span class="c"># process-related settings
+# master(마스터 프로세스)
+</span><span class="py">master</span>          <span class="p">=</span> <span class="s">true</span>
+<span class="c"># maximum number of worker processes
+</span><span class="py">processes</span>       <span class="p">=</span> <span class="s">10</span>
+<span class="c"># the socket (use the full path to be safe)
+</span><span class="py">socket</span>          <span class="p">=</span> <span class="s">/tmp/uwsgi.sock</span>
+<span class="c"># created socket permission
+</span><span class="py">chmod-socket</span>    <span class="p">=</span> <span class="s">666</span>
+<span class="c"># clear environment on exit(tmp파일 삭제)
+</span><span class="py">vacuum</span>          <span class="p">=</span> <span class="s">true</span>
+
+<span class="c"># respawn processes after serving 1000 requests
+</span><span class="py">max-requests</span> <span class="p">=</span> <span class="s">1000</span>
+<span class="py">buffer-size</span> <span class="p">=</span> <span class="s">65535</span>
+
+<span class="c"># respawn processes taking more than 60 seconds
+</span><span class="py">harakiri</span> <span class="p">=</span> <span class="s">60</span>
+
+<span class="c"># 배포시 0으로
+</span><span class="py">py-autoreload</span> <span class="p">=</span> <span class="s">0</span>
+
+<span class="c"># 로그
+</span><span class="py">logger</span> <span class="p">=</span> <span class="s">file:/var/log/uwsgi.log</span>
+</code></pre></div></div>
+
+<ul>
+  <li>ini 파일을 이용한 구동 테스트</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">source </span>venv/bin/activate
+<span class="nv">$ </span>uwsgi <span class="nt">--http</span> :8000 <span class="nt">-i</span> /etc/uwsgi/sites/uwsgi.ini
+</code></pre></div></div>
+<p>→ 여기선 –http 옵션을 사용했기 때문에 sock 파일을 사용하지 않음</p>
+
+<h4 id="3-uwsgi-서비스-등록">3. uWSGI 서비스 등록</h4>
+<ul>
+  <li>경로 : /etc/systemd/system/uwsgi.service</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Unit]
+Description=uWSGI
+After=syslog.target
+
+[Service]
+ExecStart=/usr/local/project/venv/bin/uwsgi --emperor /etc/uwsgi/sites --uid root --gid nginx
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
+</code></pre></div></div>
+<p>→ –emperor 옵션으로 uwsgi.ini(설정파일) 디렉토리</p>
+
+<h4 id="4-uwsgi-서비스-구동">4. uWSGI 서비스 구동</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>systemctl start uwsgi         <span class="c"># 서비스 시작</span>
+<span class="nv">$ </span>systemctl <span class="nb">enable </span>uwsgi        <span class="c"># 서버 부팅시 자동시작 설정</span>
+<span class="nv">$ </span>systemctl status uwsgi        <span class="c"># 구동 확인</span>
+
+<span class="nv">$ </span>systemctl daemon-reload       <span class="c"># 수정후 데몬 reload</span>
+</code></pre></div></div>
+<p>→ 에러 로그는 <code class="language-plaintext highlighter-rouge">/var/log/syslog</code>에 기록</p>
+
+<h3 id="nginx-설치">Nginx 설치</h3>
+<h4 id="1-nginx-설치">1. Nginx 설치</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># CentOS</span>
+<span class="nv">$ </span>yum <span class="nb">install </span>nginx
+</code></pre></div></div>
+
+<h4 id="2-nginx-기본-설정파일-변경">2. Nginx 기본 설정파일 변경</h4>
+<ul>
+  <li>경로 : /etc/nginx/nginx.conf</li>
+</ul>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ...생략...
+</span>
+<span class="n">http</span> {
+
+    <span class="n">include</span> /<span class="n">etc</span>/<span class="n">nginx</span>/<span class="n">conf</span>.<span class="n">d</span>/*.<span class="n">conf</span>;
+
+    <span class="n">server</span> {
+        <span class="c">#... 생략 ...
+</span>    }
+}
+
+}
+
+<span class="c">#...생략...
+</span></code></pre></div></div>
+<p>→ http &gt; server &gt; location 의 계층구조<br>
+→ include를 사용하여 <code class="language-plaintext highlighter-rouge">conf.d/</code> 아래의 다른 conf 파일을 포함시킬 수 있다.</p>
+
+<h4 id="3-nginx-설정파일-생성">3. Nginx 설정파일 생성</h4>
+<ul>
+  <li>경로 : /etc/nginx/conf.d/project.conf</li>
+</ul>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">upstream</span> <span class="n">django</span> {       <span class="c"># 서버 그룹
+</span>    <span class="n">server</span> <span class="n">unix</span>:///<span class="n">tmp</span>/<span class="n">uwsgi</span>.<span class="n">sock</span>;            <span class="c"># 유닉스 소켓사용
+</span>}
+
+<span class="n">server</span> {                <span class="c"># 서버 상세정의
+</span>        <span class="n">listen</span> <span class="m">80</span>;
+        <span class="n">server_name</span> <span class="m">127</span>.<span class="m">0</span>.<span class="m">0</span>.<span class="m">1</span>;
+
+        <span class="n">charset</span> <span class="n">utf</span>-<span class="m">8</span>;
+
+        <span class="n">location</span> / {
+            <span class="n">include</span>         /<span class="n">etc</span>/<span class="n">nginx</span>/<span class="n">uwsgi_params</span>;
+            <span class="n">uwsgi_pass</span>      <span class="n">django</span>;         <span class="c"># uWSGI 요청이 오면 바로 서버그룹 django 넘김
+</span>        }
+}
+</code></pre></div></div>
+<p>→ <code class="language-plaintext highlighter-rouge">127.0.0.1:80/</code> 로 요청이 들어오면 uwsgi_pass로 설정된 django로 넘김<br>
+→ upstream 서버 그룹의 정의된 django로 넘어오며 <code class="language-plaintext highlighter-rouge">server [주소 or 소켓]</code>를 통해 서버 목록 나열가능<br>
+→ 위에서는 유닉스 소켓을 사용하여 요청을 유닉스소켓으로 넘긴다</p>
+
+<h4 id="4-nginx-서비스-구동">4. Nginx 서비스 구동</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>systemctl start nginx
+<span class="nv">$ </span>systemctl <span class="nb">enable </span>nginx 
+
+<span class="c"># 502 에러가 뜬다면 아래 방법으로 실행해보자</span>
+<span class="nv">$ </span>nginx             <span class="c"># nginx 실행</span>
+<span class="nv">$ </span>nginx <span class="nt">-s</span> stop     <span class="c"># nginx 실행종료</span>
+</code></pre></div></div>
+
+<hr>
+
+<h3 id="실행-순서">실행 순서</h3>
+<ol>
+  <li>요청이 들어오면 Nginx로 들어와 <code class="language-plaintext highlighter-rouge">/etc/nginx/nginx.conf</code>를 통해 include 된 <code class="language-plaintext highlighter-rouge">/etc/nginx/conf.d/project.conf</code>로 연결</li>
+  <li>Nginx 설정파일에 설정된 서버정의에 의해 파일소켓인 <code class="language-plaintext highlighter-rouge">유닉스 소켓</code>을 사용하여 uWSGI 호출</li>
+  <li>uWSGI 설정파일에 설정된 정보를 통해 django 프로젝트 호출</li>
+</ol>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2021/06/28/022-file.html" title="파일(File) upload/download">파일(File) upload/download</a><a class="next" href="/docker/2021/07/08/006-docker-django-nginx-mysql.html" title="도커 설정(Django-Nginx-uWSGI-MySQL)">도커 설정(Django-Nginx-uWSGI-MySQL)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/design%20pattern/2021/10/01/001-introduction.html" title="도커 설정(Django-Nginx-uWSGI-MySQL)">디자인 패턴 소개</a></li>
+<li><a class="post-link" href="/docker/2021/03/27/003-Dockerfile.html" title="도커 설정(Django-Nginx-uWSGI-MySQL)">Dockerfile</a></li>
+<li><a class="post-link" href="/docker/2021/03/31/005-docker-VCS.html" title="도커 설정(Django-Nginx-uWSGI-MySQL)">도커 버전 관리</a></li>
+<li><a class="post-link" href="/spring/2022/01/05/035-excel.html" title="도커 설정(Django-Nginx-uWSGI-MySQL)">엑셀(excel) upload/download</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/django/2021/07/06/023-django-web-server.html';
+      this.page.identifier = 'https://europani.github.io/django/2021/07/06/023-django-web-server.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

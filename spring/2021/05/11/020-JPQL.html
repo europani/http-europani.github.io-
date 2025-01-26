@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[JPA] JPQL | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[JPA] JPQL">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="JPQL : Java Persistance Query Language JPA에서 복잡한 SELECT문을 수행할 때 모든 데이터를 엔티티 객체로 변환하여 검색하는 것은 불가능하다. JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어를 제공한다. 엔티티 객체를 대상으로 한 쿼리 SELECT절, WHERE, GROUP BY, HAVING, JOIN, ORDER BY, 집합함수 등을 지원 JPQL은 만들어진대로 단지 SQL로 변환만 할 뿐 최적화같은 것은 수행하지 않는다 ex) SELECT m FROM Member m -&gt; SELECT * FROM member">
+<meta property="og:description" content="JPQL : Java Persistance Query Language JPA에서 복잡한 SELECT문을 수행할 때 모든 데이터를 엔티티 객체로 변환하여 검색하는 것은 불가능하다. JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어를 제공한다. 엔티티 객체를 대상으로 한 쿼리 SELECT절, WHERE, GROUP BY, HAVING, JOIN, ORDER BY, 집합함수 등을 지원 JPQL은 만들어진대로 단지 SQL로 변환만 할 뿐 최적화같은 것은 수행하지 않는다 ex) SELECT m FROM Member m -&gt; SELECT * FROM member">
+<link rel="canonical" href="https://europani.github.io/spring/2021/05/11/020-JPQL.html">
+<meta property="og:url" content="https://europani.github.io/spring/2021/05/11/020-JPQL.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-05-11T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[JPA] JPQL">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-05-11T00:00:00+00:00","datePublished":"2021-05-11T00:00:00+00:00","description":"JPQL : Java Persistance Query Language JPA에서 복잡한 SELECT문을 수행할 때 모든 데이터를 엔티티 객체로 변환하여 검색하는 것은 불가능하다. JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어를 제공한다. 엔티티 객체를 대상으로 한 쿼리 SELECT절, WHERE, GROUP BY, HAVING, JOIN, ORDER BY, 집합함수 등을 지원 JPQL은 만들어진대로 단지 SQL로 변환만 할 뿐 최적화같은 것은 수행하지 않는다 ex) SELECT m FROM Member m -&gt; SELECT * FROM member","headline":"[JPA] JPQL","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2021/05/11/020-JPQL.html"},"url":"https://europani.github.io/spring/2021/05/11/020-JPQL.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[JPA] JPQL</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-05-11T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-05-11
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 14 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Spring">#Spring</a><a class="post-tag" href="/tags.html#JPA">#JPA</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <ul>
+  <li>JPQL : Java Persistance Query Language</li>
+  <li>JPA에서 복잡한 SELECT문을 수행할 때 모든 데이터를 엔티티 객체로 변환하여 검색하는 것은 불가능하다.</li>
+  <li>JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어를 제공한다.</li>
+  <li>
+<strong>엔티티 객체</strong>를 대상으로 한 쿼리</li>
+  <li>SELECT절, WHERE, GROUP BY, HAVING, JOIN, ORDER BY, 집합함수 등을 지원</li>
+  <li>
+<span style="color:red">JPQL은 만들어진대로 단지 SQL로 변환만 할 뿐 최적화같은 것은 수행하지 않는다</span><br>
+ex) <code class="language-plaintext highlighter-rouge">SELECT m FROM Member m</code> -&gt; <code class="language-plaintext highlighter-rouge">SELECT * FROM member</code>
+</li>
+</ul>
+
+<p>* 주의사항</p>
+<ul>
+  <li>FROM뒤에 엔티티 입력</li>
+  <li>JPQL 키워드는 대소문자 구분 X         ex) SELECT = select</li>
+  <li>엔티티와 속성은 대소문자 구분</li>
+  <li>엔티티에 <strong>별명 필수</strong>
+</li>
+</ul>
+
+<h3 id="기본-문법">기본 문법</h3>
+<ul>
+  <li>SELECT문</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">inputName</span> <span class="o">=</span> <span class="s">"europani"</span>
+
+<span class="nc">TypeQuery</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="s">"SELECT m FROM Member m WHERE m.name=:username"</span><span class="o">,</span> <span class="nc">Member</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="n">query</span><span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"username"</span><span class="o">,</span> <span class="n">inputName</span><span class="o">);</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;</span> <span class="n">resultList</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+
+<span class="err">#</span> <span class="n">체이닝</span>
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;</span> <span class="n">resultList</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="s">"SELECT m FROM Member m WHERE m.name=:username"</span><span class="o">,</span> <span class="nc">Member</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+               <span class="o">.</span><span class="na">setParameter</span><span class="o">(</span><span class="s">"username"</span><span class="o">,</span> <span class="n">inputName</span><span class="o">)</span>
+               <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+</code></pre></div></div>
+<p>→ <code class="language-plaintext highlighter-rouge">getResultList()</code> : 결과가 1개 이상일 때, 리스트 반환 (결과가 없으면 빈 리스트 반환)<br>
+→ <code class="language-plaintext highlighter-rouge">getSingleResult()</code> : 결과가 1개 일 때, 단일 객체 반환 (결과가 없거나 2개 이상이면 Exception)</p>
+
+<ul>
+  <li>CASE식</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">SELECT</span>
+    <span class="no">CASE</span> <span class="no">WHEN</span> <span class="n">m</span><span class="o">.</span><span class="na">age</span> <span class="o">&lt;=</span> <span class="mi">10</span> <span class="no">THEN</span> <span class="err">'</span><span class="n">학생요금</span><span class="err">'</span>
+         <span class="no">WHEN</span> <span class="n">m</span><span class="o">.</span><span class="na">age</span> <span class="o">&gt;=</span> <span class="mi">60</span> <span class="no">THEN</span> <span class="err">'</span><span class="n">경로요금</span><span class="err">'</span>
+         <span class="no">ELSE</span> <span class="err">'</span><span class="n">일반요금</span><span class="err">'</span>
+    <span class="no">END</span>
+<span class="no">FROM</span> <span class="nc">Member</span> <span class="n">m</span>
+</code></pre></div></div>
+
+<ul>
+  <li>집합함수, 정렬</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">SELECT</span> <span class="nf">COUNT</span><span class="o">(</span><span class="n">m</span><span class="o">),</span> <span class="no">SUM</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">age</span><span class="o">),</span> <span class="no">AVG</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">age</span><span class="o">),</span> <span class="no">MAX</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">age</span><span class="o">),</span> <span class="no">MIN</span><span class="o">(</span><span class="n">m</span><span class="o">.</span><span class="na">age</span><span class="o">)</span> <span class="no">FROM</span> <span class="nc">Member</span> <span class="n">m</span>
+</code></pre></div></div>
+
+<ul>
+  <li>기본 함수
+    <ul>
+      <li>문자 : CONCAT, SUBSTRING, TRIM, LOWER, UPPER, LENGTH, LOCATE</li>
+      <li>숫자 : ABS, SQRT, MOD</li>
+      <li>SIZE, INDEX</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="벌크-연산">벌크 연산</h4>
+<ul>
+  <li>쿼리 한번으로 여러 ROW를 변경</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">executeUpdate()</code> 사용 (벌크 연산된 결과수 return)</li>
+  <li>
+<strong>벌크 연산은 영속성 컨텍스트를 무시하고 DB에 직접 쿼리를 날린다</strong>
+    <ul>
+      <li><span style="color:red">데이터 유효성을 위해 벌크 연산 후 영속성 컨텍스트를 초기화 한 후 데이터를 사용해야 한다</span></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">resultCount</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="s">"UPDATE Member m SET m.age = 20"</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">executeUpdate</span><span class="o">();</span>
+<span class="n">em</span><span class="o">.</span><span class="na">claer</span><span class="o">();</span>     <span class="c1">// 영속성 컨텍스트 초기화</span>
+
+<span class="nc">Member</span> <span class="n">findMember</span> <span class="o">=</span> <span class="n">em</span><span class="o">.</span><span class="na">find</span><span class="o">(</span><span class="nc">Member</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="mi">1L</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h4 id="spring-data-jpa">Spring-data-jpa</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@Query</code>를 사용하여 JPQL을 입력할 수 있다.</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Repository</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MemberRepository</span> <span class="kd">extends</span> <span class="nc">JpaRepository</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="o">{</span>
+
+     <span class="nd">@Query</span><span class="o">(</span><span class="s">"SELECT m FROM Member m"</span><span class="o">)</span>
+     <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;</span> <span class="nf">selectAll</span><span class="o">();</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<h4 id="left-join">LEFT JOIN</h4>
+<ul>
+  <li>스프링부트 2 버전 부터는 엔티티 클래스 내에 연관관계가 없어도 Left Join이 가능하다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Member</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">email</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Board</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="nc">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">bno</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">title</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">content</span><span class="o">;</span>
+
+    <span class="nd">@ManyToOne</span><span class="o">(</span><span class="n">fetch</span><span class="o">=</span><span class="nc">FetchType</span><span class="o">.</span><span class="na">LAZY</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">Member</span> <span class="n">member</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Reply</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="nc">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">rno</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">text</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">replyer</span><span class="o">;</span>
+
+    <span class="nd">@ManyToOne</span><span class="o">(</span><span class="n">fetch</span><span class="o">=</span><span class="nc">FetchType</span><span class="o">.</span><span class="na">LAZY</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">Board</span> <span class="n">board</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>→ Board에서 Member로 접근 가능(연관관계 O) / Member에서 Board로 접근 불가(연관관계 X)<br>
+→ Reply에서 Board로 접근 가능(연관관계 O) / Board에서 Reply로 접근 불가(연관관계 X)</p>
+
+<p>1. 연관관계가 있는 경우</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ex) Board -&gt; Member 접근</span>
+<span class="nd">@Repository</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BoardRepository</span> <span class="kd">extends</span> <span class="nc">JpaRepository</span><span class="o">&lt;</span><span class="nc">Board</span><span class="o">,</span> <span class="nc">Long</span><span class="o">&gt;</span> <span class="o">{</span>
+
+     <span class="nd">@Query</span><span class="o">(</span><span class="s">"SELECT b, m FROM Board b LEFT JOIN b.member m WHERE b.bno=:bno"</span><span class="o">)</span>
+     <span class="nc">Object</span> <span class="nf">getBoardWithWriter</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"bno"</span><span class="o">)</span> <span class="nc">Long</span> <span class="n">bno</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>2. 연관관계가 없는 경우</p>
+<ul>
+  <li>LEFT JOIN 할 엔티티를 직접 입력하고 <code class="language-plaintext highlighter-rouge">ON</code> 키워드를 사용하여 연결</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ex) Board -&gt; Reply 접근</span>
+<span class="nd">@Repository</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">BoardRepository</span> <span class="kd">extends</span> <span class="nc">JpaRepository</span><span class="o">&lt;</span><span class="nc">Board</span><span class="o">,</span> <span class="nc">Long</span><span class="o">&gt;</span> <span class="o">{</span>
+
+     <span class="nd">@Query</span><span class="o">(</span><span class="s">"SELECT b, r FROM Board b LEFT JOIN Reply r ON r.board=b WHERE b.bno=:bno"</span><span class="o">)</span>
+     <span class="nc">Object</span> <span class="nf">getBoardWithReply</span><span class="o">(</span><span class="nd">@Param</span><span class="o">(</span><span class="s">"bno"</span><span class="o">)</span> <span class="nc">Long</span> <span class="n">bno</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<hr>
+
+<h3 id="n1-문제">N+1 문제</h3>
+<p>연관관계를 갖는 엔티티로 JPQL을 사용할 때 SQL 결과인 N번에 실행 SQL 1번이 더해진 N+1번의 SQL이 실행되는 문제</p>
+
+<p>1. EAGER 로딩 전략 사용시</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Member</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">username</span><span class="o">;</span>
+
+    <span class="nd">@OneToMany</span><span class="o">(</span><span class="n">mappedBy</span><span class="o">=</span><span class="s">"member"</span><span class="o">,</span> <span class="n">fetch</span><span class="o">=</span><span class="nc">FetchType</span><span class="o">.</span><span class="na">EAGER</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Order</span><span class="o">&gt;</span> <span class="n">orders</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Order</span><span class="o">&gt;)();</span>
+<span class="o">}</span>
+
+<span class="nd">@Entity</span>
+<span class="kd">class</span> <span class="nc">Order</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@ManyToOne</span>
+    <span class="kd">private</span> <span class="nc">Member</span> <span class="n">member</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Orders</span><span class="o">&gt;</span> <span class="n">orders</span><span class="o">=</span><span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="s">"SELECT m FROM Member m"</span><span class="o">,</span> <span class="nc">Member</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+</code></pre></div></div>
+
+<pre><code class="language-SQL">SELECT * FROM member                 // JPQL로 실행된 SQL
+SELECT * FROM order WHERE member_id=?     // 지연로딩으로 실행된 SQL들
+SELECT * FROM order WHERE member_id=?
+SELECT * FROM order WHERE member_id=?
+SELECT * FROM order WHERE member_id=?
+...
+</code></pre>
+<ul>
+  <li>JPQL로 SQL을 생성하여 실행한다. 그 결과를 엔티티에 담는다</li>
+  <li>즉시로딩 전략이기에 order에 연관된 member를 영속성 컨텍스트에서 찾는데 없을 시 SQL을 실행한다</li>
+  <li>그 결과 결과수 만큼의 SQL이 추가로 실행된다</li>
+</ul>
+
+<p>2. LAZY 로딩 전략으로 데이터를 가져온 이후 가져온 데이터에서 하위 엔티티를 다시 조회하는 경우</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Member</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="nd">@OneToMany</span><span class="o">(</span><span class="n">mappedBy</span><span class="o">=</span><span class="s">"member"</span><span class="o">,</span> <span class="n">fetch</span><span class="o">=</span><span class="nc">FetchType</span><span class="o">.</span><span class="na">LAZY</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Order</span><span class="o">&gt;</span> <span class="n">orders</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Order</span><span class="o">&gt;)();</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Orders</span><span class="o">&gt;</span> <span class="n">orders</span><span class="o">=</span><span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="s">"SELECT m FROM Member m"</span><span class="o">,</span> <span class="nc">Member</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+</code></pre></div></div>
+
+<pre><code class="language-SQL">SELECT * FROM member
+</code></pre>
+<ul>
+  <li>이 경우에는 지연로딩으로 JPQL에서 회원만 조회해서 N+1 문제가 발생하지 않는다</li>
+  <li>다만, 이후 비즈니스 로직에서 조회되지 않는 주문 데이터를 사용할 때 이를 조회하기 위해 N+1 문제가 발생한다</li>
+</ul>
+
+<pre><code class="language-SQL">SELECT * FROM order WHERE member_id=?
+SELECT * FROM order WHERE member_id=?
+SELECT * FROM order WHERE member_id=?
+SELECT * FROM order WHERE member_id=?
+...
+</code></pre>
+
+<p>★ 해결방안 : FETCH 조인사용</p>
+<ul>
+  <li>페치 조인을 사용하면 SQL 조인을 사용하여 연관된 엔티티를 함께 가져오기 때문에 N+1 문제가 발생하지 않는다</li>
+</ul>
+
+<pre><code class="language-SQL">jpql = "SELECT m FROM Member m JOIN FETCH m.order"
+
+SELECT m.*, o.* FROM member m INNER JOIN order o ON m.id=o.member_id
+</code></pre>
+
+<h3 id="-fetch-join페치-조인">★ Fetch Join(페치 조인)</h3>
+<ul>
+  <li>기존 SQL의 조인 종류가 아니고 JPQL의 성능 튜닝을 위해 JPA에서 제공하는 조인이다</li>
+  <li><strong>연관된 엔티티 or 컬렉션을 SQL 한번에 함께 조회하는 기능</strong></li>
+  <li>페치 조인은 모든 컬럼을 가져온다 (프로젝션이 불가능하다)</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">INNER JOIN</code>이 사용됨</li>
+  <li>한계
+    <ol>
+      <li>Pagination API를 사용할 수 없다</li>
+      <li>둘 이상의 컬렉션(@xxxToMany)은 fetch join를 사용할 수 없다</li>
+    </ol>
+  </li>
+</ul>
+
+<p><br></p>
+
+<ul>
+  <li>Member:Team = N:1(다대일) 양방향 관계를 갖는 두 엔티티</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Member</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">username</span><span class="o">;</span>
+
+    <span class="nd">@ManyToOne</span><span class="o">(</span><span class="n">fetch</span> <span class="o">=</span> <span class="nc">FetchType</span><span class="o">.</span><span class="na">LAZY</span><span class="o">)</span>
+    <span class="nd">@JoinColumn</span><span class="o">(</span><span class="n">name</span><span class="o">=</span><span class="s">"team_id"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">Team</span> <span class="n">team</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Team</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="nd">@OneToMany</span><span class="o">(</span><span class="n">mappedBy</span> <span class="o">=</span> <span class="s">"team"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;</span> <span class="n">members</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>페치조인 사용 : <code class="language-plaintext highlighter-rouge">JOIN</code> 뒤에 <code class="language-plaintext highlighter-rouge">FETCH &lt;조인컬럼&gt;</code> 입력한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">jpql</span> <span class="o">=</span> <span class="s">"SELECT m FROM Member m JOIN FETCH m.team"</span>
+
+<span class="nc">List</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;</span> <span class="n">members</span><span class="o">=</span><span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span><span class="n">jpql</span><span class="o">,</span> <span class="nc">Member</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+</code></pre></div></div>
+
+<pre><code class="language-SQL">SELECT m.*, t.* FROM member m INNER JOIN team t ON m.team_id=t.id
+</code></pre>
+<ul>
+  <li>즉시로딩으로 조회한 것과 같은 결과가 나온다</li>
+  <li>
+    <p>지연로딩을 사용했지만 페치조인을 사용했기 때문에 연관된 team 엔티티는 프록시가 아닌 실제 엔티티가 되어 지연로딩이 일어나지 않는다</p>
+  </li>
+  <li>cf) 일반조인</li>
+</ul>
+
+<pre><code class="language-SQL">jpql = "SELECT m FROM Member m JOIN m.team"
+
+SELECT m.* FROM member m INNER JOIN team t ON m.team_id=t.id
+</code></pre>
+<ul>
+  <li>일반조인의 SELECT문을 보면 팀만 조회되고 조인했던 회원은 전혀 조회되지 않았다</li>
+</ul>
+
+<p><strong><span style="color:red;">글로벌 로딩전략을 즉시 로딩으로 설정하면 애플리케이션의 성능에 영향을 미친다. 글로벌 로딩전략을 지연 로딩으로 설정하고 최적화가 필요하면 페치조인을 적용하는 것이 가장 베스트이다</span></strong></p>
+
+<h4 id="컬렉션-페치조인-1n-관계">컬렉션 페치조인 (1:N 관계)</h4>
+<ul>
+  <li>일대다(1:N) 방향으로 페치조인을 실행</li>
+</ul>
+
+<pre><code class="language-SQL">jpql = "SELECT t FROM team t JOIN FETCH t.member"
+
+SELECT t.*, m.* FROM team t INNER JOIN member m ON t.id=m.team_id
+</code></pre>
+<ul>
+  <li>다대일(N:1) 때와 똑같은 쿼리가 실행된다</li>
+  <li>하지만, 중복된 결과를 가져오는 결과를 초래한다
+    <ul>
+      <li><strong><code class="language-plaintext highlighter-rouge">Distinct</code>로 중복을 제거</strong></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">team</span> <span class="o">=</span> <span class="n">팀A</span><span class="o">,</span> <span class="n">members</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">team</span> <span class="o">=</span> <span class="n">팀A</span><span class="o">,</span> <span class="n">members</span><span class="o">=</span><span class="mi">2</span>
+<span class="n">team</span> <span class="o">=</span> <span class="n">팀B</span><span class="o">,</span> <span class="n">members</span><span class="o">=</span><span class="mi">1</span>
+</code></pre></div></div>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/169761501-9f88746d-06d9-43b1-be0f-597559e7b565.png" alt="image"></p>
+
+<h4 id="distinct">Distinct</h4>
+<ul>
+  <li>일대다(1:N) 조인의 경우 DB의 row가 증가한다. 그 결과 같은 엔티티의 조회 갯수도 증가하게 된다.</li>
+  <li>JPQL에 <code class="language-plaintext highlighter-rouge">DISTINCT</code>를 추가하면 JPA는 중복된 엔티티를 1번만 가져온다
+    <ul>
+      <li>ex) team1에 속한 member1, member2가 조회 될 경우 team1은 한번만 가져와진다</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">jpql</span> <span class="o">=</span> <span class="s">"SELECT DISTINCT t FROM team t JOIN FETCH t.member"</span>
+</code></pre></div></div>
+
+<ul>
+  <li>하지만 <code class="language-plaintext highlighter-rouge">DISTINCT</code>를 사용한 컬렉션 페치조인으로 중복된 엔티티를 제거하면 페이징이 불가능하다
+    <ul>
+      <li>일대다(1:N)에서 일(1)을 기준으로 페이징을 하는 것이 목적이지만 컬렉션 페치조인을 하면 데이터가 다(N)을 기준으로 row가 검색된다</li>
+      <li>즉, Team을 기준으로 페이징을 하고 싶은데 다(N)인 Member가 기준이 된다</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="페이징--컬렉션">페이징 + 컬렉션</h4>
+<ul>
+  <li>한계를 돌파하기 위해서는 다음과 같은 방법을 사용한다</li>
+  <li><strong>요약 : 1:N 관계를 N:1 관계로 뒤집어서 페치조인한 후 페이징 API를 사용한다. 그리고 컬렉션에는 배치 사이즈를 지정해 설정한 갯수만 들고오게 한다</strong></li>
+</ul>
+
+<ol>
+  <li>xxxToOne 관계로 모두 페치조인
+    <ul>
+      <li>ToOne 관계는 row수를 증가시키지 않아서 영향이 없다</li>
+    </ul>
+  </li>
+  <li>컬렉션은 페치조인이 아닌 지연 로딩으로 조회하고</li>
+  <li>
+<u>배치사이즈</u> 설정하여 지연 로딩 최적화
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">hibernate.default_batch_fetch_size</code> : <code class="language-plaintext highlighter-rouge">application.yml</code>에서 글로벌 설정</li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">@BatchSize</code> : <code class="language-plaintext highlighter-rouge">Entity의 해당 컬렉션 필드</code>에 개별 설정</p>
+      </li>
+      <li>이 옵션으로 컬렉션이나 프록시 객체를 한꺼번에 <strong>설정한 size 만큼 IN 쿼리</strong>로 조회한다</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span> 
+  <span class="na">jpa</span><span class="pi">:</span>
+    <span class="na">properties</span><span class="pi">:</span>
+      <span class="na">hibernate</span><span class="pi">:</span>
+        <span class="na">default_batch_fetch_size</span><span class="pi">:</span> <span class="m">1000</span>
+</code></pre></div></div>
+
+<p>or</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Team</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="nd">@OneToMany</span><span class="o">(</span><span class="n">mappedBy</span> <span class="o">=</span> <span class="s">"team"</span><span class="o">)</span>
+    <span class="nd">@BatchSize</span><span class="o">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;</span> <span class="n">members</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">&gt;();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>실행</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Order</span><span class="o">&gt;</span> <span class="nf">findAllWithMemberDelivery</span><span class="o">(</span><span class="kt">int</span> <span class="n">offset</span><span class="o">,</span> <span class="kt">int</span> <span class="n">limit</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">em</span><span class="o">.</span><span class="na">createQuery</span><span class="o">(</span>
+        <span class="s">"select o from Order o"</span> <span class="o">+</span>
+                <span class="s">" join fetch o.member m"</span> <span class="o">+</span>
+                <span class="s">" join fetch o.delivery d"</span><span class="o">,</span> <span class="nc">Order</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">setFirstResult</span><span class="o">(</span><span class="n">offset</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">setMaxResults</span><span class="o">(</span><span class="n">limit</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">getResultList</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>ToOne 관계를 갖는 Member와 Order를 페치조인 하고 페이징을 한다</li>
+</ul>
+
+<p><strong><span style="color:red;">결론 : 페치조인으로 쿼리수를 최적화하고 컬렉션을 최적화 하는데 페이징이 필요할 땐 배치사이즈를 설정하고, 필요없을 땐 컬렉션 페치조인을 사용한다</span></strong></p>
+
+<h4 id="entitygraph">@EntityGraph</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">JPQL</code>을 작성할 수 없을 때나 <code class="language-plaintext highlighter-rouge">JpaRepository</code>가 제공하는 기능에 페치조인을 적용하고 싶을 때 사용할 수 있다</li>
+  <li>또 여러 개를 fetch join 시킬때 사용할 수 있다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Repository</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MemberRepository</span> <span class="kd">extends</span> <span class="nc">JpaRepository</span><span class="o">&lt;</span><span class="nc">Member</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="nd">@EntityGraph</span><span class="o">(</span><span class="n">attributePaths</span> <span class="o">=</span> <span class="o">{</span><span class="s">"team"</span><span class="o">})</span>
+    <span class="nd">@Query</span><span class="o">(</span><span class="s">"SELECT m FROM Member m"</span><span class="o">)</span>
+    <span class="nc">Member</span> <span class="nf">findAllMembers</span><span class="o">();</span>
+
+    <span class="nd">@EntityGraph</span><span class="o">(</span><span class="n">attributePaths</span> <span class="o">=</span> <span class="o">{</span><span class="s">"team"</span><span class="o">})</span>
+    <span class="nc">Member</span> <span class="nf">findByUsername</span><span class="o">(</span><span class="nc">String</span> <span class="n">username</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<pre><code class="language-SQL">SELECT m.*, t.* FROM member m LEFT OUTER JOIN team t ON m.team_id=t.id
+</code></pre>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">OUTER JOIN</code>이 사용됨
+    <ul>
+      <li>카테시안 곱이 발생하여 중복된 결과가 출력된다</li>
+      <li><strong><code class="language-plaintext highlighter-rouge">Distinct</code>로 중복을 제거</strong></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@EntityGraph</span><span class="o">(</span><span class="n">attributePaths</span> <span class="o">=</span> <span class="o">{</span><span class="s">"team"</span><span class="o">})</span>
+<span class="nd">@Query</span><span class="o">(</span><span class="s">"SELECT DISTINCT m FROM Member m"</span><span class="o">)</span>
+<span class="nc">Member</span> <span class="nf">findAllMembers</span><span class="o">();</span>
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/python/2021/05/03/016-pymysql.html" title="[패키지] PyMySQL">[패키지] PyMySQL</a><a class="next" href="/os/2021/06/01/008-foreground-background.html" title="포그라운드(Foreground), 백그라운드(Background)">포그라운드(Foreground), 백그라운드(Background)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/javascript/2020/07/18/017-JS-Java-diff.html" title="포그라운드(Foreground), 백그라운드(Background)">JavaScript와 Java의 차이점</a></li>
+<li><a class="post-link" href="/ds/2020/11/21/006-hash-table.html" title="포그라운드(Foreground), 백그라운드(Background)">해시 테이블</a></li>
+<li><a class="post-link" href="/git/2021/02/25/008-gitignore.html" title="포그라운드(Foreground), 백그라운드(Background)">프로젝트 도중 .gitignore 파일 적용</a></li>
+<li><a class="post-link" href="/javascript/2020/07/21/022-array-function.html" title="포그라운드(Foreground), 백그라운드(Background)">(표준 객체) Array 객체</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2021/05/11/020-JPQL.html';
+      this.page.identifier = 'https://europani.github.io/spring/2021/05/11/020-JPQL.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

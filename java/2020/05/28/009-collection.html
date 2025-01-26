@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[JAVA] 컬렉션(Collection) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[JAVA] 컬렉션(Collection)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+<link rel="canonical" href="https://europani.github.io/java/2020/05/28/009-collection.html">
+<meta property="og:url" content="https://europani.github.io/java/2020/05/28/009-collection.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-05-28T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[JAVA] 컬렉션(Collection)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-05-28T00:00:00+00:00","datePublished":"2020-05-28T00:00:00+00:00","description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","headline":"[JAVA] 컬렉션(Collection)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/java/2020/05/28/009-collection.html"},"url":"https://europani.github.io/java/2020/05/28/009-collection.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[JAVA] 컬렉션(Collection)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-05-28T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-05-28
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#Java">#Java</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p><img src="https://user-images.githubusercontent.com/48157259/169446270-fa9ae865-6567-432d-ac96-db6370b08a64.png" alt="image"></p>
+
+<h3 id="1-list">1. List</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">List</code> 인터페이스</li>
+  <li>순서가 있는 데이터 집합</li>
+  <li>데이터(value) 중복 O</li>
+  <li>인덱스를 통해 랜덤 액세스(Random Access) 가능 <code class="language-plaintext highlighter-rouge">O(1)</code>
+</li>
+  <li>
+    <p>삽입/삭제시 데이터를 옮겨야 해서 비효율적이다 <code class="language-plaintext highlighter-rouge">O(N)</code></p>
+  </li>
+  <li>구현체 : <code class="language-plaintext highlighter-rouge">ArrayList</code>, <code class="language-plaintext highlighter-rouge">LinkedList</code>, <code class="language-plaintext highlighter-rouge">Vector</code>(동기화 지원, 구버전으로 사용 X)</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;();</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Vector vs ArrayList
+    <ul>
+      <li>ArrayList : 동기화가 안되는 클래스(동시에 여러 쓰레드가 접근 가능), 싱글 쓰레드 환경에서 더 빠름</li>
+      <li>Vector : 동기화를 지원하는 클래스(한 번에 하나의 쓰레드만 접근 가능)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="2-set">2. Set</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">Set</code> 인터페이스</li>
+  <li>
+    <p>순서가 없는 데이터 집합으로 데이터 중복이 불가</p>
+  </li>
+  <li>구현체 : <code class="language-plaintext highlighter-rouge">HashSet</code>, <code class="language-plaintext highlighter-rouge">LinkedHashSet</code>(순서), <code class="language-plaintext highlighter-rouge">TreeSet</code>(정렬)
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">TreeSet</code> : <code class="language-plaintext highlighter-rouge">Comparable</code> 구현 or <code class="language-plaintext highlighter-rouge">Comparator</code> 제공 해야 정렬 가능</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashSet</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;();</span>
+</code></pre></div></div>
+
+<ul>
+  <li>데이터 중복여부를 <code class="language-plaintext highlighter-rouge">hashCode()</code>와 <code class="language-plaintext highlighter-rouge">equals()</code>로 확인 <a href="https://europani.github.io/java/2022/06/01/023-equals-hashcode.html">(링크)</a>
+    <ul>
+      <li>class를 정의할 때 동등객체로 적용하고 싶으면 hashCode()와 equals()을 오버라이딩 해야 한다</li>
+      <li>동등객체 : hashCode()와 equals() <strong>모두 true</strong>일 때</li>
+    </ul>
+  </li>
+  <li>HashSet : equals(), hashCode() 비교해서 중복여부 확인</li>
+  <li>TreeSet : equals(), hashCode() 비교 + Comparable 구현여부 확인(정렬)</li>
+</ul>
+
+<h3 id="3-map">3. Map</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">Map</code> 인터페이스</li>
+  <li>순서가 없는 key-value 쌍의 데이터 집합</li>
+  <li>
+    <p>key값은 중복 불가, 데이터는 중복 가능</p>
+  </li>
+  <li>구현체 : <code class="language-plaintext highlighter-rouge">HashMap</code>, <code class="language-plaintext highlighter-rouge">LinkedHashMap</code>(순서), <code class="language-plaintext highlighter-rouge">TreeMap</code>(정렬), <code class="language-plaintext highlighter-rouge">HashTable</code>(동기화 지원, 구버전으로 사용 X)
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">HashMap</code> : <code class="language-plaintext highlighter-rouge">Entry[]</code>로 관리, 배열의 index는 key값의 해시값으로 결정</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">LinkedHashMap</code> : 링크드리스트로 구현되어 있어 순서 보장</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">TreeMap</code> : R-B트리로 관리되어 항상 정렬되어 있음, key값을 기준으로 정렬, <code class="language-plaintext highlighter-rouge">NavigableMap</code> 구현</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;();</span>
+</code></pre></div></div>
+
+<ul>
+  <li>HashTable vs HashMap
+    <ul>
+      <li>HashMap : 동기화가 안되는 클래스(동시에 여러 쓰레드가 접근 가능), 싱글 쓰레드 환경에서 더 빠름</li>
+      <li>HashTable : 동기화를 지원하는 클래스(한 번에 하나의 쓰레드만 접근 가능), 단 5버전 이상부터 지원하는 <code class="language-plaintext highlighter-rouge">CurrentHashMap</code>을 사용하는 것이 좋다</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="메서드">메서드</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="o">{</span>
+	<span class="nc">Set</span><span class="o">&lt;</span><span class="no">K</span><span class="o">&gt;</span> <span class="nf">keySet</span><span class="o">();</span>
+	<span class="nc">Collection</span><span class="o">&lt;</span><span class="no">V</span><span class="o">&gt;</span> <span class="nf">values</span><span class="o">();</span>
+	<span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;&gt;</span> <span class="nf">entrySet</span><span class="o">();</span>
+
+	<span class="kd">interface</span> <span class="nc">Entry</span><span class="o">&lt;</span><span class="no">K</span><span class="o">,</span> <span class="no">V</span><span class="o">&gt;</span> <span class="o">{</span>
+        <span class="no">K</span> <span class="nf">getKey</span><span class="o">();</span>
+        <span class="no">V</span> <span class="nf">getValue</span><span class="o">();</span>
+		<span class="o">...</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>한개의 값
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">Map.Entry</code> 인터페이스의 <code class="language-plaintext highlighter-rouge">getKey()</code>, <code class="language-plaintext highlighter-rouge">getValue()</code>
+</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">Map.Entry</code> 인터페이스 : Key-Value 쌍을 다루기 위한 인터페이스, Map인터페이스 내부에 정의</li>
+    </ul>
+  </li>
+  <li>모든 값
+    <ul>
+      <li>Key : <code class="language-plaintext highlighter-rouge">keySet()</code> (return : Set)</li>
+      <li>Values : <code class="language-plaintext highlighter-rouge">values()</code> (return : Collection)</li>
+      <li>Key-Value 쌍 : <code class="language-plaintext highlighter-rouge">entrySet()</code> (return : Set)</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="properties">Properties</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">HashTable</code>의 하위 클래스</li>
+  <li>key와 value 자료형이 모두 String</li>
+  <li>txt, xml파일에 Properties 객체를 추가할 수 있는 기능</li>
+</ul>
+
+<h3 id="4-stack과-queue">4. Stack과 Queue</h3>
+<h4 id="stack-클래스">Stack (클래스)</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">Vector</code>의 하위클래스 (List)</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">push()</code> : 저장, <code class="language-plaintext highlighter-rouge">pop()</code> : 꺼내오면서 제거, <code class="language-plaintext highlighter-rouge">peek()</code> : 조회</li>
+</ul>
+
+<h4 id="queue-인터페이스">Queue (인터페이스)</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">Collection</code>의 하위 인터페이스</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">offer()</code> : 저장, <code class="language-plaintext highlighter-rouge">poll()</code> : 꺼내오면서 제거, <code class="language-plaintext highlighter-rouge">peek()</code> : 조회</li>
+</ul>
+
+<h3 id="자바-인터페이스">자바 인터페이스</h3>
+<h4 id="1-comparable">1. <code class="language-plaintext highlighter-rouge">Comparable</code>
+</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Comparable</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compareTo</span><span class="o">(</span><span class="no">T</span> <span class="n">o</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>클래스의 기본 정렬 방식을 <strong>지정</strong>할 때 사용 (기본값 : 오름차순)</li>
+  <li>compareTo(Object)에 정렬방식을 구현</li>
+  <li>Comparable 인터페이스를 구현한 클래스는 정렬이 가능함
+    <ul>
+      <li>사용자정의 클래스에서 Collections.sort()를 사용하기 위해서는 반드시 Comparable 인터페이스를 구현해야 한다</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="2-comparator">2. <code class="language-plaintext highlighter-rouge">Comparator</code>
+</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Comparator</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="no">T</span> <span class="n">o1</span><span class="o">,</span> <span class="no">T</span> <span class="n">o2</span><span class="o">);</span>
+	<span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="nc">Object</span> <span class="n">obj</span><span class="o">);</span>
+	<span class="o">...</span>
+</code></pre></div></div>
+
+<ul>
+  <li>기본 정렬 방식을 <strong>변경</strong>할 때 사용
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">compare(Object o1, Object o2)</code>를 구현</li>
+    </ul>
+  </li>
+</ul>
+
+<p>ex) <code class="language-plaintext highlighter-rouge">String</code> 클래스에서 compareTo()가 final로 정의되어 있기 떄문에 Comparator를 사용한다</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kt">void</span> <span class="nf">sort</span><span class="o">(</span><span class="nc">Object</span> <span class="n">a</span><span class="o">)</span>			<span class="c1">// 지정된 Comparable에 의한 정렬</span>
+<span class="kd">static</span> <span class="kt">void</span> <span class="nf">sort</span><span class="o">(</span><span class="nc">Object</span> <span class="n">a</span><span class="o">,</span> <span class="nc">Comparator</span> <span class="n">c</span><span class="o">)</span>	<span class="c1">// 수정된 Comparator에 의한 정렬</span>
+</code></pre></div></div>
+
+<h4 id="3-iterator">3. <code class="language-plaintext highlighter-rouge">Iterator</code>
+</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Iterator</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kt">boolean</span> <span class="nf">hasNext</span><span class="o">();</span>
+    <span class="no">E</span> <span class="nf">next</span><span class="o">();</span>
+
+    <span class="k">default</span> <span class="kt">void</span> <span class="nf">remove</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">UnsupportedOperationException</span><span class="o">(</span><span class="s">"remove"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>컬렉션 프레임워크에서 사용하는 방법
+    <ul>
+      <li>Collection 인터페이스에 iterator() 정의</li>
+      <li>List 와 Set 인터페이스에 iterator() 오버라이딩</li>
+    </ul>
+  </li>
+</ul>
+
+<p>ex) Map에서 사용하기 위해서는 Key, Entry-&gt;Set, Value-&gt;Collection으로 변환한 후 iterator()을 호출해야함.<br>
+[Map -&gt; Set(Key or Entry의 경우) : keySet() or entrySet() /  Map -&gt; Collection(Value의 경우) : values() 사용해 변환]</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;();</span>
+		
+		<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"나자바"</span><span class="o">,</span> <span class="mi">85</span><span class="o">);</span> <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"홍길동"</span><span class="o">,</span> <span class="mi">90</span><span class="o">);</span>
+		<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"동장군"</span><span class="o">,</span> <span class="mi">80</span><span class="o">);</span> <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"홍길동"</span><span class="o">,</span> <span class="mi">95</span><span class="o">);</span>
+		
+		<span class="c1">// keySet()</span>
+		<span class="nc">Set</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">keySet</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">keySet</span><span class="o">();</span>
+		<span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">keyIterator</span> <span class="o">=</span> <span class="n">keySet</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">keyIterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+			<span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">keyIterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+			<span class="nc">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">" : "</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">();</span>
+		
+		<span class="c1">// entrySet()</span>
+		<span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entrySet</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">entrySet</span><span class="o">();</span>
+		<span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;&gt;</span> <span class="n">entryIterator</span> <span class="o">=</span> <span class="n">entrySet</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">entryIterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+			<span class="nc">Map</span><span class="o">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">entryIterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+			<span class="nc">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">();</span>
+			<span class="nc">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">" : "</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
+		<span class="o">}</span>
+		
+		<span class="c1">// values()</span>
+		<span class="nc">Collection</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">values</span><span class="o">();</span>
+		<span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">valueIterator</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">valueIterator</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+			<span class="nc">Integer</span> <span class="n">value</span> <span class="o">=</span> <span class="n">valueIterator</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+		<span class="o">}</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// keySet()</span>
+<span class="n">나자바</span> <span class="o">:</span> <span class="mi">85</span>
+<span class="n">홍길동</span> <span class="o">:</span> <span class="mi">95</span>
+<span class="n">동장군</span> <span class="o">:</span> <span class="mi">80</span>
+
+<span class="c1">// entrySet()</span>
+<span class="n">나자바</span> <span class="o">:</span> <span class="mi">85</span>
+<span class="n">홍길동</span> <span class="o">:</span> <span class="mi">95</span>
+<span class="n">동장군</span> <span class="o">:</span> <span class="mi">80</span>
+
+<span class="c1">// values()</span>
+<span class="mi">85</span>
+<span class="mi">95</span>
+<span class="mi">80</span>
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/java/2020/05/27/008-API2.html" title="기본API(Calendar)">기본API(Calendar)</a><a class="next" href="/java/2020/05/30/010-generic.html" title="지네릭(Generics)">지네릭(Generics)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/html/2020/07/13/003-link-route.html" title="지네릭(Generics)">상대경로와 절대경로</a></li>
+<li><a class="post-link" href="/spring/2022/12/20/048-logback.html" title="지네릭(Generics)">[Spring] Logging - logback 프레임워크</a></li>
+<li><a class="post-link" href="/git/2022/02/14/013-stash.html" title="지네릭(Generics)">git stash 임시저장</a></li>
+<li><a class="post-link" href="/network/2022/04/22/010-DHCP.html" title="지네릭(Generics)">DHCP (Dynamic Host Configuration Protocol)</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/java/2020/05/28/009-collection.html';
+      this.page.identifier = 'https://europani.github.io/java/2020/05/28/009-collection.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

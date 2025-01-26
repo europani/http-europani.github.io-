@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Github Actions, AWS CodeDeploy를 사용한 CI/CD 구축 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="Github Actions, AWS CodeDeploy를 사용한 CI/CD 구축">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="CI도구로 Github Actions와 CD도구로 AWS CodeDeploy를 사용해서 CI/CD 환경을 구축할 것이다. 프론트엔드는 React이고 백엔드는 Spring Boot로 구현한 애플리케이션이다.">
+<meta property="og:description" content="CI도구로 Github Actions와 CD도구로 AWS CodeDeploy를 사용해서 CI/CD 환경을 구축할 것이다. 프론트엔드는 React이고 백엔드는 Spring Boot로 구현한 애플리케이션이다.">
+<link rel="canonical" href="https://europani.github.io/aws/2022/04/04/005-code-deploy.html">
+<meta property="og:url" content="https://europani.github.io/aws/2022/04/04/005-code-deploy.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-04-04T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Github Actions, AWS CodeDeploy를 사용한 CI/CD 구축">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2022-04-04T00:00:00+00:00","datePublished":"2022-04-04T00:00:00+00:00","description":"CI도구로 Github Actions와 CD도구로 AWS CodeDeploy를 사용해서 CI/CD 환경을 구축할 것이다. 프론트엔드는 React이고 백엔드는 Spring Boot로 구현한 애플리케이션이다.","headline":"Github Actions, AWS CodeDeploy를 사용한 CI/CD 구축","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/aws/2022/04/04/005-code-deploy.html"},"url":"https://europani.github.io/aws/2022/04/04/005-code-deploy.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Github Actions, AWS CodeDeploy를 사용한 CI/CD 구축</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-04-04T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-04-04
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 14 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#AWS">#AWS</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>CI도구로 <code class="language-plaintext highlighter-rouge">Github Actions</code>와 CD도구로 <code class="language-plaintext highlighter-rouge">AWS CodeDeploy</code>를 사용해서 CI/CD 환경을 구축할 것이다.<br>
+프론트엔드는 <strong>React</strong>이고 백엔드는 <strong>Spring Boot</strong>로 구현한 애플리케이션이다.</p>
+
+<p>스테이징서버와 운영서버가 두개의 EC2 인스턴스로 구축되어 있다.<br>
+스테이징서버 : <code class="language-plaintext highlighter-rouge">develop</code> / 운영서버 : <code class="language-plaintext highlighter-rouge">master</code> 브랜치를 각각 따르고 있다.</p>
+
+<p>스테이징서버는 프론트엔드와 백엔드 모두 <code class="language-plaintext highlighter-rouge">EC2 인스턴스</code>에 배포할 것이며<br>
+운영서버는 프론트엔드는 <code class="language-plaintext highlighter-rouge">S3버킷</code>에 백엔드는 <code class="language-plaintext highlighter-rouge">EC2 인스턴스</code>에 각각 배포할 것이다.</p>
+
+<h2 id="배포-과정">배포 과정</h2>
+<p><img src="https://user-images.githubusercontent.com/48157259/161882881-98eeee90-f2ee-4a46-83f7-6f6a46cf29d3.png" alt="image"></p>
+
+<h2 id="aws-iam">AWS IAM</h2>
+<ul>
+  <li>USER : 외부 서비스에 할당 가능 (key값 제공)</li>
+  <li>ROLE : AWS 서비스만 할당 가능</li>
+</ul>
+
+<h3 id="1-aws-cli용-user">1. AWS CLI용 USER</h3>
+<ul>
+  <li>배포시 EC2 인스턴스의 AWS CLI에서 사용할 권한
+<img src="https://user-images.githubusercontent.com/48157259/161706262-198f3eea-da83-47ca-b239-13e039be1104.png" alt="image">
+</li>
+</ul>
+
+<h3 id="2-ec2-배포용-role">2. EC2 배포용 ROLE</h3>
+<ul>
+  <li>배포시 EC2가 사용하는 권한</li>
+  <li>
+    <p>AWS서비스-EC2 -&gt; <code class="language-plaintext highlighter-rouge">S3FullAccess</code>, <code class="language-plaintext highlighter-rouge">CodeDeployFullAccess</code> -&gt; 태그설정
+<img src="https://user-images.githubusercontent.com/48157259/161710303-021df0ea-b19f-4da2-8da7-dee2243b9eff.png" alt="image">
+<img src="https://user-images.githubusercontent.com/48157259/161710703-e9acdb32-8b00-4834-be6f-b127a188d095.png" alt="image"></p>
+  </li>
+  <li>스테이징서버, 운영서버 EC2 인스턴스 2개 모두에 생성한 권한 부여
+    <ul>
+      <li>EC2 인스턴스 -&gt; 보안 -&gt; IAM 역할 수정
+<img src="https://user-images.githubusercontent.com/48157259/161871739-85d510e2-37e8-42a2-ac68-39aa88ee3c11.png" alt="image">
+</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="3-codedeploy용-role">3. CodeDeploy용 ROLE</h3>
+<ul>
+  <li>배포시 CodeDeploy가 사용하는 권한</li>
+  <li>AWS서비스-CodeDeploy -&gt; <code class="language-plaintext highlighter-rouge">CodeDeployFullAccess</code> -&gt; 태그설정
+<img src="https://user-images.githubusercontent.com/48157259/161711012-18db8b3c-1568-450b-b525-14188a68644e.png" alt="image">
+<img src="https://user-images.githubusercontent.com/48157259/161711161-aac9c133-565d-4e60-9453-ae20794bb4f3.png" alt="image">
+</li>
+</ul>
+
+<h2 id="백엔드-스프링부트">백엔드 (스프링부트)</h2>
+<ul>
+  <li>스테이징서버 : EC2</li>
+  <li>운영서버 : EC2</li>
+</ul>
+
+<h3 id="1-테스트-applicationyml-분리">1. 테스트 application.yml 분리</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">application.yml</code>에 DB접속정보가 포함되어 있을 것이다. 하지만 노출되어서는 안되는 정보이기 때문에 <code class="language-plaintext highlighter-rouge">.gitignore</code>에 관리되어 깃허브에 업로드 되지 않는다.</li>
+  <li>접속정보가 필요하지 않은(노출되어도 무방한) 내장 인메모리 디비를 사용하여 테스트를 진행해야 한다.</li>
+  <li>내장 인메모리 디비는 테스트 진행시 올라왔다가 테스트가 종료되면 내려가 흔적이 남지 않게 된다.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">test/resources/application.yml</code>을 사용해 내장 인메모리 디비로 테스트가 진행되도록 할 수 있다.
+    <ul>
+      <li>혹은, 접속정보가 아예 존재하지 않는다면 스프링은 자동으로 내장 인메모리 디비에 연결한다.</li>
+      <li>간혹 스프링이 테스트 config를 찾지 못한다면 <code class="language-plaintext highlighter-rouge">test/resources/config/application.yml</code>로 이동시켜보자.</li>
+    </ul>
+  </li>
+  <li>디비 접속정보 이외의 비밀키같이 정보를 스프링이 빈 생성에 참조할 때 존재하지 않으면 에러가 발생한다.
+    <ul>
+      <li>임시값을 대체해 넣어주면 된다.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">spring</span><span class="pi">:</span>
+  <span class="na">datasource</span><span class="pi">:</span>
+    <span class="na">driver-class-name</span><span class="pi">:</span> <span class="s">org.h2.Driver</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">jdbc:h2:mem:test</span>
+    <span class="na">username</span><span class="pi">:</span> <span class="s">sa</span>
+    <span class="na">password</span><span class="pi">:</span>
+  <span class="na">jpa</span><span class="pi">:</span>
+    <span class="na">database-platform</span><span class="pi">:</span> <span class="s">org.hibernate.dialect.H2Dialect</span>
+    <span class="na">defer-datasource-initialization</span><span class="pi">:</span> <span class="kc">true</span>
+
+<span class="na">app</span><span class="pi">:</span>
+  <span class="na">auth</span><span class="pi">:</span>
+    <span class="na">token</span><span class="pi">:</span>
+      <span class="na">secret-key</span><span class="pi">:</span> <span class="s">tmp</span>
+      <span class="na">refresh-cookie-key</span><span class="pi">:</span> <span class="s">tmp</span>
+  <span class="na">oauth2</span><span class="pi">:</span>
+    <span class="na">authorizedRedirectUris</span><span class="pi">:</span> <span class="s">tmp</span>
+</code></pre></div></div>
+<p>→ <code class="language-plaintext highlighter-rouge">defer-datasource-initialization</code> : hibernate 구동시 <code class="language-plaintext highlighter-rouge">data.sql</code>이 실행되도록 설정</p>
+
+<h3 id="2-외부-yml-적용">2. 외부 yml 적용</h3>
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">application.yml</code>이 깃허브에 업로드 되지 않기 때문에 미리 서버에 만들어 놓고 스프링이 구동할 때 참조하도록 설정해야 한다</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Application.class</code></p>
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">classpath:</code>로 시작하는 파일 경로는 프로젝트 내부의 <code class="language-plaintext highlighter-rouge">src/main/resources/</code>이하 경로이다</li>
+      <li>프로젝트 외부의 <code class="language-plaintext highlighter-rouge">application.yml</code>을 추가로 설정한다</li>
+      <li>개발서버에서는 프로젝트 내부의 설정파일을 운영서버에서는 외부의 설정파일을 참조하도록 했기 때문에 <code class="language-plaintext highlighter-rouge">optional</code>을 사용했다</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@SpringBootApplication</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Application</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="nc">String</span> <span class="no">APPLICATION_LOCATIONS</span> <span class="o">=</span> <span class="s">"spring.config.location="</span>
+			<span class="o">+</span> <span class="s">"optional:classpath:application.yml,"</span>
+			<span class="o">+</span> <span class="s">"optional:/usr/local/myapp/application.yml"</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">new</span> <span class="nf">SpringApplicationBuilder</span><span class="o">(</span><span class="nc">Application</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+				<span class="o">.</span><span class="na">properties</span><span class="o">(</span><span class="no">APPLICATION_LOCATIONS</span><span class="o">)</span>
+				<span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">args</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="3-codedeploy-생성">3. CodeDeploy 생성</h3>
+<ul>
+  <li>CD 과정을 맡을 CodeDeploy 애플리케이션, 배포그룹을 생성한다</li>
+  <li>여기서 생성된 배포그룹은 생성시 태그로 선택된 EC2에서 설치된 CodeDeploy 에이전트에 의해 실행된다</li>
+</ul>
+
+<h4 id="1-애플리케이션">(1) 애플리케이션</h4>
+<p><img src="https://user-images.githubusercontent.com/48157259/161713992-75e983f1-5544-4608-87f2-167363748a36.png" alt="image"></p>
+
+<h4 id="2-배포그룹">(2) 배포그룹</h4>
+<ul>
+  <li>스테이징서버에 적용할 그룹<code class="language-plaintext highlighter-rouge">myapp-staging</code>과 운영서버에 적용할 그룹<code class="language-plaintext highlighter-rouge">myapp-prodution</code> 2개 생성</li>
+  <li>배포그룹이름 -&gt; 서비스역할 : <a href="#3-codedeploy%EC%9A%A9-role">CodeDeploy용 ROLE</a> 선택 -&gt; 배포유형 : 현재위치 -&gt; EC2인스턴스 -&gt; EC2 태그추가(Name) -&gt; AllAtOnce -&gt; 로드밸런스 활성화 해제</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/161714513-6c37a0dc-d4ee-4a87-9b86-611c9895e6bd.png" alt="image">
+<img src="https://user-images.githubusercontent.com/48157259/161714784-31f7b2a6-ee5e-41a5-b000-42ca3de8d4ca.png" alt="image"></p>
+
+<h3 id="4-서버에-aws-cli-및-codedeploy-에이전트-설치">4. 서버에 AWS CLI 및 CodeDeploy 에이전트 설치</h3>
+<ul>
+  <li>IAM : <a href="#1-aws-cli%EC%9A%A9-user">AWS CLI용으로 발급한 USER</a> 사용</li>
+  <li>EC2 인스턴스에서 배포시 사용하기 위해 설치한다</li>
+</ul>
+
+<pre><code class="language-cli">$ sudo yum -y update
+$ sudo yum install -y aws-cli
+$ sudo aws configure
+AWS Access Key ID [None]:
+AWS Secret Access Key [None]:
+Default region name [None]: ap-northeast-2
+Default output format [None]: json
+</code></pre>
+
+<pre><code class="language-cli">$ aws s3 cp s3://aws-codedeploy-ap-northeast-2/latest/install . --region ap-northeast-2
+$ chmod +x ./install
+$ sudo yum -y install ruby
+$ sudo ./install auto
+$ sudo service codedeploy-agent status
+The AWS CodeDeploy agent is running as PID xxx
+</code></pre>
+
+<h3 id="5-github-actions-ci">5. Github Actions (CI)</h3>
+<h4 id="0-secrets-적용">(0) Secrets 적용</h4>
+<ul>
+  <li>노출되어서는 안되는 비밀키값은 Github에 Secrets로 등록하면 yml실행시 참조할 수 있다</li>
+  <li>
+    <p>Github -&gt; Repository내의 Settings -&gt; Secrets -&gt; Actions -&gt; New Repository Secrets
+<img src="https://user-images.githubusercontent.com/48157259/161717072-3a237fe6-f374-4e0f-8b7e-3d54b706ae5c.png" alt="image">
+<img src="https://user-images.githubusercontent.com/48157259/161717134-a79f14ec-bf4a-4a16-879a-e9ae0b2ecc23.png" alt="image"></p>
+  </li>
+  <li>그리고 Github Actions가 사용할 yml 파일을 작성한다
+    <ul>
+      <li>name : 해당 Action(Workflow)의 이름</li>
+      <li>on : 아래 jobs를 실행시킬 조건(이벤트 or 트리거)</li>
+      <li>jobs : 커맨드가 모인 집합</li>
+      <li>steps : 각 각의 실핼될 커맨드단계</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="1-deploy-stagingyml">(1) deploy-staging.yml</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">develop</code> 브랜치에 push/merge가 이루어지면 스테이징서버에서 CI가 동작한다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">deploy-staging</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="nv">develop</span> <span class="pi">]</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">deploy</span><span class="pi">:</span>      <span class="c1"># job 이름</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">defaults</span><span class="pi">:</span>
+      <span class="na">run</span><span class="pi">:</span>
+        <span class="na">shell</span><span class="pi">:</span> <span class="s">bash</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout Github-Actions</span>     <span class="c1"># Github Actions 사용을 위한 체크아웃</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install Java </span><span class="m">11</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-java@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">java-version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">11'</span>
+      
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Permission for Gradle</span> 
+        <span class="na">run</span><span class="pi">:</span> <span class="s">chmod +x ./gradlew</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Start Build with Gradle</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">./gradlew clean build</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Setting for AWS</span>          <span class="c1"># AWS 권한셋팅</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">aws-actions/configure-aws-credentials@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">aws-access-key-id</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-secret-access-key</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-region</span><span class="pi">:</span> <span class="s">ap-northeast-2</span>
+      
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload to S3</span>             <span class="c1"># 빌드파일 S3 업로드</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">aws deploy push --application-name myapp --description "myapp Test" --s3-location s3://myapp/deploy/myapp-staging.zip --source .</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Start Deploy with CodeDeploy</span>      <span class="c1"># CodeDeploy 실행</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">aws deploy create-deployment --application-name myapp --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name myapp-staging --s3-location bucket=myapp,bundleType=zip,key=deploy/myapp-staging.zip</span>
+</code></pre></div></div>
+<ul>
+  <li>Upload to S3
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">--application-name</code> : CodeDeploy 애플리케이션 이름</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">--s3-lication</code> : 빌드파일을 업로드할 S3 위치</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">--source .</code> : 현재 폴더를 S3에 업로드</li>
+    </ul>
+  </li>
+  <li>Start Deploy with CodeDeploy
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">--application-name</code> : CodeDeploy 애플리케이션 이름</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">--application-group-name</code> : 애플리케이션 내의 배포그룹 이름</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">--s3-location</code> : 가져올 배포파일 위치 및 정보</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="2-deploy-productionyml">(2) deploy-production.yml</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">master</code> 브랜치에 push/merge가 이루어지면 운영서버에서 CI가 동작한다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">deploy-production</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="nv">master</span> <span class="pi">]</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">defaults</span><span class="pi">:</span>
+      <span class="na">run</span><span class="pi">:</span>
+        <span class="na">shell</span><span class="pi">:</span> <span class="s">bash</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout Github-Actions</span>     <span class="c1"># Github Actions 사용을 위한 체크아웃</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install Java </span><span class="m">11</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-java@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">java-version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">11'</span>
+      
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Permission for Gradle</span> 
+        <span class="na">run</span><span class="pi">:</span> <span class="s">chmod +x ./gradlew</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Start Build with Gradle</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">./gradlew clean build</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Setting for AWS</span>         <span class="c1"># AWS 권한셋팅</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">aws-actions/configure-aws-credentials@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">aws-access-key-id</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-secret-access-key</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-region</span><span class="pi">:</span> <span class="s">ap-northeast-2</span>
+      
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload to S3</span>             <span class="c1"># 빌드파일 S3 업로드</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">aws deploy push --application-name myapp --description "myapp" --s3-location s3://myapp/deploy/myapp-production.zip --source .</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Start Deploy with CodeDeploy</span>      <span class="c1"># CodeDeploy 실행</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">aws deploy create-deployment --application-name myapp --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name myapp-production --s3-location bucket=myapp,bundleType=zip,key=deploy/myapp-production.zip</span>
+</code></pre></div></div>
+
+<h3 id="6-codedeploy-cd">6. CodeDeploy (CD)</h3>
+<h4 id="1-appspecyml">(1) appspec.yml</h4>
+<ul>
+  <li>CodeDeploy는 S3에 업로드된 빌드파일을 EC2 인스턴스로 가져온 후 <code class="language-plaintext highlighter-rouge">appspec.yml</code>을 실행한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">appspec.yml</code>은 <code class="language-plaintext highlighter-rouge">deploy.sh</code>를 훅으로 실행한다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="m">0.0</span>
+<span class="na">os</span><span class="pi">:</span> <span class="s">linux</span>
+
+<span class="na">files</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">source</span><span class="pi">:</span> <span class="s">/</span>
+    <span class="na">destination</span><span class="pi">:</span> <span class="s">/usr/local/myapp</span>
+    <span class="na">overwrite</span><span class="pi">:</span> <span class="s">yes</span>
+<span class="na">permissions</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">object</span><span class="pi">:</span> <span class="s">/usr/local/myapp</span>
+    <span class="na">owner</span><span class="pi">:</span> <span class="s">ec2-user</span>
+    <span class="na">group</span><span class="pi">:</span> <span class="s">ec2-user</span>
+    <span class="na">mode</span><span class="pi">:</span> <span class="m">755</span>
+<span class="na">hooks</span><span class="pi">:</span>
+  <span class="na">AfterInstall</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">location</span><span class="pi">:</span> <span class="s">deploy.sh</span>
+      <span class="na">timeout</span><span class="pi">:</span> <span class="m">60</span>
+      <span class="na">runas</span><span class="pi">:</span> <span class="s">ec2-user</span>
+</code></pre></div></div>
+
+<h4 id="2-deploysh">(2) deploy.sh</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">appspec.yml</code>에 의해 실행되는 배포 스크립트</li>
+  <li>실행중이던 이전 스프링 프로세스를 중단시키고 새로운 프로세스를 실행시킨다</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/env bash</span>
+
+<span class="nv">REPOSITORY</span><span class="o">=</span>/usr/local/myapp
+<span class="nb">cd</span> <span class="nv">$REPOSITORY</span>
+
+<span class="nv">APP_NAME</span><span class="o">=</span>myapp
+<span class="nv">JAR_NAME</span><span class="o">=</span><span class="si">$(</span><span class="nb">ls</span> <span class="nv">$REPOSITORY</span>/build/libs/ | <span class="nb">grep</span> <span class="s1">'.jar'</span> | <span class="nb">tail</span> <span class="nt">-n</span> 1<span class="si">)</span>
+<span class="nv">JAR_PATH</span><span class="o">=</span><span class="nv">$REPOSITORY</span>/build/libs/<span class="nv">$JAR_NAME</span>
+
+<span class="nv">CURRENT_PID</span><span class="o">=</span><span class="si">$(</span>pgrep <span class="nt">-f</span> <span class="nv">$APP_NAME</span><span class="si">)</span>
+
+<span class="nb">echo</span> <span class="s2">"&gt; Kill Previous Process"</span> <span class="o">&gt;&gt;</span> /usr/local/myapp/deploy.log
+
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$CURRENT_PID</span><span class="s2">"</span> <span class="o">]</span>
+<span class="k">then
+  </span><span class="nb">echo</span> <span class="s2">"&gt; No Process to Kill"</span> <span class="o">&gt;&gt;</span> /usr/local/myapp/deploy.log
+<span class="k">else
+  </span><span class="nb">echo</span> <span class="s2">"&gt; Kill </span><span class="nv">$CURRENT_PID</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> /usr/local/myapp/deploy.log
+  <span class="nb">kill</span> <span class="nt">-15</span> <span class="s2">"</span><span class="nv">$CURRENT_PID</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> /usr/local/myapp/deploy.log 2&gt;&amp;1
+  <span class="nb">sleep </span>5
+<span class="k">fi
+
+</span><span class="nb">echo</span> <span class="s2">"&gt; </span><span class="nv">$JAR_PATH</span><span class="s2"> Deploy"</span>
+<span class="nb">nohup </span>java <span class="nt">-jar</span> <span class="nv">$JAR_PATH</span> <span class="o">&gt;&gt;</span> /usr/local/myapp/nohup.log 2&gt;&amp;1 &amp;
+</code></pre></div></div>
+
+<h2 id="프론트엔드-리액트">프론트엔드 (리액트)</h2>
+<ul>
+  <li>스테이징서버 : EC2 (백엔드와 동일 서버)</li>
+  <li>운영서버 : S3</li>
+</ul>
+
+<h3 id="1-codedeploy-생성">1. CodeDeploy 생성</h3>
+<h4 id="1-애플리케이션-1">(1) 애플리케이션</h4>
+<p><img src="https://user-images.githubusercontent.com/48157259/161876130-f49fae92-4b69-405a-9b59-ca545fe85dab.png" alt="image"></p>
+
+<h4 id="2-배포그룹-1">(2) 배포그룹</h4>
+<ul>
+  <li>프론트엔드의 경우 운영서버는 S3 정적호스팅을 사용하기 때문에 EC2를 사용하는 스테이징서버를 위한 배포그룹만 생성하면 된다.</li>
+  <li>배포그룹이름 -&gt; 서비스역할 : <a href="#3-codedeploy%EC%9A%A9-role">CodeDeploy용 ROLE</a> 선택 -&gt; 배포유형 : 현재위치 -&gt; EC2인스턴스 -&gt; EC2 태그추가(Name) -&gt; AllAtOnce -&gt; 로드밸런스 활성화 해제
+<img src="https://user-images.githubusercontent.com/48157259/161876421-9768803e-e83f-4694-a7a6-8a8e85635314.png" alt="image">
+<img src="https://user-images.githubusercontent.com/48157259/161876458-0579b240-fd13-4cd2-bb36-dc5bbcbc24fb.png" alt="image">
+</li>
+</ul>
+
+<h3 id="2-github-actions-ci">2. Github Actions (CI)</h3>
+<h4 id="1-deploy-stagingyml-1">(1) deploy-staging.yml</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">develop</code>브랜치에 push/merge가 이루어지면 스테이징서버에서 CI가 동작한다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">deploy-staging</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="nv">develop</span> <span class="pi">]</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">defaults</span><span class="pi">:</span>
+      <span class="na">run</span><span class="pi">:</span>
+        <span class="na">shell</span><span class="pi">:</span> <span class="s">bash</span>
+
+    <span class="na">strategy</span><span class="pi">:</span>
+      <span class="na">matrix</span><span class="pi">:</span>
+        <span class="na">node-version</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">16.14.x</span><span class="pi">]</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout Github-Actions</span>     <span class="c1"># Github Actions 사용을 위한 체크아웃</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install node.js </span><span class="m">16</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">node-version</span><span class="pi">:</span> <span class="s">$</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install Dependencies</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm install</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Start Build with npm</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run bhild</span>
+        <span class="na">env</span><span class="pi">:</span>
+          <span class="na">CI</span><span class="pi">:</span> <span class="kc">false</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Setting for AWS</span>         <span class="c1"># AWS 권한셋팅</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">aws-actions/configure-aws-credentials@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">aws-access-key-id</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-secret-access-key</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-region</span><span class="pi">:</span> <span class="s">ap-northeast-2</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload to S3</span>             <span class="c1"># 빌드파일 S3 업로드</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">aws deploy push --application-name myappF --description "myappF Test" --s3-location s3://myapp/deploy/myappF-staging.zip --source .</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Start Deploy with CodeDeploy</span>      <span class="c1"># CodeDeploy 실행</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">aws deploy create-deployment --application-name myappF --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name myappF-staging --s3-location bucket=myapp,bundleType=zip,key=deploy/myappF-staging.zip</span>
+</code></pre></div></div>
+
+<h4 id="2-deploy-productionyml-1">(2) deploy-production.yml</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">master</code> 브랜치에 push/merge가 이루어지면 운영서버에서 CI가 동작한다</li>
+  <li>리액트 프로젝트의 <code class="language-plaintext highlighter-rouge">build</code>폴더를 S3 버킷에 업로드시켜 배포한다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">deploy-production</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="nv">master</span> <span class="pi">]</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">deploy</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">defaults</span><span class="pi">:</span>
+      <span class="na">run</span><span class="pi">:</span>
+        <span class="na">shell</span><span class="pi">:</span> <span class="s">bash</span>
+  
+    <span class="na">strategy</span><span class="pi">:</span>
+      <span class="na">matrix</span><span class="pi">:</span>
+        <span class="na">node-version</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">16.14.x</span><span class="pi">]</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout Github-Actions</span>     <span class="c1"># Github Actions 사용을 위한 체크아웃</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install node.js </span><span class="m">16</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">node-version</span><span class="pi">:</span> <span class="s">$</span>
+      
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install Dependencies</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm install</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Start Build with npm</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">npm run build</span>
+        <span class="na">env</span><span class="pi">:</span>
+          <span class="na">CI</span><span class="pi">:</span> <span class="kc">false</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Setting for AWS</span>         <span class="c1"># AWS 권한셋팅</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">aws-actions/configure-aws-credentials@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">aws-access-key-id</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-secret-access-key</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">aws-region</span><span class="pi">:</span> <span class="s">ap-northeast-2</span>
+      
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Upload to S3 for Deploy</span>             <span class="c1"># 빌드파일 S3 업로드</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">aws s3 cp --recursive --region ap-northeast-2 build s3://myapp.co.kr</span>
+</code></pre></div></div>
+<ul>
+  <li>Upload to S3 for Deploy
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">build s3://myapp.co.kr</code> : build 폴더를 s3버킷으로 복사</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">--recursive</code> : 선택폴더 이하 모든 폴더/파일</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="3-codedeploy-cd">3. CodeDeploy (CD)</h3>
+<h4 id="1-appspecyml-1">(1) appspec.yml</h4>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="m">0.0</span>
+<span class="na">os</span><span class="pi">:</span> <span class="s">linux</span>
+
+<span class="na">files</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">source</span><span class="pi">:</span> <span class="s">/</span>
+    <span class="na">destination</span><span class="pi">:</span> <span class="s">/usr/local/myappF</span>
+    <span class="na">overwrite</span><span class="pi">:</span> <span class="s">yes</span>
+<span class="na">permissions</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">object</span><span class="pi">:</span> <span class="s">/usr/local/myappF</span>
+    <span class="na">owner</span><span class="pi">:</span> <span class="s">ec2-user</span>
+    <span class="na">group</span><span class="pi">:</span> <span class="s">ec2-user</span>
+    <span class="na">mode</span><span class="pi">:</span> <span class="m">755</span>
+<span class="na">hooks</span><span class="pi">:</span>
+  <span class="na">AfterInstall</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">location</span><span class="pi">:</span> <span class="s">deploy.sh</span>
+      <span class="na">timeout</span><span class="pi">:</span> <span class="m">60</span>
+      <span class="na">runas</span><span class="pi">:</span> <span class="s">ec2-user</span>
+</code></pre></div></div>
+
+<h4 id="2-deploysh-1">(2) deploy.sh</h4>
+<ul>
+  <li>build폴더 복사 후 별도의 커맨드가 필요 없어 배포 날짜만 기록했다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env bash</span>
+
+<span class="s">echo "&gt; [$(date +%y-%m-%d/%H:%M)] Deploy React" &gt;&gt; /usr/local/debrains/deploy.log</span>
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/aws/2022/03/03/004-spring-s3.html" title="[S3] Spring에서 S3로 파일업로드 및 테스트">[S3] Spring에서 S3로 파일업로드 및 테스트...</a><a class="next" href="/os/2022/04/11/009-mount.html" title="외부 저장소 마운트(mount)">외부 저장소 마운트(mount)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/db/2023/09/29/003-plan.html" title="외부 저장소 마운트(mount)">SQL 쿼리 플랜, 튜닝</a></li>
+<li><a class="post-link" href="/python/2021/02/16/013-sqlalchemy.html" title="외부 저장소 마운트(mount)">[패키지] sqlalchemy</a></li>
+<li><a class="post-link" href="/oracle/2020/06/20/004-operator.html" title="외부 저장소 마운트(mount)">연산자</a></li>
+<li><a class="post-link" href="/spring/2023/04/29/050-spring-batch-error-handling.html" title="외부 저장소 마운트(mount)">[Batch] 반복 및 에러처리</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/aws/2022/04/04/005-code-deploy.html';
+      this.page.identifier = 'https://europani.github.io/aws/2022/04/04/005-code-deploy.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

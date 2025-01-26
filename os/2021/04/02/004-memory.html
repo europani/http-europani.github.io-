@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>주기억장치(Memory), 캐시메모리(Cache), 가상메모리 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="주기억장치(Memory), 캐시메모리(Cache), 가상메모리">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+<meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+<link rel="canonical" href="https://europani.github.io/os/2021/04/02/004-memory.html">
+<meta property="og:url" content="https://europani.github.io/os/2021/04/02/004-memory.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-04-02T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="주기억장치(Memory), 캐시메모리(Cache), 가상메모리">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-04-02T00:00:00+00:00","datePublished":"2021-04-02T00:00:00+00:00","description":"Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.","headline":"주기억장치(Memory), 캐시메모리(Cache), 가상메모리","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/os/2021/04/02/004-memory.html"},"url":"https://europani.github.io/os/2021/04/02/004-memory.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">주기억장치(Memory), 캐시메모리(Cache), 가상메모리</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-04-02T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-04-02
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 5 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#OS">#OS</a><a class="post-tag" href="/tags.html#CS">#CS</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p><img src="https://user-images.githubusercontent.com/48157259/143364687-2a78865d-22ff-4fb1-8d35-35569dad48cb.png" alt="image"></p>
+
+<h2 id="주기억장치memory">주기억장치(Memory)</h2>
+<ul>
+  <li>프로세스가 실행되기 위해서는 프로그램이 메모리에 올라와야 한다</li>
+  <li>프로그램을 보조기억장치에서 주기억장치로 적재시키면 그 프로그램은 실행되어 프로세스가 된다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">OS가 사용하는 커널영역(낮은주소사용)</code>과 <code class="language-plaintext highlighter-rouge">USER가 사용하는 사용자영역(높은주소사용)</code>으로 구분</li>
+</ul>
+
+<h3 id="주기억장치-관리-전략">주기억장치 관리 전략</h3>
+<h4 id="1-반입fetch-전략">1. 반입(Fetch) 전략</h4>
+<p>: 보조기억장치에 보관중인 데이터를 <strong><u>언제</u></strong> 주기억장치에 적재할지 결정<br>
+    (1) 요구 반입 : 실행중인 프로그램이 특정 데이터의 참조를 요구할 때 적재<br>
+    (2) 예상 반입 : 실행중인 프로그램에 의해 참조된 특정 데이터를 미리 예상하여 적재</p>
+
+<h4 id="2-배치placement-전략">2. 배치(Placement) 전략</h4>
+<p>: 새로 반입된 데이터를 주기억장치의 <strong><u>어디에</u></strong> 적재할지 결정<br>
+    (1) 최초 적합(First Fit) : 배치 가능한 크기의 빈 영역중 <strong>첫번째</strong> 분할 영역에 배치<br>
+    (2) 최적 적합(Best Fit) : 배치 가능한 크기의 빈 영역중 단편화가 <strong>가장 적은</strong> 분할 영역에 배치<br>
+    (3) 최악 적합(Worst Fit) : 배치 가능한 크기의 빈 영역중 단편화가 <strong>가장 많은</strong> 분할 영역에 배치</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; 내부단편화 : 배치 후 남은 공간  
+&gt; 외부단편화 : 배치를 못해 비어지게 된 공간
+</code></pre></div></div>
+
+<h4 id="3-교체replacement-전략">3. 교체(Replacement) 전략</h4>
+<p>: 주기억장치의 모든 영역이 사용중일 때 어느 영역을 교체할지 결정<br>
+ex) FIFO, OPT, LRU, LFU, NUR, SCR 등 <a href="https://europani.github.io/os/2021/04/02/005-page-replacement.html">(링크)</a></p>
+
+<h3 id="주기억장치-할당-기법">주기억장치 할당 기법</h3>
+<ul>
+  <li>주기억장치에 프로그램을 어떻게 할당할 지 결정하는 기법</li>
+</ul>
+
+<h4 id="1-연속-할당-기법--프로그램-전체를-주기억장치에-적재">1. 연속 할당 기법 : 프로그램 전체를 주기억장치에 적재</h4>
+
+<p>(1) 단일 분할 할당 기법</p>
+<ul>
+  <li>사용자영역에 오직 한명의 사용자만 사용가능</li>
+  <li>프로세스는 사용자영역에 올라가는데 <strong>오직 1개의 프로그램만</strong> 올라갈 수 있다</li>
+  <li>초기의 운영체제에서 많이 사용됨</li>
+</ul>
+
+<p>(2) 다중 분할 할당 기법 : 고정 분할(정적 할당), 가변 분할(동적 할당)</p>
+<ul>
+  <li>고정 분할 : 메모리를 고정된 크기로 분할</li>
+  <li>
+    <p>가변 분할 : 메모리를 필요한 크기만큼 분할</p>
+  </li>
+  <li>오버레이 (Overlay) : 보조기억장치의 한 프로그램을 조각 분할 후 필요한 조각을 차례로 주기억장재 적재, 필요시 덮어씌움</li>
+  <li>스와핑 (Swapping) : 한 프로그램 전체를 주기억장치에 적재, 필요시 다른프로그램으로 교체
+    <ul>
+      <li>Swap out : 메모리에 적재되었던 프로그램이 교체되어 디스크로 쫒겨나는 것</li>
+      <li>Swap in : 프로그램이 메모리에 적재되는 것</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="2-분산-할당-기법--프로그램을-조각으로-나누어-주기억장치에-분산-적재">2. 분산 할당 기법 : 프로그램을 조각으로 나누어 주기억장치에 분산 적재</h4>
+<ul>
+  <li>
+<strong>가상 메모리</strong>는 해당 기법을 사용힌다</li>
+  <li>여러 프로세스의 조각들이 주기억장치에 분산되어 섞여 배치되어도 맵핑테이블이 있어서 각 프로세스는 자신의 조각을 찾을 수 있다</li>
+</ul>
+
+<p>(1) 페이징 기법 : 프로그램과 주기억장치의 영역을 <span style="color:red">동일한 크기</span>로 나눠 주기억장치에 적재하는 기법</p>
+<ul>
+  <li>내부 단편화 발생</li>
+  <li>동일한 크기로 나뉘어진 프로세스 조각을 <code class="language-plaintext highlighter-rouge">페이지</code>라고 한다</li>
+  <li>페이지 크기에 따라 동일한 크기로 나뉘어진 주기억장치의 조각을 <code class="language-plaintext highlighter-rouge">프레임</code>이라고 한다
+<img src="https://user-images.githubusercontent.com/48157259/163570492-999fa3a3-0a5a-4efe-85f6-e39ac41fec7d.png" alt="image">
+</li>
+  <li>p : 페이징 번호</li>
+  <li>d : offset(시작위치에서 떨어져있는 주소)</li>
+</ul>
+
+<p>(2) 세그먼테이션 기법 : 프로그램을 가변의 논리적 크기로 나눠 주기억장치에 적재하는 기법</p>
+<ul>
+  <li>가변의 크기로 나누는 기준은 프로그램의 Code, Data, Stack 영역 등의 논리적 단위이다</li>
+  <li>외부 단편화 발생</li>
+  <li>가변의 논리적 크기로 나뉘어진 프로세스 조각을 <code class="language-plaintext highlighter-rouge">세그먼트</code>라고 한다</li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/163569936-e2677ef9-e584-4c70-90e3-ab5476d7e5c5.png" alt="image"></p>
+<ul>
+  <li>s : 세그먼트 번호</li>
+  <li>d : offset(시작위치에서 떨어져있는 주소)</li>
+  <li>base : 물리메모리에서 해당 세그먼트의 시작 주소</li>
+  <li>limit : 세그먼트 길이</li>
+</ul>
+
+<h2 id="가상메모리virtual-memory---논리-메모리">가상메모리(Virtual Memory) - 논리 메모리</h2>
+<ul>
+  <li>보조기억장치의 일부 공간을 주기억장치 처럼 사용하는 공간(논리 메모리)</li>
+  <li>프로그램 크기가 주기억장치보다 클 경우 실행이 불가능하게 되는데 이를 해결할 수 있다
+    <ol>
+      <li>주기억장치보다 실행하려는 프로그램 크기가 큰 경우</li>
+      <li>여러개의 프로그램을 동시에 실행할 때 여러개의 크기합이 주기억장치보다 큰 경우</li>
+    </ol>
+  </li>
+  <li><strong>프로세스를 여러 조각으로 나누어 필요한 부분만 주기억장치에 올리고 필요하지 않은 부분은 보조기억장치(가상메모리)에 놔둔다</strong></li>
+  <li>
+<code class="language-plaintext highlighter-rouge">요구 반입</code> 전략으로 주기억장치에 반입한다</li>
+</ul>
+
+<h3 id="논리주소-vs-물리주소">논리주소 vs 물리주소</h3>
+<ol>
+  <li>논리주소 : 프로세스마다 독립적으로 가지는 주소(각 프로세스마다 0번지부터 시작)
+    <ul>
+      <li>CPU가 참조하는 주소</li>
+    </ul>
+  </li>
+  <li>물리주소 : 실제 메모리의 주소</li>
+</ol>
+
+<h3 id="블록-맵핑-테이블">블록 맵핑 테이블</h3>
+<ul>
+  <li>각 블록(페이지/세그먼트)의 주소 변환을 위한 페이지의 위치 정보를 갖고 있는 테이블</li>
+  <li><strong>각 블록이 저장된 가상메모리의 가상주소(논리주소) → 주기억장치의 실제주소(물리주소) 변환</strong></li>
+  <li>주소변환 과정은 운영체제의 개입이 없으며 하드웨어가 처리한다.</li>
+  <li>
+<u>프로세스마다</u> 블록 맵핑 테이블을 생성한다</li>
+  <li>블록 맵핑 테이블은 OS에 의해 <code class="language-plaintext highlighter-rouge">주기억장치의 커널영역</code>에 위치한다
+    <ul>
+      <li>데이터 접근을 위해서는 2번의 메모리 접근이 발생(맵핑 테이블+실제 데이터)</li>
+      <li>속도 향상을 위해 TLB(Translation Look-aside Buffer) 캐시를 사용</li>
+      <li>TLB hit : TLB참조 / TLB miss : 맵핑테이블 참조</li>
+    </ul>
+  </li>
+  <li>Valid-Invalid bit : 해당 주소의 frame에 그 프로세스를 구성하는 유효한 내용이 있고 없음을 나타냄
+    <ul>
+      <li>invalid : 사용되지 않는 주소영역인 경우(6, 7프레임), 페이지가 물리메모리에 없는 경우</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="https://user-images.githubusercontent.com/48157259/162599193-be54708f-7ace-400e-9df7-3b6f8097b2f7.png" alt="image"></p>
+
+<ol>
+  <li>페이지 맵핑 테이블(페이지 테이블)
+    <ul>
+      <li>페이징 기법에서 주소 변환을 위해 사용하는 테이블</li>
+    </ul>
+  </li>
+  <li>세그먼트 맵핑 테이블(세그먼트 테이블)
+    <ul>
+      <li>세그먼테이션 기법에서 주소 변환을 위해 사용하는 테이블</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="캐시메모리cache">캐시메모리(Cache)</h2>
+<ul>
+  <li>주기억장치에 저장된 내용의 일부를 임시로 저장해두는 기억장치</li>
+  <li>CPU와 주기억장치 사이의 속도 차이로 인한 성능저하를 방지하기 위한 방법</li>
+  <li>속도가 주기억장치보다 빠르다</li>
+</ul>
+
+<ol>
+  <li>페이지 캐시 : 물리 메모리에 올라와 있는 페이지들</li>
+  <li>버퍼 캐시 : 사용자의 요청을 받은 파일을 운영체제가 파일시스템(디스크)에서 가져와 저장한 것</li>
+</ol>
+
+<h3 id="지역성">지역성</h3>
+<ul>
+  <li>캐시메모리를 효율적으로 사용하기 위해서는 자주 사용하는 데이터를 캐시메모리에 적재해야 한다</li>
+  <li>이를 위해 시간기준과 공간기준으로 자주 사용하는 데이터를 예측한다</li>
+</ul>
+
+<ol>
+  <li>시간지역성 : 최근에 접근한 데이터를 자주 사용하는 데이터로 예측</li>
+  <li>공간지역성 : 최근에 접근한 데이터의 인접 데이터들을 자주 사용하는 데이터로 예측</li>
+</ol>
+
+<h3 id="워킹셋">워킹셋</h3>
+<ul>
+  <li>프로세스가 일정 시간동안 원활하게 수행되기 위해 한꺼번에 메모리에 올라와 있어야 하는 페이지들의 집합</li>
+  <li>쓰래싱 방지가능</li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/os/2021/04/02/003-process-schedule.html" title="프로세스 스케줄링">프로세스 스케줄링</a><a class="next" href="/os/2021/04/02/005-page-replacement.html" title="페이지 교체 알고리즘">페이지 교체 알고리즘</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/spring/2020/10/16/016-xml-javaconfig-diff.html" title="페이지 교체 알고리즘">Xml과 Java Config</a></li>
+<li><a class="post-link" href="/spring/2022/02/16/040-api-error.html" title="페이지 교체 알고리즘">스프링 API 에러처리</a></li>
+<li><a class="post-link" href="/java/2020/05/27/008-API2.html" title="페이지 교체 알고리즘">기본API(Calendar)</a></li>
+<li><a class="post-link" href="/java/2020/05/15/004-overriding-overloading.html" title="페이지 교체 알고리즘">오버로딩 vs 오버라이딩</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/os/2021/04/02/004-memory.html';
+      this.page.identifier = 'https://europani.github.io/os/2021/04/02/004-memory.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

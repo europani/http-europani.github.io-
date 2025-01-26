@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>[JUnit] Junit 테스트 프레임워크 | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="[JUnit] Junit 테스트 프레임워크">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Junit5 : Junit Platform + Junit Jupiter + Junit Vintage 모듈로 구성 Junit Platform : 테스트를 싱핼해주는 런쳐와 TestEngine API 제공 Junit Jupiter : TestEngine API의 구현체로 Junit5의 새롭게 확장된 모델 제공 Junit Vintage : 하위 호환성을 위하여 Junit4, Junit3를 실행할 수 있는 모듈 제공">
+<meta property="og:description" content="Junit5 : Junit Platform + Junit Jupiter + Junit Vintage 모듈로 구성 Junit Platform : 테스트를 싱핼해주는 런쳐와 TestEngine API 제공 Junit Jupiter : TestEngine API의 구현체로 Junit5의 새롭게 확장된 모델 제공 Junit Vintage : 하위 호환성을 위하여 Junit4, Junit3를 실행할 수 있는 모듈 제공">
+<link rel="canonical" href="https://europani.github.io/spring/2020/10/04/015-JUnit.html">
+<meta property="og:url" content="https://europani.github.io/spring/2020/10/04/015-JUnit.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-10-04T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="[JUnit] Junit 테스트 프레임워크">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2020-10-04T00:00:00+00:00","datePublished":"2020-10-04T00:00:00+00:00","description":"Junit5 : Junit Platform + Junit Jupiter + Junit Vintage 모듈로 구성 Junit Platform : 테스트를 싱핼해주는 런쳐와 TestEngine API 제공 Junit Jupiter : TestEngine API의 구현체로 Junit5의 새롭게 확장된 모델 제공 Junit Vintage : 하위 호환성을 위하여 Junit4, Junit3를 실행할 수 있는 모듈 제공","headline":"[JUnit] Junit 테스트 프레임워크","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2020/10/04/015-JUnit.html"},"url":"https://europani.github.io/spring/2020/10/04/015-JUnit.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">[JUnit] Junit 테스트 프레임워크</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-10-04T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2020-10-04
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 6 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Spring">#Spring</a><a class="post-tag" href="/tags.html#Junit">#Junit</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>Junit5 : Junit Platform + Junit Jupiter + Junit Vintage 모듈로 구성</p>
+<ol>
+  <li>Junit Platform : 테스트를 싱핼해주는 런쳐와 TestEngine API 제공</li>
+  <li>Junit Jupiter : TestEngine API의 구현체로 <u>Junit5</u>의 새롭게 확장된 모델 제공</li>
+  <li>Junit Vintage : 하위 호환성을 위하여 <u>Junit4, Junit3</u>를 실행할 수 있는 모듈 제공</li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">spring-boot-starter-test</code>에 포함되어 있다.</p>
+
+<h3 id="어노테이션">어노테이션</h3>
+<h4 id="테스트">테스트</h4>
+<p>1. <code class="language-plaintext highlighter-rouge">@Test</code> : 단위테스트 메서드 명시</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Test</span>
+<span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>2. <code class="language-plaintext highlighter-rouge">@ParameterizedTest</code> : 여러 매개변수를 대입해가며 테스트 실행</p>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@ValueSource</code> : value를 매개변수 설정</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@EmptySource</code>, <code class="language-plaintext highlighter-rouge">@NullSource</code>, <code class="language-plaintext highlighter-rouge">@NullAndEmptySource</code> : empty값, null값을 매개변수로 설정</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">@CsvSource</code> : csv값을 매개변수로 설정</li>
+  <li>{displaName}, {index}, {arguments}, {0},{1},…(매개변후 번호)</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@DisplayName</span><span class="o">(</span><span class="s">"이름 출력 테스트"</span><span class="o">)</span>
+<span class="nd">@ParameterizedTest</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"{index} {displayName} this={0}"</span><span class="o">)</span>
+<span class="nd">@ValueSource</span><span class="o">(</span><span class="n">strings</span> <span class="o">=</span> <span class="o">{</span><span class="s">"europani"</span><span class="o">,</span> <span class="s">"greeze"</span><span class="o">})</span>
+<span class="kt">void</span> <span class="nf">nameTest</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>테스트 이름 : <code class="language-plaintext highlighter-rouge">1 이름 출력 테스트 this=europani</code>
+</li>
+  <li>println : <code class="language-plaintext highlighter-rouge">europani</code>
+</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@ParameterizedTest</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"{index} {displayName} this={0}"</span><span class="o">)</span>
+<span class="nd">@ValueSource</span><span class="o">(</span><span class="n">ints</span> <span class="o">=</span> <span class="o">{</span><span class="mi">10</span><span class="o">,</span> <span class="mi">20</span><span class="o">})</span>
+<span class="kt">void</span> <span class="nf">numTest</span><span class="o">(</span><span class="nc">Integer</span> <span class="n">num</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">num</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>3. <code class="language-plaintext highlighter-rouge">@RepeatedTest</code> : 반복적으로 테스트 실행</p>
+<ul>
+  <li>{displayName}, {currentRepetition}, {totalRepetitions} 를 사용하여 테스트 이름을 변경할 수 있다</li>
+  <li>RepetitionInfo 타입의 인자를 받을 수 있다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@DisplayName</span><span class="o">(</span><span class="s">"리핏 테스트"</span><span class="o">)</span>
+<span class="nd">@RepeatedTest</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="mi">3</span><span class="o">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"{displayName}, {currentRepetition}/{totalRepetitions}"</span><span class="o">)</span>
+<span class="kt">void</span> <span class="nf">test</span><span class="o">(</span><span class="nc">RepetitionInfo</span> <span class="n">info</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"test : "</span> <span class="o">+</span> <span class="n">info</span><span class="o">.</span><span class="na">getcurrentRepetitions</span><span class="o">()</span> <span class="o">+</span> <span class="s">"/"</span> <span class="o">+</span> <span class="n">info</span><span class="o">.</span><span class="na">getTotalRepetations</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>테스트 이름 : <code class="language-plaintext highlighter-rouge">리핏 테스트, 1/3</code>
+</li>
+  <li>println : <code class="language-plaintext highlighter-rouge">test : 1/3</code>
+</li>
+</ul>
+
+<p>4. <code class="language-plaintext highlighter-rouge">@Disabled</code> : 테스트 비활성화  <del>[4버전 : @Ignore]</del></p>
+
+<h4 id="라이프사이클">라이프사이클</h4>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@BeforeAll</code> -&gt; <code class="language-plaintext highlighter-rouge">@BeforeEach</code> -&gt; <code class="language-plaintext highlighter-rouge">@Test</code> -&gt; <code class="language-plaintext highlighter-rouge">@AfterEach</code> -&gt; <code class="language-plaintext highlighter-rouge">@AfterAll</code> 사이클 순서</li>
+</ul>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@BeforeAll</code> : 모든 테스트 전에 실행될 메서드 명시(테스트 클래스 수행시 1번만 실행)  <del>[4버전 : @BeforeClass]</del></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@AfterAll</code> : 모든 테스트 후에 실행될 메서드 명시(테스트 클래스 종료시 1번만 실행)  <del>[4버전 : @AfterClassx]</del></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@BeforeEach</code> : 각 단위테스트 전 마다 실행되는 메서드  <del>[4버전 : @Before]</del></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@AfterEach</code> : 각 단위테스트 후 마다 실행되는 메서드  <del>[4버전 : @After]</del></p>
+  </li>
+</ol>
+
+<h4 id="조건">조건</h4>
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@EnabledOnOs</code>, <code class="language-plaintext highlighter-rouge">@DisabledOnOs</code> : 특정 OS에서 테스트 활성화/비활성화</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@EnabledOnJre</code>, <code class="language-plaintext highlighter-rouge">@DisabledOnJre</code> : 특정 Java 버전에서 테스트 활성화/비활성화</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@EnabledIfEnvironmentVariable(name = "key", matches = "europani")</code> : 환경변수 <code class="language-plaintext highlighter-rouge">key</code>의 값이 <code class="language-plaintext highlighter-rouge">europani</code>일 때 실행</p>
+  </li>
+</ol>
+
+<h4 id="기타">기타</h4>
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@DisplayName</code> : 테스트 이름 지정</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@Tag</code> : 테스트 필터링을 위한 태그 선언</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@Timeout</code> : 실행시간 제한 (실행시간을 초과하면 테스트 실패처리)</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@Order</code> : 테스트 순서 지정</p>
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">TestMethodOrder</code>로 활성화
+        <ul>
+          <li>
+<code class="language-plaintext highlighter-rouge">MethodOrderer.OrderAnnotation.class</code> : <code class="language-plaintext highlighter-rouge">@Order</code>로 설정</li>
+          <li>
+<code class="language-plaintext highlighter-rouge">MethodOrderer.Alphanumeric.class</code> : 알파벳 순서</li>
+          <li>
+<code class="language-plaintext highlighter-rouge">MethodOrderer.Random</code> : 랜덤</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@TestMethodOrder</span><span class="o">(</span><span class="nc">MethodOrderer</span><span class="o">.</span><span class="na">OrderAnnotation</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">class</span> <span class="nc">appTest</span> <span class="o">{</span>
+
+    <span class="nd">@Order</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+    <span class="kt">void</span> <span class="nf">create_test</span><span class="o">()</span> <span class="o">{}</span>
+
+    <span class="nd">@Order</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
+    <span class="kt">void</span> <span class="nf">read_test</span><span class="o">()</span> <span class="o">{}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Test</span>
+<span class="nd">@Order</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+<span class="kt">void</span> <span class="nf">test_value</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+
+<span class="nd">@Test</span>
+<span class="nd">@Order</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
+<span class="kt">void</span> <span class="nf">test_empty</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="assert-메서드-orgjunitjupiterapiassertions">assert 메서드 (org.junit.jupiter.api.Assertions.*)</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">assert 메서드</th>
+      <th style="text-align: center">설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">assertArrayEquals(a, b)</td>
+      <td style="text-align: center">배열 a와 b가 일치하는지 확인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">assertEquals(a, b)</td>
+      <td style="text-align: center">객체 a와 b가 같은 값인지 확인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">assertSame(a, b)</td>
+      <td style="text-align: center">객체 a와 b가 같은 객체인지 확인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">assertTrue(a)</td>
+      <td style="text-align: center">조건 a가 참인지 확인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">assertNotNull(a)</td>
+      <td style="text-align: center">객체 a가 not Null인지 확인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">assertThrows(exception.class, 코드)</td>
+      <td style="text-align: center">해당 코드 실행시 예상한 exception가 발생하는지 확인</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">fail()</td>
+      <td style="text-align: center">테스트 실패처리</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="assertthat-관련-메서드-orgassertjcoreapiassertionsassertthat">assertThat 관련 메서드 (org.assertj.core.api.Assertions.assertThat)</h4>
+<p><a href="https://europani.github.io/spring/2021/11/04/028-AssertJ.html">AssertJ</a></p>
+
+<h4 id="spring-test-어노테이션">Spring-Test 어노테이션</h4>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@ExtendWith(SpringRunner.class)</code> : JUnit 테스트를 스프링 프레임워크와 통합 (테스트가 스프링 컨테이너에서 실행된다)  <del>[4버전 : @Runwith]</del></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@ContextConfiguration</code> : 테스트시 사용할 설정파일 지정</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">@SpringBootTest</code> : Spring Boot를 사용하여 테스트를 진행한다 (일반적으로 통합테스트에 사용)</p>
+    <ul>
+      <li>테스트에 필요한 거의 모든 의존성을 제공 - <code class="language-plaintext highlighter-rouge">@ExtendWith</code> 의존성 포함</li>
+      <li>
+        <p>classes 파라미터를 사용하여 테스트에 필요한 Bean을 등록하지 않으면 모든 Bean이 사용된다.</p>
+      </li>
+      <li>슬라이스 테스트 어노테이션
+        <ul>
+          <li>모든 빈을 등록하는 <code class="language-plaintext highlighter-rouge">@SpringBootTest</code>와는 달리 필요한 빈만 등록할 수 있게 해준다</li>
+          <li>
+<code class="language-plaintext highlighter-rouge">@DataJpaTest</code>, <code class="language-plaintext highlighter-rouge">@WebMvcTest</code>, <code class="language-plaintext highlighter-rouge">@JsonTest</code>, <code class="language-plaintext highlighter-rouge">@WebFluxTest</code> 등</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="예외처리-테스트assertthrows">예외처리 테스트(assertThrows)</h3>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">assertThrows(Class&lt;T&gt; expectedType, Executable executable)</code> : 두번째 인자의 코드를 실행할 때 첫번째 인자의 익셉션이 발생하는지 테스트</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@SpringBootTest</span>
+<span class="kd">class</span> <span class="nc">ExceptionTest</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">MemberService</span> <span class="n">memberService</span><span class="o">;</span>
+
+    <span class="nd">@Test</span>
+    <span class="nd">@DisplayName</span><span class="o">(</span><span class="s">"중복회원 가입 실패"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nf">join</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// 1. Given</span>
+        <span class="nc">Member</span> <span class="n">member1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Member</span><span class="o">();</span>
+        <span class="n">member1</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">"spring"</span><span class="o">);</span>
+        
+        <span class="nc">Member</span> <span class="n">member2</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Member</span><span class="o">();</span>
+        <span class="n">member2</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="s">"spring"</span><span class="o">);</span>
+
+        <span class="c1">// 2. When</span>
+        <span class="n">memberService</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">member1</span><span class="o">);</span>
+        <span class="c1">// memberService.join()을 실행했을 때 IllegalStateException이 발생하는지</span>
+        <span class="nc">IllegalStateException</span> <span class="n">exception</span> <span class="o">=</span> <span class="n">assertThrows</span><span class="o">(</span><span class="nc">IllegalStateException</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+            <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">memberService</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">member2</span><span class="o">));</span>
+
+        <span class="c1">// 3. Then</span>
+        <span class="n">assertEquals</span><span class="o">(</span><span class="s">"이미 존재하는 회원입니다."</span><span class="o">,</span> <span class="n">exception</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2020/09/28/014-xml-collection-props.html" title="Spring xml 컬렉션 설정(List, Set, Map), Properties">Spring xml 컬렉션 설정(List, Set, Map),...</a><a class="next" href="/spring/2020/10/16/016-xml-javaconfig-diff.html" title="Xml과 Java Config">Xml과 Java Config</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/git/2020/03/27/002-local-command.html" title="Xml과 Java Config">Git 명령어(Local)</a></li>
+<li><a class="post-link" href="/javascript/2020/07/22/026-es5-array.html" title="Xml과 Java Config">ECMAScript5 (ES5) - Array 메서드</a></li>
+<li><a class="post-link" href="/ds/2020/11/21/006-hash-table.html" title="Xml과 Java Config">해시 테이블</a></li>
+<li><a class="post-link" href="/react.js/2021/07/13/005-react-install.html" title="Xml과 Java Config">리액트 설치</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2020/10/04/015-JUnit.html';
+      this.page.identifier = 'https://europani.github.io/spring/2020/10/04/015-JUnit.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

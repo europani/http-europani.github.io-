@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Spring REST Docs | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="Spring REST Docs">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="REST API 문서를 자동화 하는 도구에는 Spring REST Docs와 Swagger 등이 있다. Spring REST Docs의 장점 : 테스트가 성공해야 문서가 작성되며 실제 코드에는 추가되는 코드가 없다 AsciiDoc의 형태로 문서가 작성된다">
+<meta property="og:description" content="REST API 문서를 자동화 하는 도구에는 Spring REST Docs와 Swagger 등이 있다. Spring REST Docs의 장점 : 테스트가 성공해야 문서가 작성되며 실제 코드에는 추가되는 코드가 없다 AsciiDoc의 형태로 문서가 작성된다">
+<link rel="canonical" href="https://europani.github.io/spring/2022/01/28/038-spring-REST-docs.html">
+<meta property="og:url" content="https://europani.github.io/spring/2022/01/28/038-spring-REST-docs.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-01-28T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Spring REST Docs">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2022-01-28T00:00:00+00:00","datePublished":"2022-01-28T00:00:00+00:00","description":"REST API 문서를 자동화 하는 도구에는 Spring REST Docs와 Swagger 등이 있다. Spring REST Docs의 장점 : 테스트가 성공해야 문서가 작성되며 실제 코드에는 추가되는 코드가 없다 AsciiDoc의 형태로 문서가 작성된다","headline":"Spring REST Docs","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/spring/2022/01/28/038-spring-REST-docs.html"},"url":"https://europani.github.io/spring/2022/01/28/038-spring-REST-docs.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Spring REST Docs</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-01-28T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-01-28
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Spring">#Spring</a><a class="post-tag" href="/tags.html#Rest%20Docs">#Rest Docs</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>REST API 문서를 자동화 하는 도구에는 <code class="language-plaintext highlighter-rouge">Spring REST Docs</code>와 <code class="language-plaintext highlighter-rouge">Swagger</code> 등이 있다.</p>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">Spring REST Docs</code>의 장점 : 테스트가 성공해야 문서가 작성되며 실제 코드에는 추가되는 코드가 없다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">AsciiDoc</code>의 형태로 문서가 작성된다</li>
+</ul>
+
+<h3 id="buildgradle">build.gradle</h3>
+
+<div class="language-gradle highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plugins</span> <span class="o">{</span> 
+	<span class="n">id</span> <span class="s2">"org.asciidoctor.convert"</span> <span class="n">version</span> <span class="s2">"1.5.9.2"</span>
+<span class="o">}</span>
+
+<span class="k">dependencies</span> <span class="o">{</span>
+	<span class="n">asciidoctor</span> <span class="s1">'org.springframework.restdocs:spring-restdocs-asciidoctor'</span>
+	<span class="n">testImplementation</span> <span class="s1">'org.springframework.restdocs:spring-restdocs-mockmvc'</span>
+<span class="o">}</span>
+
+<span class="n">ext</span> <span class="o">{</span>           <span class="c1">// 전역변수 설정</span>
+	<span class="n">snippetsDir</span> <span class="o">=</span> <span class="n">file</span><span class="o">(</span><span class="s1">'build/generated-snippets'</span><span class="o">)</span>    <span class="c1">// 해당 폴더에 스니펫 문서생성</span>
+<span class="o">}</span>
+
+<span class="n">test</span> <span class="o">{</span>
+	<span class="n">outputs</span><span class="o">.</span><span class="na">dir</span> <span class="n">snippetsDir</span>
+<span class="o">}</span>
+
+<span class="n">asciidoctor</span> <span class="o">{</span>
+	<span class="n">dependsOn</span> <span class="n">test</span>
+	<span class="n">inputs</span><span class="o">.</span><span class="na">dir</span> <span class="n">snippetsDir</span>
+<span class="o">}</span>
+
+<span class="n">bootJar</span> <span class="o">{</span>   <span class="c1">// JAR파일에 문서를 같이 빌드하기 위한 설정</span>
+	<span class="n">dependsOn</span> <span class="n">asciidoctor</span>
+	<span class="n">copy</span> <span class="o">{</span>
+		<span class="n">from</span> <span class="s2">"${asciidoctor.outputDir}"</span>         <span class="c1">// build/docs/asciidoc</span>
+		<span class="n">into</span> <span class="s1">'src/main/resources/static/docs'</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">test</code> → <code class="language-plaintext highlighter-rouge">asciidoctor</code> → <code class="language-plaintext highlighter-rouge">bootJar</code> 순으로 실행</li>
+</ul>
+
+<h3 id="configuration">Configuration</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">test.java.project.common.RestDocsConfig</code>
+    <ul>
+      <li>출력 형태가 가독성 좋게 출력되도록 설정</li>
+      <li>Test 클래스에서 <code class="language-plaintext highlighter-rouge">@Import</code>해서 설정을 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@TestConfiguration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RestDocsConfig</span> <span class="o">{</span>
+
+    <span class="nd">@Bean</span>
+    <span class="kd">public</span> <span class="nc">RestDocsMockMvcConfigurationCustomizer</span> <span class="nf">restDocsMockMvcConfigurationCustomizer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">configurer</span> <span class="o">-&gt;</span> <span class="n">configurer</span><span class="o">.</span><span class="na">operationPreprocessors</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">withRequestDefaults</span><span class="o">(</span><span class="n">prettyPrint</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">withResponseDefaults</span><span class="o">(</span><span class="n">prettyPrint</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="entity-controller">Entity, Controller</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Entity</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Event</span> <span class="o">{</span>
+    <span class="nd">@Id</span>
+    <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="nc">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">title</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">content</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/api/event"</span><span class="o">)</span>
+<span class="nd">@RequiredArgsConstructor</span>
+<span class="nd">@RestController</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">EventController</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="nc">EventService</span> <span class="n">eventService</span><span class="o">;</span>
+
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">"/{id}"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">ResponseEntity</span> <span class="nf">getEvent</span><span class="o">(</span><span class="nd">@PathVariable</span> <span class="nc">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Event</span> <span class="n">event</span> <span class="o">=</span> <span class="n">eventService</span><span class="o">.</span><span class="na">getEvent</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+        <span class="nc">EntityModel</span><span class="o">&lt;</span><span class="nc">Event</span><span class="o">&gt;</span> <span class="n">resource</span> <span class="o">=</span> <span class="nc">EntityModel</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+        <span class="n">resource</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">linkTo</span><span class="o">(</span><span class="n">methodOn</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">getClass</span><span class="o">()).</span><span class="na">getEvent</span><span class="o">(</span><span class="n">id</span><span class="o">)).</span><span class="na">withSelfRel</span><span class="o">());</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@GetMapping</span>
+    <span class="kd">public</span> <span class="nc">ResponseEntity</span> <span class="nf">getEventList</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">EntityModel</span><span class="o">&lt;</span><span class="nc">Event</span><span class="o">&gt;&gt;</span> <span class="n">eventList</span> <span class="o">=</span> <span class="n">eventService</span><span class="o">.</span><span class="na">getEventList</span><span class="o">()</span>
+                 <span class="o">.</span><span class="na">stream</span><span class="o">().</span><span class="na">map</span><span class="o">(</span><span class="n">event</span> <span class="o">-&gt;</span> <span class="n">eventConverter</span><span class="o">.</span><span class="na">toModel</span><span class="o">(</span><span class="n">event</span><span class="o">)).</span><span class="na">collect</span><span class="o">(</span><span class="nc">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+
+        <span class="nc">CollectionModel</span><span class="o">&lt;</span><span class="nc">EntityModel</span><span class="o">&lt;</span><span class="nc">Event</span><span class="o">&gt;&gt;</span> <span class="n">resource</span> <span class="o">=</span> <span class="nc">CollectionModel</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">eventList</span><span class="o">,</span>
+            <span class="n">linkTo</span><span class="o">(</span><span class="n">methodOn</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">getClass</span><span class="o">()).</span><span class="na">getEventList</span><span class="o">()).</span><span class="na">withSelfRel</span><span class="o">());</span>
+
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">ok</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="작동순서">작동순서</h2>
+
+<ol>
+  <li>Controller 테스트를 실행하고 테스트에 성공하면 스니펫이 만들어진다. (<code class="language-plaintext highlighter-rouge">build/generated-snippets</code> 경로)</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">src/docs/asciidoc/index.adoc</code> 베이스 아스키닥스 파일에서 만들어진 스니펫을 조합하여 문서를 작성한다.</li>
+  <li>문서 작성을 완료하고 build하면 베이스 아스키닥스 파일을 기반으로 <code class="language-plaintext highlighter-rouge">build/docs/asciidoc/index.html</code>이 만들어 진다.</li>
+  <li>추가 설정을 하면 build폴더에 생성된 <code class="language-plaintext highlighter-rouge">index.html</code>을 프로젝트의 static 폴더에도 복사 할 수 있다.  <code class="language-plaintext highlighter-rouge">src/main/resources/static/docs</code>
+    <ul>
+      <li>이렇게 복사하면 서버에서 <code class="language-plaintext highlighter-rouge">http://localhost:8080/docs/index.html</code>를 통해 문서를 읽을 수 있다</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="1-test를-통해-스니펫-생성">1. Test를 통해 스니펫 생성</h3>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">@AutoConfigureRestDocs</code> : Rest Docs를 사용하기 위한 어노테이션</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">andDo(document(스니펫명, 스니펫조각...)</code> : 스니펫명(identifier)을 지정하고 해당 스니펫에 속할 스니펫 조각들을 생성</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@AutoConfigureRestDocs</span><span class="o">(</span><span class="n">uriScheme</span> <span class="o">=</span> <span class="s">"https"</span><span class="o">,</span> <span class="n">uriHost</span> <span class="o">=</span> <span class="s">"docs.api.com"</span><span class="o">)</span>
+<span class="nd">@WebMvcTest</span><span class="o">(</span><span class="nc">EventController</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@Import</span><span class="o">(</span><span class="nc">RestDocsConfig</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">EventControllerTest</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="nc">MockMvc</span> <span class="n">mvc</span><span class="o">;</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="nc">ObjectMapper</span> <span class="n">objectMapper</span><span class="o">;</span>
+
+    <span class="nd">@MockBean</span>
+    <span class="kd">private</span> <span class="nc">EventService</span> <span class="n">eventService</span><span class="o">;</span>
+
+    <span class="nd">@Test</span>
+    <span class="nd">@DisplayName</span><span class="o">(</span><span class="s">"이벤트 1건 조회"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getEvent</span><span class="o">()</span> <span class="k">throw</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// given</span>
+        <span class="nc">Event</span> <span class="n">event</span> <span class="o">=</span> <span class="nc">Event</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">id</span><span class="o">(</span><span class="mi">1L</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">title</span><span class="o">(</span><span class="s">"test"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">content</span><span class="o">(</span><span class="s">"test content"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="n">given</span><span class="o">(</span><span class="n">eventService</span><span class="o">.</span><span class="na">getEvent</span><span class="o">(</span><span class="n">any</span><span class="o">())).</span><span class="na">willReturn</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+
+        <span class="c1">// when &amp; then</span>
+        <span class="n">mvc</span><span class="o">.</span><span class="na">perform</span><span class="o">(</span><span class="n">get</span><span class="o">(</span><span class="s">"/api/event/{id}"</span><span class="o">,</span> <span class="n">event</span><span class="o">.</span><span class="na">getId</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">contentType</span><span class="o">(</span><span class="nc">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="nc">MediaTypes</span><span class="o">.</span><span class="na">HAL_JSON</span><span class="o">))</span>
+                <span class="c1">// .content(objectMapper.writeValueAsString(id)))       // Request Body 필요없음</span>
+            <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">status</span><span class="o">().</span><span class="na">isOk</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">header</span><span class="o">().</span><span class="na">string</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">CONTENT_TYPE</span><span class="o">,</span> <span class="nc">MediaTypes</span><span class="o">.</span><span class="na">HAL_JSON_VALUE</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">jsonPath</span><span class="o">(</span><span class="s">"$.id"</span><span class="o">).</span><span class="na">value</span><span class="o">(</span><span class="mi">1L</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">jsonPath</span><span class="o">(</span><span class="s">"$.title"</span><span class="o">).</span><span class="na">exists</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">jsonPath</span><span class="o">(</span><span class="s">"_links.self"</span><span class="o">).</span><span class="na">exists</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">andDo</span><span class="o">(</span><span class="n">print</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">andDo</span><span class="o">(</span><span class="n">document</span><span class="o">(</span><span class="s">"get-event"</span><span class="o">,</span>
+                    <span class="n">links</span><span class="o">(</span>
+                        <span class="n">linkWithRel</span><span class="o">(</span><span class="s">"self"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"link to self"</span><span class="o">)</span>
+                    <span class="o">),</span>
+                    <span class="n">requestHeaders</span><span class="o">(</span>
+                        <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">ACCEPT</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"accept header"</span><span class="o">),</span>
+                        <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">CONTENT_TYPE</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"content type"</span><span class="o">)</span>
+                    <span class="o">),</span>
+                    <span class="n">responseHeaders</span><span class="o">(</span>
+                        <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">CONTENT_TYPE</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"content type"</span><span class="o">)</span>
+                    <span class="o">),</span>
+                    <span class="n">responseFields</span><span class="o">(</span>
+                        <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"id"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"user id number"</span><span class="o">),</span>
+                        <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"title"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event title"</span><span class="o">),</span>
+                        <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"content"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event content"</span><span class="o">),</span>
+                        <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"_links.self.href"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"link to self"</span><span class="o">))</span>
+                <span class="o">));</span>  
+        <span class="n">verify</span><span class="o">(</span><span class="n">eventService</span><span class="o">).</span><span class="na">getEvent</span><span class="o">(</span><span class="n">any</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="nd">@DisplayName</span><span class="o">(</span><span class="s">"이벤트 List 조회"</span><span class="o">)</span>
+    <span class="kt">void</span> <span class="nf">getEventList</span><span class="o">()</span> <span class="kd">throws</span> <span class="nc">Exception</span> <span class="o">{</span>
+        <span class="c1">// given</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">EventDTO</span><span class="o">&gt;</span> <span class="n">eventList</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="kt">long</span> <span class="n">i</span><span class="o">=</span><span class="mi">1L</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3L</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+            <span class="nc">EventDTO</span> <span class="n">event</span> <span class="o">=</span> <span class="nc">EventDTO</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+                    <span class="o">.</span><span class="na">id</span><span class="o">(</span><span class="n">i</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">title</span><span class="o">(</span><span class="s">"event title "</span> <span class="o">+</span> <span class="n">i</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">content</span><span class="o">(</span><span class="s">"event content "</span> <span class="o">+</span> <span class="n">i</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+            <span class="n">eventList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="n">given</span><span class="o">(</span><span class="n">eventService</span><span class="o">.</span><span class="na">getEventList</span><span class="o">()).</span><span class="na">willReturn</span><span class="o">(</span><span class="n">eventList</span><span class="o">);</span>
+
+        <span class="c1">// when &amp; then</span>
+        <span class="n">mvc</span><span class="o">.</span><span class="na">perform</span><span class="o">(</span><span class="n">get</span><span class="o">(</span><span class="s">"/api/event"</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">contentType</span><span class="o">(</span><span class="nc">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="nc">MediaTypes</span><span class="o">.</span><span class="na">HAL_JSON</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">status</span><span class="o">().</span><span class="na">isOk</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">header</span><span class="o">().</span><span class="na">string</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">CONTENT_TYPE</span><span class="o">,</span> <span class="nc">MediaTypes</span><span class="o">.</span><span class="na">HAL_JSON_VALUE</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">jsonPath</span><span class="o">(</span><span class="s">"$..title"</span><span class="o">).</span><span class="na">exists</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">jsonPath</span><span class="o">(</span><span class="s">"$..content"</span><span class="o">).</span><span class="na">exists</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">andExpect</span><span class="o">(</span><span class="n">jsonPath</span><span class="o">(</span><span class="s">"_links.self"</span><span class="o">).</span><span class="na">exists</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">andDo</span><span class="o">(</span><span class="n">print</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">andDo</span><span class="o">(</span><span class="n">document</span><span class="o">(</span><span class="s">"get-eventList"</span><span class="o">,</span>
+                        <span class="n">links</span><span class="o">(</span>
+                            <span class="n">linkWithRel</span><span class="o">(</span><span class="s">"self"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"link to self"</span><span class="o">)</span>
+                        <span class="o">),</span>
+                        <span class="n">requestHeaders</span><span class="o">(</span>
+                            <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">ACCEPT</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"accept header"</span><span class="o">),</span>
+                            <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">CONTENT_TYPE</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"content type"</span><span class="o">)</span>
+                        <span class="o">),</span>
+                        <span class="n">responseHeaders</span><span class="o">(</span>
+                            <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">CONTENT_TYPE</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"content type"</span><span class="o">)</span>
+                        <span class="o">),</span>
+                        <span class="n">responseFields</span><span class="o">(</span>
+                            <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"_embedded.eventList[].id"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event id number"</span><span class="o">),</span>
+                            <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"_embedded.eventList[].title"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event title"</span><span class="o">),</span>
+                            <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"_embedded.eventList[].content"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event content"</span><span class="o">),</span>
+                            <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"_embedded.eventList[]._links.self.href"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"link to self"</span><span class="o">),</span>
+                            <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"_links.self.href"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"link to self"</span><span class="o">)</span>
+                        <span class="o">)</span>
+                <span class="o">));</span>
+        <span class="n">verify</span><span class="o">(</span><span class="n">eventService</span><span class="o">).</span><span class="na">getEventList</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="스니펫-조각">스니펫 조각</h4>
+<p>1. links - 하이퍼미디어</p>
+<ul>
+  <li>Hateoa를 사용할 때 하이퍼미디어와 관련된 스니펫 조각을 생성</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">linkWithRel(링크명).description(설명)</code> : 해당 링크의 이름과 설명을 설정</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">links</span><span class="o">(</span>
+    <span class="n">linkWithRel</span><span class="o">(</span><span class="s">"self"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"link to self"</span><span class="o">)</span>
+<span class="o">)</span>
+</code></pre></div></div>
+
+<p>2. RequestHeaders, ResponseHeaders - Http 헤더</p>
+<ul>
+  <li>Http 헤더의 스니펫 조각을 생성</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">headerWithName(헤더명).description(설명)</code> : 해당 헤더의 이름과 설명을 설정</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">requestHeaders</span><span class="o">(</span>
+    <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">ACCEPT</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"accept header"</span><span class="o">),</span>
+    <span class="n">headerWithName</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="na">CONTENT_TYPE</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"content type"</span><span class="o">)</span>
+<span class="o">),</span>
+</code></pre></div></div>
+
+<p>3. RequestFields, ResponseFields - Http 바디 필드</p>
+<ul>
+  <li>Http 바디 필드의 스니펫 조각을 생성</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">fieldWithPath(필드명).description(설명)</code> : 해당 필드의 이름과 설명을 설정</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">responseFields</span><span class="o">(</span>
+    <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"id"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event id number"</span><span class="o">),</span>
+    <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"title"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event title"</span><span class="o">),</span>
+    <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"content"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"event content"</span><span class="o">),</span>
+    <span class="n">fieldWithPath</span><span class="o">(</span><span class="s">"_links.self.href"</span><span class="o">).</span><span class="na">description</span><span class="o">(</span><span class="s">"link to self"</span><span class="o">))</span>
+<span class="o">),</span>
+</code></pre></div></div>
+
+<h3 id="2-indexadoc-작성">2. index.adoc 작성</h3>
+
+<h3 id="3-빌드-작성-및-indexhtml-복사">3. 빌드 작성 및 index.html 복사</h3>
+<ul>
+  <li>gradle 기준 build나 bootJar를 하면 <code class="language-plaintext highlighter-rouge">index.adoc(1)</code>를 기반으로 <code class="language-plaintext highlighter-rouge">index.html(2)</code>이 생성된다</li>
+  <li>또한, 추가적인 설정을 통해(build.gradle 참조) 생성된 index.html을 프로젝트 내 static 폴더로 복사(3)를 하면 서버에서도 링크를 통해 확인이 가능하다
+<img src="https://user-images.githubusercontent.com/48157259/153324934-6bdc6448-85a1-45eb-a821-bed6de619c2d.png" alt="image">
+<img src="https://user-images.githubusercontent.com/48157259/153325160-f168882e-1d14-4e1b-b01a-9517d4c1f16d.png" alt="image">
+</li>
+</ul>
+
+<p><a href="https://docs.spring.io/spring-restdocs/docs/current/reference/html5/">Spring Rest Docs 공식문헌</a></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/spring/2022/01/28/037-spring-HATEOAS.html" title="Spring HATEOAS">Spring HATEOAS</a><a class="next" href="/git/2022/02/14/013-stash.html" title="git stash 임시저장">git stash 임시저장</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/ds/2020/07/04/001-linear.html" title="git stash 임시저장">선형 구조 - 배열, 연속 리스트, 연결 리스트</a></li>
+<li><a class="post-link" href="/django/2021/01/15/014-ajax.html" title="git stash 임시저장">django ajax 처리</a></li>
+<li><a class="post-link" href="/css/2020/07/14/008-transition-props.html" title="git stash 임시저장">CSS 전환 속성(transition)</a></li>
+<li><a class="post-link" href="/javascript/2020/04/23/006-hoisting.html" title="git stash 임시저장">함수정의, 호이스팅</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/spring/2022/01/28/038-spring-REST-docs.html';
+      this.page.identifier = 'https://europani.github.io/spring/2022/01/28/038-spring-REST-docs.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>

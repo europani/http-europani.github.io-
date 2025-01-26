@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>데이터링크 계층(L2) | For My Developer</title>
+<meta name="generator" content="Jekyll v4.3.4">
+<meta property="og:title" content="데이터링크 계층(L2)">
+<meta name="author" content="europani">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="같은 네트워크(LAN)에 있는 여러 대의 컴퓨터가 데이터를 주고받을 수 있게 작업 MAC주소(물리주소)를 이용하여 출발지에서 정확한 목적지로 데이터(프레임) 전송 (Point-to-Point) 기능 : 흐름 제어, 프레임 동기화, 오류 제어, 순서 제어">
+<meta property="og:description" content="같은 네트워크(LAN)에 있는 여러 대의 컴퓨터가 데이터를 주고받을 수 있게 작업 MAC주소(물리주소)를 이용하여 출발지에서 정확한 목적지로 데이터(프레임) 전송 (Point-to-Point) 기능 : 흐름 제어, 프레임 동기화, 오류 제어, 순서 제어">
+<link rel="canonical" href="https://europani.github.io/network/2021/04/01/004-OSI2-datalink.html">
+<meta property="og:url" content="https://europani.github.io/network/2021/04/01/004-OSI2-datalink.html">
+<meta property="og:site_name" content="For My Developer">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-04-01T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="데이터링크 계층(L2)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"europani"},"dateModified":"2021-04-01T00:00:00+00:00","datePublished":"2021-04-01T00:00:00+00:00","description":"같은 네트워크(LAN)에 있는 여러 대의 컴퓨터가 데이터를 주고받을 수 있게 작업 MAC주소(물리주소)를 이용하여 출발지에서 정확한 목적지로 데이터(프레임) 전송 (Point-to-Point) 기능 : 흐름 제어, 프레임 동기화, 오류 제어, 순서 제어","headline":"데이터링크 계층(L2)","mainEntityOfPage":{"@type":"WebPage","@id":"https://europani.github.io/network/2021/04/01/004-OSI2-datalink.html"},"url":"https://europani.github.io/network/2021/04/01/004-OSI2-datalink.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://europani.github.io/feed.xml" title="For My Developer">
+<script>
+  function initGoogleAnalytics() {
+    var doNotTrack = (window.doNotTrack === "1" || navigator.doNotTrack === "1" ||
+      navigator.doNotTrack === "yes" || navigator.msDoNotTrack === "1");
+    var enableDNT = "true" == "true";
+
+    if (!enableDNT || !doNotTrack) {
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'G-7MDN6XTS1E', 'auto');
+      ga('send', 'pageview');
+    }
+  }
+  initGoogleAnalytics();
+</script>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="For My Developer" src="" onerror="this.style.display='none'">
+  For My Developer
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/">HOME</a><a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a><a class="page-link" href="/cv.html">CV</a><a class="page-link" href="/search.html"><i class="fa fa-search"></i></a> 
+          </div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('manual' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">데이터링크 계층(L2)</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-04-01T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> 2021-04-01
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#Network">#Network</a><a class="post-tag" href="/tags.html#CS">#CS</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <ul>
+  <li>
+<u>같은 네트워크(LAN)</u>에 있는 여러 대의 컴퓨터가 데이터를 주고받을 수 있게 작업</li>
+  <li><strong>MAC주소(물리주소)를 이용하여 출발지에서 정확한 목적지로 데이터(프레임) 전송 (Point-to-Point)</strong></li>
+  <li>기능 : 흐름 제어, 프레임 동기화, 오류 제어, 순서 제어</li>
+</ul>
+
+<h3 id="이더넷유선">이더넷(유선)</h3>
+<ul>
+  <li>IEEE 802.3</li>
+  <li>네트워크를 이루는 컴퓨터들의 통신 수단 중 하나</li>
+  <li>LAN 환경에서 절대 다수를 차지하는 네트워크 이다</li>
+</ul>
+
+<h4 id="이더넷-프레임-구조">이더넷 프레임 구조</h4>
+<p><img src="https://user-images.githubusercontent.com/48157259/164959024-93795999-2778-4fc2-b4b3-83d12d38695a.png" alt="image"></p>
+
+<ul>
+  <li>목적지 주소 : 목적지 MAC 주소(다음 노드), ARP로 알아냄</li>
+  <li>출발지 주소 : 출발지 MAC 주소(자기자신)</li>
+  <li>Type : 데이터 타입(보통 IP)</li>
+</ul>
+
+<h3 id="wifi무선">WIFI(무선)</h3>
+<ul>
+  <li>IEEE 802.11</li>
+  <li>무선환경에서 사용하는 통신 수단</li>
+</ul>
+
+<h4 id="wifi-프레임-구조">WIFI 프레임 구조</h4>
+<p><img src="https://user-images.githubusercontent.com/48157259/165439558-e8c151b2-58ad-467f-89f4-e0d2b6857791.png" alt="image"></p>
+
+<ul>
+  <li>Address 1 : AP(목적지) MAC 주소</li>
+  <li>Address 2 : 출발지 MAC 주소</li>
+  <li>
+<strong>Address 3 : AP와 연결되어 있는 라우터의 MAC 주소</strong>
+    <ul>
+      <li>AP는 스위치이기 때문에 출발지에서 전송한 프레임을 해석 할 수 없다</li>
+      <li>프레임을 해석할 수 있는 라우터에게 포워딩 할 라우터의 주소를 같이 적어준다
+<img src="https://user-images.githubusercontent.com/48157259/165441416-c56582a6-8672-4c57-b731-96083ce0224e.png" alt="image">
+</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mac-주소">MAC 주소</h3>
+<ul>
+  <li>Media Access Control의 줄인 말로 <code class="language-plaintext highlighter-rouge">NIC</code>에 할당된 고유 식별자</li>
+  <li>
+    <p>48비트(6바이트) : 16진수 12자리<br>
+<code class="language-plaintext highlighter-rouge">00-00-00-00-00-00</code><br>
+앞 24비트 : OUI(Organizational Unique Identifier) - 제조사 코드<br>
+뒤 24비트 : UAA(Universally Administered Address) - 각 제조사가 부여한 고유 코드</p>
+  </li>
+  <li>
+<a href="https://europani.github.io/network/2021/04/01/005-OSI3-network.html#h-arp">ARP</a>를 통해 목적지의 MAC주소를 알아낼 수 있다</li>
+</ul>
+
+<h3 id="스위치">스위치</h3>
+<ul>
+  <li>목적지 MAC 주소를 확인하고 해당 목적지로만 데이터를 전송한다</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">스위칭 테이블</code>에 MAC주소를 저장 후 참고한다</li>
+</ul>
+
+<h4 id="1-플러딩">1. 플러딩</h4>
+<ul>
+  <li>스위치가 처음 부팅되면 <code class="language-plaintext highlighter-rouge">스위칭 테이블</code>에 아무런 정보가 없기 때문에 허브처럼 모든 포트로 데이터를 전송한다(브로드캐스팅)</li>
+  <li>이렇게 스위치에 연결된 모든 곳으로 데이터를 전송하는 것</li>
+</ul>
+
+<h4 id="2-어드레스-러닝">2. 어드레스 러닝</h4>
+<ul>
+  <li>데이터를 목적지로만 보내기 위해 <code class="language-plaintext highlighter-rouge">스위칭 테이블</code>을 만들고 유지하는 과정</li>
+</ul>
+
+<h4 id="3-포워딩필터링">3. 포워딩/필터링</h4>
+<ul>
+  <li>목적지 MAC주소를 확인하고 해당 포트로만 데이터를 보내는 것</li>
+  <li>필터링 : 목적지 이외의 포트로는 데이터를 보내지 않는 것</li>
+  <li>유니캐스트로 전송</li>
+</ul>
+
+<h3 id="vlan">VLAN</h3>
+<ul>
+  <li>물리적 배치와 상관없이 논리적으로 LAN을 분리하는 기술</li>
+  <li>한 대의 스위치를 여러 개의 VLAN으로 분할 할 수 있다</li>
+  <li>
+    <p>VLAN은 서로 독립적인 네트워크이기 때문에 VLAN간의 통신에는 라우터가 필요하다</p>
+  </li>
+  <li>
+<strong>포트기반 VLAN</strong> : 스위치의 포트를 기반으로 VLAN을 할당한다 (1번포트 : VLAN10 / 2번포트 : VLAN20)</li>
+  <li>MAC기반 VLAN : 단말의 MAC주소를 기반으로 VLAN을 할당한다</li>
+</ul>
+
+<h2 id="통신방식">통신방식</h2>
+<h3 id="csmacd유선">CSMA/CD(유선)</h3>
+<ul>
+  <li>Carrier Sence Multiple Access + Collision Detection</li>
+  <li>
+    <p>회선의 상태에 따라 누구든 동시에 접근할 수 있으면서 충돌을 감지해 제어하는 통신 방식</p>
+  </li>
+  <li>아무도 전송하지 않을 때 프레임을 전송하는 방식</li>
+  <li>아무도 전송하지 않는 것을 전송하기 전에 확인하더라도 <code class="language-plaintext highlighter-rouge">Propagation delay</code>로 인해 충돌은 피할 수 없다
+    <ul>
+      <li>Collision : 어느 한 순간에 누군가의 프레임과 겹쳐지는 상황</li>
+    </ul>
+  </li>
+  <li>충돌을 감지하면 전송을 즉시 멈추고 일정시간(Backoff) 후 재전송한다</li>
+  <li>충돌이 계속 일어난다면 Backoff 시간을 늘려간다</li>
+  <li>충돌이 안날 때 까지 계속해서 전송을 시도하며 언젠가는 전송이 완료되게 된다</li>
+  <li>데이터링크 계층은 손실률이 없기 때문에 전송을 하면 무조건 받았다고 생각해서 <strong>ACK신호가 없다</strong>
+</li>
+</ul>
+
+<h3 id="csmaca무선">CSMA/CA(무선)</h3>
+<ul>
+  <li>Collision Avoidance</li>
+  <li>
+    <p>사전에 충돌이 가능한 상황을 회피하는 통신 방식</p>
+  </li>
+  <li>무선 LAN은 전송매체(공기) 상에서 충돌 감지가 불가능 하기 때문에 상황을 회피하는 방식을 선택해야 한다</li>
+  <li>
+    <p>무선의 상황은 손실률이 높기 때문에 receiver가 프레임을 받으면 ACK를 전송한다</p>
+  </li>
+  <li>RTS/CTS 교환
+    <ul>
+      <li>RTS: Request To Send / CTS : Clear To Send
+        <ol>
+          <li>노드는 AP로 데이터 전송을 하기 전에 AP에게 <code class="language-plaintext highlighter-rouge">RTS 프레임</code>을 먼저 전송하여 전송해도 되는지를 확인한다</li>
+          <li>RTS를 받은 AP는 전송 가능한 상태라면 <code class="language-plaintext highlighter-rouge">CTS 프레임</code>을 모든 노드에게 전송해 응답한다</li>
+          <li>CTS 응답을 받은 노드는 데이터 전송을 시작한다</li>
+          <li>데이터를 잘 받은 AP는 <code class="language-plaintext highlighter-rouge">ACK</code>를 전송한다
+<img src="https://user-images.githubusercontent.com/48157259/165438111-c32f0618-1d62-4ba2-8d93-dc3a72c192dd.png" alt="image">
+</li>
+        </ol>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/docker/2021/03/31/005-docker-VCS.html" title="도커 버전 관리">도커 버전 관리</a><a class="next" href="/network/2021/04/01/005-OSI3-network.html" title="네트워크 계층(L3)">네트워크 계층(L3)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/aws/2022/05/18/006-codedeploy-revision.html" title="네트워크 계층(L3)">AWS CodeDeploy Agent 저장 파일 갯수변경</a></li>
+<li><a class="post-link" href="/git/2020/03/28/003-remote-command.html" title="네트워크 계층(L3)">Git 명령어(remote)</a></li>
+<li><a class="post-link" href="/java/2020/05/14/002-parameter.html" title="네트워크 계층(L3)">기본형 매개변수와 참조형 매개변수</a></li>
+<li><a class="post-link" href="/javascript/2020/03/18/001-object.html" title="네트워크 계층(L3)">객체(Object)</a></li>
+</ul>
+    </div>
+<div class="post-comments">  <div id="disqus_thread"></div>
+  <script>
+    var disqus_config = function () {
+      this.page.url = 'https://europani.github.io/network/2021/04/01/004-OSI2-datalink.html';
+      this.page.identifier = 'https://europani.github.io/network/2021/04/01/004-OSI2-datalink.html';
+    };
+
+    (function() {
+      var d = document, s = d.createElement('script');
+
+      s.src = 'https://europani-github-io.disqus.com/embed.js';
+
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+</div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2020-2021 @europani</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7MDN6XTS1E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7MDN6XTS1E');
+</script>
+</body>
+</html>
